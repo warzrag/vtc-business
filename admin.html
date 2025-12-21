@@ -1151,6 +1151,7 @@ VTC Aéroport Paris</textarea>
                 updateDashboard();
             });
             loadChauffeurs();
+            loadDeletedClients();
         }
 
         // Pricing
@@ -1440,6 +1441,21 @@ VTC Aéroport Paris</textarea>
         // Clients Management
         let allClients = [];
 
+        let deletedClients = [];
+
+        function loadDeletedClients() {
+            db.ref('deletedClients').on('value', snapshot => {
+                deletedClients = [];
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        deletedClients.push(data[key]);
+                    });
+                }
+                updateClients();
+            });
+        }
+
         function updateClients() {
             const clientsMap = {};
 
@@ -1459,7 +1475,10 @@ VTC Aéroport Paris</textarea>
                 clientsMap[key].revenu += getRevenue(r);
             });
 
-            allClients = Object.values(clientsMap).sort((a, b) => b.reservations - a.reservations);
+            // Filtrer les clients supprimés
+            allClients = Object.values(clientsMap)
+                .filter(client => !deletedClients.includes(client.nom))
+                .sort((a, b) => b.reservations - a.reservations);
             renderClientsTable(allClients);
         }
 
@@ -1511,14 +1530,22 @@ VTC Aéroport Paris</textarea>
 
             if (!confirm(confirmMsg)) return;
 
-            // Supprimer le client de la liste affichée
-            allClients = allClients.filter(client => client.nom !== clientName);
+            // Sauvegarder le client supprimé dans Firebase
+            db.ref('deletedClients').push(clientName)
+                .then(() => {
+                    // Supprimer de la liste affichée
+                    allClients = allClients.filter(client => client.nom !== clientName);
+                    deletedClients.push(clientName);
 
-            alert(`✅ ${clientName} a été supprimé du carnet d'adresses.\n\nNota: Les réservations antérieures restent dans le système. Si vous souhaitez supprimer aussi les réservations, veuillez les supprimer manuellement.`);
+                    alert(`✅ ${clientName} a été supprimé du carnet d'adresses.\n\nNota: Les réservations antérieures restent dans le système. Si vous souhaitez supprimer aussi les réservations, veuillez les supprimer manuellement.`);
 
-            // Rafraîchir l'affichage
-            renderClientsTable(allClients);
-            document.getElementById('searchClient').value = '';
+                    // Rafraîchir l'affichage
+                    renderClientsTable(allClients);
+                    document.getElementById('searchClient').value = '';
+                })
+                .catch(error => {
+                    alert('❌ Erreur: ' + error.message);
+                });
         }
 
         // ========== DRIVERS MANAGEMENT ==========
