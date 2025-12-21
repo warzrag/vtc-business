@@ -595,15 +595,81 @@
 
                 <!-- Réservations Section -->
                 <div id="reservationsSection" class="hidden">
+                    <!-- Add Reservation Form -->
                     <div class="section">
-                        <div class="section-title">Toutes les Réservations</div>
+                        <div class="section-title">➕ Ajouter une Nouvelle Réservation</div>
+                        <form id="addReservationForm" onsubmit="handleAddReservation(event)">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nom du Client *</label>
+                                    <input type="text" id="resNom" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Email *</label>
+                                    <input type="email" id="resEmail" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Téléphone *</label>
+                                    <input type="tel" id="resPhone" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Date de Réservation *</label>
+                                    <input type="date" id="resDate" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Heure *</label>
+                                    <input type="time" id="resTime" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Aéroport *</label>
+                                    <select id="resAeroport" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                        <option value="">-- Choisir --</option>
+                                        <option value="CDG">CDG - Charles de Gaulle (60€)</option>
+                                        <option value="Orly">Orly (60€)</option>
+                                        <option value="Beauvais">Beauvais (140€)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Type de Véhicule *</label>
+                                    <select id="resVehicle" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                        <option value="">-- Choisir --</option>
+                                        <option value="Berline">Berline</option>
+                                        <option value="Van">Van</option>
+                                        <option value="SUV">SUV</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nombre de Passagers *</label>
+                                    <input type="number" id="resPassengers" min="1" max="8" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Statut *</label>
+                                    <select id="resStatus" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                        <option value="">-- Choisir --</option>
+                                        <option value="En attente">En attente</option>
+                                        <option value="Confirmée">Confirmée</option>
+                                        <option value="Complétée">Complétée</option>
+                                        <option value="Annulée">Annulée</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-export" style="background-color: #22c55e;">✅ Ajouter la Réservation</button>
+                        </form>
+                    </div>
+
+                    <!-- Reservations List -->
+                    <div class="section">
+                        <div class="section-title">📋 Toutes les Réservations</div>
                         <div class="table-wrapper">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
                                         <th>Aéroport</th>
                                         <th>Date</th>
+                                        <th>Heure</th>
                                         <th>Revenu</th>
                                         <th>Statut</th>
                                     </tr>
@@ -1113,13 +1179,16 @@ VTC Aéroport Paris</textarea>
 
             // All reservations
             html = '';
-            allReservations.slice(0, 20).forEach(r => {
+            allReservations.forEach(r => {
                 html += `<tr>
                     <td>${r.nomClient}</td>
+                    <td style="color: var(--primary);">${r.emailClient}</td>
+                    <td>${r.phoneClient}</td>
                     <td>${r.aeroport}</td>
                     <td>${r.dateReservation}</td>
-                    <td>${getRevenue(r)}€</td>
-                    <td>${r.statut}</td>
+                    <td>${r.heureReservation}</td>
+                    <td style="color: var(--green); font-weight: 600;">${getRevenue(r)}€</td>
+                    <td><span style="background: ${r.statut === 'Confirmée' ? '#22c55e' : r.statut === 'En attente' ? '#f59e0b' : '#ef4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${r.statut}</span></td>
                 </tr>`;
             });
             document.getElementById('reservationsTable').innerHTML = html;
@@ -1187,6 +1256,34 @@ VTC Aéroport Paris</textarea>
             a.href = url;
             a.download = 'vtc-contacts-' + new Date().toISOString().split('T')[0] + '.csv';
             a.click();
+        }
+
+        // Add Reservation Handler
+        function handleAddReservation(event) {
+            event.preventDefault();
+
+            const newReservation = {
+                nomClient: document.getElementById('resNom').value,
+                emailClient: document.getElementById('resEmail').value,
+                phoneClient: document.getElementById('resPhone').value,
+                dateReservation: document.getElementById('resDate').value,
+                heureReservation: document.getElementById('resTime').value,
+                aeroport: document.getElementById('resAeroport').value,
+                typeVehicule: document.getElementById('resVehicle').value,
+                nombrePassagers: document.getElementById('resPassengers').value,
+                statut: document.getElementById('resStatus').value,
+                dateCreation: new Date().toISOString()
+            };
+
+            // Save to Firebase
+            db.ref('reservations').push(newReservation)
+                .then(() => {
+                    alert('✅ Réservation ajoutée avec succès!');
+                    document.getElementById('addReservationForm').reset();
+                })
+                .catch((error) => {
+                    alert('❌ Erreur: ' + error.message);
+                });
         }
 
         // Reminders Management
