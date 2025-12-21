@@ -4,35 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | VTC Aéroport Paris</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --primary: #a27d34;
             --primary-dark: #8b6628;
-            --primary-light: #d4a574;
-            --bg-dark: #0f0f0f;
-            --bg-card: #1a1a1a;
-            --border: rgba(255,255,255,0.08);
-            --text: #ffffff;
-            --text-secondary: rgba(255,255,255,0.6);
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
+            --black: #000;
+            --dark: #0a0a0a;
+            --card: #111;
+            --border: rgba(255,255,255,0.1);
+            --white: #fff;
+            --gray: rgba(255,255,255,0.6);
+            --green: #22c55e;
+            --orange: #f59e0b;
+            --red: #ef4444;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--black);
+            color: var(--white);
             min-height: 100vh;
-            line-height: 1.6;
         }
 
         /* Login Screen */
@@ -42,35 +36,27 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
         }
 
         .login-box {
-            background: var(--bg-card);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 48px 40px;
+            border-radius: 20px;
+            padding: 40px;
             width: 100%;
-            max-width: 420px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
         }
 
-        .login-header {
+        .login-box h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .login-box p {
+            color: var(--gray);
             text-align: center;
             margin-bottom: 32px;
-        }
-
-        .login-logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 12px;
-        }
-
-        .login-subtitle {
-            color: var(--text-secondary);
-            font-size: 14px;
         }
 
         .form-group {
@@ -79,74 +65,55 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text);
+            margin-bottom: 8px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            transition: all 0.3s;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--white);
+            font-size: 16px;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255,255,255,0.08);
-            box-shadow: 0 0 0 3px rgba(162, 125, 52, 0.1);
         }
 
         .btn {
-            padding: 12px 24px;
+            width: 100%;
+            padding: 14px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
         }
 
         .btn-primary {
-            width: 100%;
-            background: var(--primary);
-            color: #fff;
-            margin-top: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(162, 125, 52, 0.2);
+            opacity: 0.9;
         }
 
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+        .error-msg {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
             padding: 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .success-message {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #86efac;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            text-align: center;
+            display: none;
         }
 
         /* Dashboard */
@@ -155,97 +122,184 @@
         }
 
         .dashboard.active {
-            display: block;
-        }
-
-        .navbar {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
-        .navbar-brand {
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: var(--dark);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo {
             font-size: 20px;
-            font-weight: 800;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo span {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: rgba(162,125,52,0.1);
             color: var(--primary);
         }
 
-        .navbar-user {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
         }
 
         .user-info {
-            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .user-email {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .btn-logout {
-            background: var(--danger);
-            color: white;
-            padding: 8px 16px;
             font-size: 12px;
+            color: var(--gray);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .btn-logout:hover {
-            background: #dc2626;
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: var(--red);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 32px 24px;
+        .logout-btn:hover {
+            background: rgba(239,68,68,0.2);
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* Main Content */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* Grid */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
 
-        .stat-card {
-            background: var(--bg-card);
+        .card {
+            background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
             transition: all 0.3s;
         }
 
-        .stat-card:hover {
+        .card:hover {
             border-color: var(--primary);
-            transform: translateY(-4px);
         }
 
-        .stat-label {
+        .card-label {
+            color: var(--gray);
             font-size: 13px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 8px;
+            text-transform: uppercase;
         }
 
-        .stat-value {
+        .card-value {
             font-size: 32px;
-            font-weight: 800;
+            font-weight: 700;
             color: var(--primary);
         }
 
         /* Section */
         .section {
-            background: var(--bg-card);
+            background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 24px;
@@ -253,66 +307,82 @@
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text);
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
         }
 
-        /* Form Grid */
+        /* Form */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 16px;
         }
 
         .form-group select {
             width: 100%;
-            padding: 12px 16px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--white);
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255,255,255,0.08);
         }
 
-        /* Buttons Group */
-        .button-group {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        /* Buttons */
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
         }
 
         .btn-success {
-            background: var(--success);
+            background: var(--green);
             color: white;
         }
 
         .btn-success:hover {
-            background: #16a34a;
-            transform: translateY(-2px);
+            opacity: 0.8;
         }
 
         .btn-secondary {
             background: rgba(255,255,255,0.1);
-            color: var(--text);
+            color: var(--white);
             border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
             background: rgba(255,255,255,0.15);
-            border-color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.8;
+        }
+
+        .btn-edit {
+            background: rgba(59,130,246,0.2);
+            color: #93c5fd;
+        }
+
+        .btn-edit:hover {
+            background: rgba(59,130,246,0.3);
         }
 
         /* Table */
@@ -323,22 +393,17 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        thead {
-            background: rgba(255,255,255,0.04);
-            border-bottom: 1px solid var(--border);
         }
 
         th {
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid var(--border);
             padding: 12px 16px;
             text-align: left;
             font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
+            color: var(--gray);
             font-size: 12px;
-            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         td {
@@ -353,58 +418,35 @@
         .status-badge {
             display: inline-block;
             padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .status-pending {
-            background: rgba(245, 158, 11, 0.2);
+            background: rgba(245,158,11,0.2);
             color: #fcd34d;
         }
 
         .status-confirmed {
-            background: rgba(34, 197, 94, 0.2);
+            background: rgba(34,197,94,0.2);
             color: #86efac;
         }
 
         .status-completed {
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59,130,246,0.2);
             color: #93c5fd;
         }
 
         .status-cancelled {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239,68,68,0.2);
             color: #fca5a5;
         }
 
         .action-buttons {
             display: flex;
             gap: 8px;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .btn-edit {
-            background: var(--info);
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #2563eb;
-        }
-
-        .btn-delete {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
         }
 
         /* Modal */
@@ -415,7 +457,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -426,13 +468,13 @@
         }
 
         .modal-content {
-            background: var(--bg-card);
+            background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 32px;
             width: 90%;
             max-width: 600px;
-            max-height: 90vh;
+            max-height: 80vh;
             overflow-y: auto;
         }
 
@@ -451,14 +493,9 @@
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 24px;
             cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .modal-close:hover {
-            color: var(--text);
         }
 
         .hidden {
@@ -467,52 +504,52 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .login-box {
-                padding: 32px 24px;
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .card-value {
+                font-size: 24px;
             }
 
             th, td {
                 padding: 8px 12px;
                 font-size: 12px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar {
-                padding: 12px 16px;
-            }
-
-            .navbar-brand {
-                font-size: 16px;
-            }
-
-            .container {
-                padding: 16px 12px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-value {
-                font-size: 24px;
             }
         }
     </style>
@@ -521,19 +558,17 @@
     <!-- Login Screen -->
     <div id="authScreen" class="login-screen">
         <div class="login-box">
-            <div class="login-header">
-                <div class="login-logo">🚗 VTC</div>
-                <div class="login-subtitle">Admin Dashboard</div>
-            </div>
-            <div id="authError" class="error-message hidden"></div>
+            <h1>VTC Admin</h1>
+            <p>Connexion à votre dashboard</p>
+            <div id="errorMsg" class="error-msg"></div>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required placeholder="admin@example.com">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="admin@example.com">
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">Mot de passe</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="btn btn-primary">Se connecter</button>
             </form>
@@ -541,151 +576,193 @@
     </div>
 
     <!-- Dashboard -->
-    <div id="dashboard" class="dashboard">
-        <!-- Navbar -->
-        <div class="navbar">
-            <div class="navbar-brand">🚗 VTC Admin</div>
-            <div class="navbar-user">
+    <div id="dashboardScreen" class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                🚗 <span>VTC</span>
+            </div>
+
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span>📊</span> Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('reservations')">
+                <span>📅</span> Réservations
+            </div>
+            <div class="nav-item" onclick="showSection('add')">
+                <span>➕</span> Ajouter
+            </div>
+
+            <div class="sidebar-footer">
                 <div class="user-info">
-                    <div class="user-email" id="userEmail"></div>
+                    <div class="user-avatar" id="userInitial">A</div>
+                    <div class="user-details">
+                        <div class="user-name">Admin</div>
+                        <div class="user-email" id="userEmailSidebar">admin@example.com</div>
+                    </div>
                 </div>
-                <button id="logoutBtn" class="btn btn-logout">Déconnexion</button>
+                <button class="logout-btn" onclick="logout()">Déconnexion</button>
             </div>
         </div>
 
-        <!-- Container -->
-        <div class="container">
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total</div>
-                    <div class="stat-value" id="totalReservations">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">En attente</div>
-                    <div class="stat-value" id="pendingCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Confirmées</div>
-                    <div class="stat-value" id="confirmedCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Complétées</div>
-                    <div class="stat-value" id="completedCount">0</div>
-                </div>
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header">
+                <h1 id="pageTitle">Dashboard</h1>
             </div>
 
-            <!-- Add Reservation -->
-            <div class="section">
-                <div class="section-title">Ajouter une réservation</div>
-                <form id="addForm" class="form-grid">
-                    <div class="form-group">
-                        <label>Nom client</label>
-                        <input type="text" name="nomClient" required>
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="section-view">
+                    <div class="grid">
+                        <div class="card">
+                            <div class="card-label">Total</div>
+                            <div class="card-value" id="totalCount">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-label">En attente</div>
+                            <div class="card-value" id="pendingCount">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-label">Confirmées</div>
+                            <div class="card-value" id="confirmedCount">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-label">Complétées</div>
+                            <div class="card-value" id="completedCount">0</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="emailClient" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Téléphone</label>
-                        <input type="tel" name="phoneClient" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Date</label>
-                        <input type="date" name="dateReservation" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Heure</label>
-                        <input type="time" name="heureReservation" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Aéroport</label>
-                        <select name="aeroport" required>
-                            <option value="">Sélectionner</option>
-                            <option value="CDG">CDG - Roissy</option>
-                            <option value="Orly">Orly</option>
-                            <option value="Beauvais">Beauvais</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Véhicule</label>
-                        <select name="typeVehicule" required>
-                            <option value="">Sélectionner</option>
-                            <option value="Berline">Berline</option>
-                            <option value="VAN">VAN 7 places</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Passagers</label>
-                        <input type="number" name="nombrePassagers" min="1" max="7" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Statut</label>
-                        <select name="statut" required>
-                            <option value="En attente">En attente</option>
-                            <option value="Confirmée">Confirmée</option>
-                            <option value="Complétée">Complétée</option>
-                            <option value="Annulée">Annulée</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-success" style="grid-column: 1/-1;">Ajouter</button>
-                </form>
-            </div>
 
-            <!-- Filters -->
-            <div class="section">
-                <div class="section-title">Filtres</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Aéroport</label>
-                        <select id="filterAeroport">
-                            <option value="">Tous</option>
-                            <option value="CDG">CDG</option>
-                            <option value="Orly">Orly</option>
-                            <option value="Beauvais">Beauvais</option>
-                        </select>
+                    <div class="section">
+                        <div class="section-title">Filtres</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Aéroport</label>
+                                <select id="filterAeroport" onchange="applyFilters()">
+                                    <option value="">Tous</option>
+                                    <option value="CDG">CDG</option>
+                                    <option value="Orly">Orly</option>
+                                    <option value="Beauvais">Beauvais</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Statut</label>
+                                <select id="filterStatut" onchange="applyFilters()">
+                                    <option value="">Tous</option>
+                                    <option value="En attente">En attente</option>
+                                    <option value="Confirmée">Confirmée</option>
+                                    <option value="Complétée">Complétée</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="filterDate" onchange="applyFilters()">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Statut</label>
-                        <select id="filterStatut">
-                            <option value="">Tous</option>
-                            <option value="En attente">En attente</option>
-                            <option value="Confirmée">Confirmée</option>
-                            <option value="Complétée">Complétée</option>
-                            <option value="Annulée">Annulée</option>
-                        </select>
+
+                    <div class="section">
+                        <div class="section-title">Réservations récentes</div>
+                        <div class="table-wrapper">
+                            <table id="dashboardTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Aéroport</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Date</label>
-                        <input type="date" id="filterDate">
-                    </div>
-                    <button id="resetFilters" class="btn btn-secondary">Réinitialiser</button>
                 </div>
-            </div>
 
-            <!-- Table -->
-            <div class="section">
-                <div class="section-title">Réservations</div>
-                <div class="table-wrapper">
-                    <table id="reservationsTable">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Téléphone</th>
-                                <th>Date</th>
-                                <th>Heure</th>
-                                <th>Aéroport</th>
-                                <th>Véhicule</th>
-                                <th>Passagers</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                        </tbody>
-                    </table>
+                <!-- Reservations Section -->
+                <div id="reservationsSection" class="section-view hidden">
+                    <div class="section">
+                        <div class="section-title">Toutes les réservations</div>
+                        <div class="table-wrapper">
+                            <table id="reservationsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Date</th>
+                                        <th>Heure</th>
+                                        <th>Aéroport</th>
+                                        <th>Véhicule</th>
+                                        <th>Passagers</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reservationsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Section -->
+                <div id="addSection" class="section-view hidden">
+                    <div class="section">
+                        <div class="section-title">Ajouter une réservation</div>
+                        <form id="addForm" class="form-grid">
+                            <div class="form-group">
+                                <label>Nom client</label>
+                                <input type="text" name="nomClient" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="emailClient" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Téléphone</label>
+                                <input type="tel" name="phoneClient" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" name="dateReservation" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Heure</label>
+                                <input type="time" name="heureReservation" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Aéroport</label>
+                                <select name="aeroport" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="CDG">CDG</option>
+                                    <option value="Orly">Orly</option>
+                                    <option value="Beauvais">Beauvais</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Véhicule</label>
+                                <select name="typeVehicule" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="Berline">Berline</option>
+                                    <option value="VAN">VAN 7 places</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Passagers</label>
+                                <input type="number" name="nombrePassagers" min="1" max="7" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Statut</label>
+                                <select name="statut" required>
+                                    <option value="En attente">En attente</option>
+                                    <option value="Confirmée">Confirmée</option>
+                                    <option value="Complétée">Complétée</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success" style="grid-column: 1/-1;">Ajouter</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -723,7 +800,7 @@
                 <div class="form-group">
                     <label>Aéroport</label>
                     <select name="aeroport" required>
-                        <option value="CDG">CDG - Roissy</option>
+                        <option value="CDG">CDG</option>
                         <option value="Orly">Orly</option>
                         <option value="Beauvais">Beauvais</option>
                     </select>
@@ -745,12 +822,11 @@
                         <option value="En attente">En attente</option>
                         <option value="Confirmée">Confirmée</option>
                         <option value="Complétée">Complétée</option>
-                        <option value="Annulée">Annulée</option>
                     </select>
                 </div>
                 <div style="grid-column: 1/-1; display: flex; gap: 12px;">
-                    <button type="submit" class="btn btn-success">Sauvegarder</button>
-                    <button type="button" class="btn btn-delete" onclick="deleteReservation()">Supprimer</button>
+                    <button type="submit" class="btn btn-success btn-sm">Sauvegarder</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteReservation()">Supprimer</button>
                 </div>
             </form>
         </div>
@@ -762,7 +838,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Config
+        // Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBJuFLVMI3gUKFohxYRZeg8Qyn0mXf1sQI",
             authDomain: "admin-vtc.firebaseapp.com",
@@ -770,259 +846,209 @@
             projectId: "admin-vtc",
             storageBucket: "admin-vtc.firebasestorage.app",
             messagingSenderId: "692871193828",
-            appId: "1:692871193828:web:2dd34c34736f2faf9bb8f1",
-            measurementId: "G-7HMTJSJ13H"
+            appId: "1:692871193828:web:2dd34c34736f2faf9bb8f1"
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
 
-        // State
         let currentUser = null;
         let allReservations = [];
-        let filteredReservations = [];
         let editingId = null;
+        let currentSection = 'dashboard';
 
-        // DOM Elements
-        const authScreen = document.getElementById('authScreen');
-        const dashboard = document.getElementById('dashboard');
-        const loginForm = document.getElementById('loginForm');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userEmail = document.getElementById('userEmail');
-        const authError = document.getElementById('authError');
-
-        const addForm = document.getElementById('addForm');
-        const editForm = document.getElementById('editForm');
-        const editModal = document.getElementById('editModal');
-        const tableBody = document.getElementById('tableBody');
-
-        const filterAeroport = document.getElementById('filterAeroport');
-        const filterStatut = document.getElementById('filterStatut');
-        const filterDate = document.getElementById('filterDate');
-        const resetFilters = document.getElementById('resetFilters');
-
-        // Auth State
+        // Auth
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
-                authScreen.classList.add('hidden');
-                dashboard.classList.add('active');
-                userEmail.textContent = user.email;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('dashboardScreen').classList.add('active');
+                document.getElementById('userEmailSidebar').textContent = user.email;
+                document.getElementById('userInitial').textContent = user.email[0].toUpperCase();
                 loadReservations();
             } else {
                 currentUser = null;
-                authScreen.classList.remove('hidden');
-                dashboard.classList.remove('active');
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('dashboardScreen').classList.remove('active');
             }
         });
 
         // Login
-        loginForm.addEventListener('submit', e => {
+        document.getElementById('loginForm').addEventListener('submit', e => {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            auth.signInWithEmailAndPassword(email, password)
-                .catch(err => {
-                    authError.textContent = 'Erreur: ' + err.message;
-                    authError.classList.remove('hidden');
-                });
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(email, password).catch(err => {
+                document.getElementById('errorMsg').textContent = err.message;
+                document.getElementById('errorMsg').style.display = 'block';
+            });
         });
 
         // Logout
-        logoutBtn.addEventListener('click', () => {
+        function logout() {
             auth.signOut();
-        });
+        }
 
-        // Load Reservations
+        // Load
         function loadReservations() {
             db.ref('reservations').on('value', snapshot => {
                 allReservations = [];
                 const data = snapshot.val();
-
                 if (data) {
                     Object.entries(data).forEach(([key, value]) => {
                         allReservations.push({ id: key, ...value });
                     });
                 }
-
                 allReservations.sort((a, b) => new Date(b.dateReservation) - new Date(a.dateReservation));
                 updateStats();
-                applyFilters();
+                renderTables();
             });
         }
 
-        // Add Reservation
-        addForm.addEventListener('submit', e => {
+        // Add
+        document.getElementById('addForm').addEventListener('submit', e => {
             e.preventDefault();
-            const formData = new FormData(addForm);
+            const formData = new FormData(document.getElementById('addForm'));
             const reservation = Object.fromEntries(formData);
             reservation.dateCreation = new Date().toISOString();
-
-            db.ref('reservations').push(reservation)
-                .then(() => {
-                    addForm.reset();
-                    showNotification('Réservation ajoutée!', 'success');
-                })
-                .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+            db.ref('reservations').push(reservation).then(() => {
+                document.getElementById('addForm').reset();
+                alert('Réservation ajoutée!');
+            }).catch(err => alert('Erreur: ' + err.message));
         });
-
-        // Apply Filters
-        function applyFilters() {
-            filteredReservations = allReservations.filter(r => {
-                const matchAeroport = !filterAeroport.value || r.aeroport === filterAeroport.value;
-                const matchStatut = !filterStatut.value || r.statut === filterStatut.value;
-                const matchDate = !filterDate.value || r.dateReservation === filterDate.value;
-                return matchAeroport && matchStatut && matchDate;
-            });
-            renderTable();
-        }
-
-        filterAeroport.addEventListener('change', applyFilters);
-        filterStatut.addEventListener('change', applyFilters);
-        filterDate.addEventListener('change', applyFilters);
-
-        resetFilters.addEventListener('click', () => {
-            filterAeroport.value = '';
-            filterStatut.value = '';
-            filterDate.value = '';
-            applyFilters();
-        });
-
-        // Render Table
-        function renderTable() {
-            tableBody.innerHTML = '';
-
-            if (filteredReservations.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 32px; color: var(--text-secondary);">Aucune réservation</td></tr>';
-                return;
-            }
-
-            filteredReservations.forEach(r => {
-                const tr = document.createElement('tr');
-                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
-                tr.innerHTML = `
-                    <td>${r.nomClient}</td>
-                    <td>${r.emailClient}</td>
-                    <td>${r.phoneClient}</td>
-                    <td>${r.dateReservation}</td>
-                    <td>${r.heureReservation}</td>
-                    <td>${r.aeroport}</td>
-                    <td>${r.typeVehicule}</td>
-                    <td>${r.nombrePassagers}</td>
-                    <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteQuick('${r.id}')">Supprimer</button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
 
         // Edit
+        document.getElementById('editForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('editForm'));
+            const data = Object.fromEntries(formData);
+            delete data.id;
+            db.ref(`reservations/${editingId}`).set(data).then(() => {
+                closeModal();
+                alert('Mise à jour faite!');
+            }).catch(err => alert('Erreur: ' + err.message));
+        });
+
         function openEdit(id) {
             editingId = id;
             const r = allReservations.find(x => x.id === id);
             if (r) {
-                editForm.nomClient.value = r.nomClient;
-                editForm.emailClient.value = r.emailClient;
-                editForm.phoneClient.value = r.phoneClient;
-                editForm.dateReservation.value = r.dateReservation;
-                editForm.heureReservation.value = r.heureReservation;
-                editForm.aeroport.value = r.aeroport;
-                editForm.typeVehicule.value = r.typeVehicule;
-                editForm.nombrePassagers.value = r.nombrePassagers;
-                editForm.statut.value = r.statut;
-                editModal.classList.add('active');
+                document.getElementById('editForm').nomClient.value = r.nomClient;
+                document.getElementById('editForm').emailClient.value = r.emailClient;
+                document.getElementById('editForm').phoneClient.value = r.phoneClient;
+                document.getElementById('editForm').dateReservation.value = r.dateReservation;
+                document.getElementById('editForm').heureReservation.value = r.heureReservation;
+                document.getElementById('editForm').aeroport.value = r.aeroport;
+                document.getElementById('editForm').typeVehicule.value = r.typeVehicule;
+                document.getElementById('editForm').nombrePassagers.value = r.nombrePassagers;
+                document.getElementById('editForm').statut.value = r.statut;
+                document.getElementById('editModal').classList.add('active');
             }
         }
 
         function closeModal() {
-            editModal.classList.remove('active');
-            editingId = null;
+            document.getElementById('editModal').classList.remove('active');
         }
-
-        editForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const formData = new FormData(editForm);
-            const data = Object.fromEntries(formData);
-            delete data.id;
-
-            db.ref(`reservations/${editingId}`).set(data)
-                .then(() => {
-                    closeModal();
-                    showNotification('Réservation mise à jour!', 'success');
-                })
-                .catch(err => showNotification('Erreur: ' + err.message, 'error'));
-        });
 
         function deleteReservation() {
-            if (confirm('Supprimer cette réservation?')) {
-                db.ref(`reservations/${editingId}`).remove()
-                    .then(() => {
-                        closeModal();
-                        showNotification('Réservation supprimée!', 'success');
-                    })
-                    .catch(err => showNotification('Erreur: ' + err.message, 'error'));
-            }
-        }
-
-        function deleteQuick(id) {
-            if (confirm('Supprimer cette réservation?')) {
-                db.ref(`reservations/${id}`).remove()
-                    .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+            if (confirm('Supprimer?')) {
+                db.ref(`reservations/${editingId}`).remove().then(() => {
+                    closeModal();
+                    alert('Supprimée!');
+                }).catch(err => alert('Erreur: ' + err.message));
             }
         }
 
         // Stats
         function updateStats() {
-            document.getElementById('totalReservations').textContent = allReservations.length;
+            document.getElementById('totalCount').textContent = allReservations.length;
             document.getElementById('pendingCount').textContent = allReservations.filter(r => r.statut === 'En attente').length;
             document.getElementById('confirmedCount').textContent = allReservations.filter(r => r.statut === 'Confirmée').length;
             document.getElementById('completedCount').textContent = allReservations.filter(r => r.statut === 'Complétée').length;
         }
 
-        // Notification
-        function showNotification(msg, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
-                color: white;
-                padding: 16px 24px;
-                border-radius: 8px;
-                font-size: 14px;
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-            `;
-            notification.textContent = msg;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+        // Render
+        function applyFilters() {
+            renderTables();
         }
 
-        // Animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(400px); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
+        function renderTables() {
+            const aeroport = document.getElementById('filterAeroport').value;
+            const statut = document.getElementById('filterStatut').value;
+            const date = document.getElementById('filterDate').value;
+
+            const filtered = allReservations.filter(r => {
+                return (!aeroport || r.aeroport === aeroport) &&
+                       (!statut || r.statut === statut) &&
+                       (!date || r.dateReservation === date);
+            });
+
+            // Dashboard
+            let html = '';
+            filtered.slice(0, 10).forEach(r => {
+                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
+                html += `
+                    <tr>
+                        <td>${r.nomClient}</td>
+                        <td>${r.aeroport}</td>
+                        <td>${r.dateReservation}</td>
+                        <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('dashboardTableBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:20px;">Aucune réservation</td></tr>';
+
+            // All
+            html = '';
+            filtered.forEach(r => {
+                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
+                html += `
+                    <tr>
+                        <td>${r.nomClient}</td>
+                        <td>${r.emailClient}</td>
+                        <td>${r.phoneClient}</td>
+                        <td>${r.dateReservation}</td>
+                        <td>${r.heureReservation}</td>
+                        <td>${r.aeroport}</td>
+                        <td>${r.typeVehicule}</td>
+                        <td>${r.nombrePassagers}</td>
+                        <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('reservationsTableBody').innerHTML = html || '<tr><td colspan="10" style="text-align:center;padding:20px;">Aucune réservation</td></tr>';
+        }
+
+        function showSection(section) {
+            currentSection = section;
+            document.querySelectorAll('.section-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            if (section === 'dashboard') {
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'Dashboard';
+                document.querySelector('[onclick="showSection(\'dashboard\')"]').classList.add('active');
+            } else if (section === 'reservations') {
+                document.getElementById('reservationsSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'Réservations';
+                document.querySelector('[onclick="showSection(\'reservations\')"]').classList.add('active');
+            } else if (section === 'add') {
+                document.getElementById('addSection').classList.remove('hidden');
+                document.getElementById('pageTitle').textContent = 'Ajouter';
+                document.querySelector('[onclick="showSection(\'add\')"]').classList.add('active');
             }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(400px); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+        }
     </script>
 </body>
 </html>
