@@ -838,6 +838,17 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--white);
 }
 
+.reservation-form select option:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+}
+
+.reservation-form select option:checked {
+    background: linear-gradient(#1a1a1a, #1a1a1a);
+    background-color: var(--primary-gold) !important;
+    color: var(--dark-bg) !important;
+}
+
 .reservation-form .quick-loc {
     background: rgba(162, 125, 52, 0.2);
     border: 1px solid rgba(162, 125, 52, 0.3);
