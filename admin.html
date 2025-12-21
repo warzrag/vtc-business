@@ -473,6 +473,7 @@
 
             <div class="nav-item active" onclick="showSection('analytics')">📊 Analytics</div>
             <div class="nav-item" onclick="showSection('reservations')">📅 Réservations</div>
+            <div class="nav-item" onclick="showSection('chauffeurs')">🚗 Chauffeurs</div>
             <div class="nav-item" onclick="showSection('clients')">👥 Clients</div>
             <div class="nav-item" onclick="showSection('rappels')">🔔 Rappels</div>
             <div class="nav-item" onclick="showSection('rapports')">📈 Rapports</div>
@@ -772,6 +773,58 @@
                     </div>
                 </div>
 
+                <!-- Chauffeurs Section -->
+                <div id="chauffeursSection" class="hidden">
+                    <div class="section">
+                        <div class="section-title">🚗 Gestion des Chauffeurs</div>
+                        <p style="color:var(--gray); margin-bottom: 20px;">Ajoutez et gérez vos chauffeurs</p>
+
+                        <!-- Ajouter Chauffeur Form -->
+                        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nom du Chauffeur *</label>
+                                    <input type="text" id="chauffeurNom" placeholder="Ex: Mohammed Bachir" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Téléphone *</label>
+                                    <input type="tel" id="chauffeurPhone" placeholder="Ex: 06 69 06 82 44" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Numéro de Plaque *</label>
+                                    <input type="text" id="chauffeurPlate" placeholder="Ex: ABC123XY" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
+                                    <select id="chauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                        <option value="Berline">🚗 Berline</option>
+                                        <option value="Van">🚐 Van 7 places</option>
+                                        <option value="SUV">🚙 SUV</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="addChauffeur()" class="btn-export" style="background-color: #22c55e;">➕ Ajouter le Chauffeur</button>
+                        </div>
+
+                        <!-- Liste des Chauffeurs -->
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Téléphone</th>
+                                        <th>Numéro de Plaque</th>
+                                        <th>Véhicule</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chauffeurTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Rappels Section -->
                 <div id="rappelsSection" class="hidden">
                     <div class="section">
@@ -1031,6 +1084,7 @@ VTC Aéroport Paris</textarea>
                 }
                 updateDashboard();
             });
+            loadChauffeurs();
         }
 
         // Pricing
@@ -1373,6 +1427,97 @@ VTC Aéroport Paris</textarea>
             a.href = url;
             a.download = 'vtc-contacts-' + new Date().toISOString().split('T')[0] + '.csv';
             a.click();
+        }
+
+        // ========== DRIVERS MANAGEMENT ==========
+        let allChauffeurs = [];
+
+        // Load chauffeurs from Firebase
+        function loadChauffeurs() {
+            db.ref('chauffeurs').on('value', snapshot => {
+                allChauffeurs = [];
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        allChauffeurs.push({ id: key, ...data[key] });
+                    });
+                }
+                renderChauffeurTable();
+            });
+        }
+
+        // Add chauffeur
+        function addChauffeur() {
+            const nom = document.getElementById('chauffeurNom').value.trim();
+            const phone = document.getElementById('chauffeurPhone').value.trim();
+            const plate = document.getElementById('chauffeurPlate').value.trim();
+            const vehicule = document.getElementById('chauffeurVehicule').value;
+
+            if (!nom || nom.length < 2) {
+                alert('❌ Veuillez entrer un nom valide');
+                return;
+            }
+            if (!phone || phone.length < 10) {
+                alert('❌ Veuillez entrer un numéro de téléphone valide');
+                return;
+            }
+            if (!plate || plate.length < 3) {
+                alert('❌ Veuillez entrer un numéro de plaque valide');
+                return;
+            }
+
+            const newChauffeur = {
+                nom: nom,
+                phone: phone,
+                plate: plate,
+                vehicule: vehicule,
+                statut: 'Disponible',
+                dateCreation: new Date().toISOString()
+            };
+
+            db.ref('chauffeurs').push(newChauffeur)
+                .then(() => {
+                    alert('✅ Chauffeur ajouté avec succès!');
+                    document.getElementById('chauffeurNom').value = '';
+                    document.getElementById('chauffeurPhone').value = '';
+                    document.getElementById('chauffeurPlate').value = '';
+                    document.getElementById('chauffeurVehicule').value = 'Berline';
+                })
+                .catch(error => {
+                    alert('❌ Erreur: ' + error.message);
+                });
+        }
+
+        // Render chauffeurs table
+        function renderChauffeurTable() {
+            let html = '';
+            allChauffeurs.forEach(chauffeur => {
+                const statutColor = chauffeur.statut === 'Disponible' ? '#22c55e' : '#f59e0b';
+                html += `<tr>
+                    <td>${chauffeur.nom}</td>
+                    <td>${chauffeur.phone}</td>
+                    <td style="font-family: monospace; font-weight: 600;">${chauffeur.plate}</td>
+                    <td>${chauffeur.vehicule}</td>
+                    <td><span style="background: ${statutColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${chauffeur.statut}</span></td>
+                    <td>
+                        <button onclick="deleteChauffeur('${chauffeur.id}')" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Supprimer</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('chauffeurTable').innerHTML = html || '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Aucun chauffeur trouvé</td></tr>';
+        }
+
+        // Delete chauffeur
+        function deleteChauffeur(chauffeurId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur?')) return;
+
+            db.ref('chauffeurs/' + chauffeurId).remove()
+                .then(() => {
+                    alert('✅ Chauffeur supprimé');
+                })
+                .catch(error => {
+                    alert('❌ Erreur: ' + error.message);
+                });
         }
 
         // Calendar Management
