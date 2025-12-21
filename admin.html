@@ -657,8 +657,12 @@
                         <form id="addReservationForm" onsubmit="handleAddReservation(event)">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
                                 <div>
-                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nom du Client *</label>
-                                    <input type="text" id="resNom" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Prénom *</label>
+                                    <input type="text" id="resFirstname" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nom *</label>
+                                    <input type="text" id="resLastname" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                 </div>
                                 <div>
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Email *</label>
@@ -1624,8 +1628,14 @@ VTC Aéroport Paris</textarea>
         function handleAddReservation(event) {
             event.preventDefault();
 
+            const resFirstname = document.getElementById('resFirstname').value.trim();
+            const resLastname = document.getElementById('resLastname').value.trim();
+            const clientName = resFirstname + ' ' + resLastname;
+
             const newReservation = {
-                nomClient: document.getElementById('resNom').value,
+                nomClient: clientName,
+                prenomClient: resFirstname,
+                nomFamilleClient: resLastname,
                 emailClient: document.getElementById('resEmail').value,
                 phoneClient: document.getElementById('resPhone').value,
                 dateReservation: document.getElementById('resDate').value,

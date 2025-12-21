@@ -758,8 +758,13 @@
                                 <h4 style="color: #c9a227; margin-bottom: 1rem; font-size: 1.1rem;">
                                     <i class="fas fa-user"></i> Vos coordonnées
                                 </h4>
-                                <div class="form-group" style="margin-bottom: 1rem;">
-                                    <input type="text" id="client-name" placeholder="Votre nom *" style="width: 100%;" required>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <div class="form-group">
+                                        <input type="text" id="client-firstname" placeholder="Prénom *" style="width: 100%;" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" id="client-lastname" placeholder="Nom *" style="width: 100%;" required>
+                                    </div>
                                 </div>
                                 <div class="form-group" style="margin-bottom: 1rem;">
                                     <input type="tel" id="client-phone" placeholder="Votre téléphone *" style="width: 100%;" required>
@@ -1177,11 +1182,16 @@ Merci de confirmer ma réservation.`;
                     document.getElementById('btn-send').addEventListener('click', function(e) {
                         e.preventDefault();
 
-                        const clientName = document.getElementById('client-name').value;
+                        const clientFirstname = document.getElementById('client-firstname').value.trim();
+                        const clientLastname = document.getElementById('client-lastname').value.trim();
                         const clientPhone = document.getElementById('client-phone').value;
                         const clientEmail = document.getElementById('client-email').value;
 
-                        if (!clientName || clientName.length < 2) {
+                        if (!clientFirstname || clientFirstname.length < 2) {
+                            alert('Veuillez entrer votre prénom');
+                            return;
+                        }
+                        if (!clientLastname || clientLastname.length < 2) {
                             alert('Veuillez entrer votre nom');
                             return;
                         }
@@ -1189,6 +1199,8 @@ Merci de confirmer ma réservation.`;
                             alert('Veuillez entrer un numéro de téléphone valide');
                             return;
                         }
+
+                        const clientName = clientFirstname + ' ' + clientLastname;
 
                         const serviceType = document.getElementById('service-type').value;
                         const date = document.getElementById('date').value;
@@ -1264,6 +1276,8 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
                             referenceNumber: referenceNumber,
                             serviceType: serviceType,
                             nomClient: clientName,
+                            prenomClient: clientFirstname,
+                            nomFamilleClient: clientLastname,
                             phoneClient: clientPhone,
                             emailClient: clientEmail || 'non fourni',
                             dateReservation: date,
