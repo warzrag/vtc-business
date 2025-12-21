@@ -474,6 +474,7 @@
             <div class="nav-item active" onclick="showSection('analytics')">📊 Analytics</div>
             <div class="nav-item" onclick="showSection('reservations')">📅 Réservations</div>
             <div class="nav-item" onclick="showSection('clients')">👥 Clients</div>
+            <div class="nav-item" onclick="showSection('rappels')">🔔 Rappels</div>
             <div class="nav-item" onclick="showSection('rapports')">📈 Rapports</div>
             <div class="nav-item" onclick="showSection('settings')">⚙️ Paramètres</div>
 
@@ -639,6 +640,73 @@
                                 </thead>
                                 <tbody id="clientsTable"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rappels Section -->
+                <div id="rappelsSection" class="hidden">
+                    <div class="section">
+                        <div class="section-title">🔔 Rappels Réservations</div>
+                        <p style="color:var(--gray); margin-bottom: 20px;">Gérez les rappels pour les clients ayant une réservation demain</p>
+
+                        <div id="remindersAlert" style="background: rgba(162,125,52,0.2); border-left: 3px solid #a27d34; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;">
+                            <p style="color:var(--primary); font-weight: 600;">
+                                📢 <span id="remindersCount">0</span> client(s) à rappeler demain
+                            </p>
+                        </div>
+
+                        <div class="table-wrapper" style="margin-bottom: 30px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Aéroport</th>
+                                        <th>Date/Heure</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="remindersTable"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="section" style="background: rgba(255,255,255,0.03);">
+                            <div class="section-title" style="border: none; padding: 0; margin-bottom: 15px;">📝 Modèle de Message</div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 10px;">Message SMS</label>
+                                <textarea id="smsTemplate" style="width: 100%; height: 80px; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-family: monospace; resize: vertical;">Bonjour, ceci est un rappel pour votre réservation VTC demain. Merci de confirmer votre présence!</textarea>
+                                <p style="color:var(--gray); font-size: 12px; margin-top: 8px;">💡 Variables disponibles: {nom}, {aeroport}, {heure}</p>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 10px;">Message Email</label>
+                                <textarea id="emailTemplate" style="width: 100%; height: 100px; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-family: monospace; resize: vertical;">Bonjour {nom},
+
+Ceci est un rappel pour votre réservation VTC à {aeroport} demain à {heure}.
+
+Merci de confirmer votre présence.
+
+Cordialement,
+VTC Aéroport Paris</textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-export" onclick="sendAllReminders('sms')">📱 Envoyer Rappels SMS</button>
+                                <button class="btn-export" onclick="sendAllReminders('email')" style="background-color: #3b82f6;">📧 Envoyer Rappels Email</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color:var(--white); font-weight: 600; margin-bottom: 10px;">⚙️ Configuration des envois automatiques</p>
+                            <p style="color:var(--gray); font-size: 14px; margin-bottom: 15px;">Pour automatiser les rappels chaque jour à 18h, vous devez:</p>
+                            <ol style="color:var(--gray); margin-left: 20px; line-height: 1.8;">
+                                <li>Créer un compte <strong>Twilio</strong> (SMS) ou <strong>SendGrid</strong> (Email)</li>
+                                <li>Configurer des <strong>Firebase Cloud Functions</strong> pour exécuter chaque jour</li>
+                                <li>Nous pouvons mettre en place cela pour vous</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
@@ -1121,6 +1189,91 @@
             a.click();
         }
 
+        // Reminders Management
+        function updateReminders() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const remindersForTomorrow = allReservations.filter(r => r.dateReservation === tomorrowStr);
+
+            let html = '';
+            if (remindersForTomorrow.length > 0) {
+                document.getElementById('remindersAlert').style.display = 'block';
+                document.getElementById('remindersCount').textContent = remindersForTomorrow.length;
+
+                remindersForTomorrow.forEach(r => {
+                    html += `<tr>
+                        <td>${r.nomClient}</td>
+                        <td style="color: var(--primary);">${r.emailClient}</td>
+                        <td>${r.phoneClient}</td>
+                        <td>${r.aeroport}</td>
+                        <td>${r.dateReservation} à ${r.heureReservation}</td>
+                        <td>
+                            <button onclick="sendReminder('${r.nomClient}', '${r.emailClient}', '${r.phoneClient}', '${r.aeroport}', '${r.heureReservation}', 'sms')" style="padding: 6px 10px; background: #22c55e; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; font-size: 12px;">SMS</button>
+                            <button onclick="sendReminder('${r.nomClient}', '${r.emailClient}', '${r.phoneClient}', '${r.aeroport}', '${r.heureReservation}', 'email')" style="padding: 6px 10px; background: #3b82f6; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; font-size: 12px; margin-left: 5px;">Email</button>
+                        </td>
+                    </tr>`;
+                });
+            } else {
+                document.getElementById('remindersAlert').style.display = 'none';
+                html = '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Aucun rappel à envoyer demain</td></tr>';
+            }
+
+            document.getElementById('remindersTable').innerHTML = html;
+        }
+
+        function sendReminder(nom, email, phone, aeroport, heure, type) {
+            const template = type === 'sms'
+                ? document.getElementById('smsTemplate').value
+                : document.getElementById('emailTemplate').value;
+
+            const message = template
+                .replace('{nom}', nom)
+                .replace('{aeroport}', aeroport)
+                .replace('{heure}', heure);
+
+            if (type === 'sms') {
+                console.log('SMS à envoyer:', phone, message);
+                alert('✅ Rappel SMS prêt à envoyer à ' + phone + ':\n\n' + message + '\n\n(Vous devez configurer une API SMS comme Twilio pour automatiser)');
+            } else {
+                console.log('Email à envoyer:', email, message);
+                alert('✅ Rappel Email prêt à envoyer à ' + email + ':\n\n' + message + '\n\n(Vous devez configurer une API Email comme SendGrid pour automatiser)');
+            }
+        }
+
+        function sendAllReminders(type) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const remindersForTomorrow = allReservations.filter(r => r.dateReservation === tomorrowStr);
+
+            if (remindersForTomorrow.length === 0) {
+                alert('Aucun rappel à envoyer demain');
+                return;
+            }
+
+            const template = type === 'sms'
+                ? document.getElementById('smsTemplate').value
+                : document.getElementById('emailTemplate').value;
+
+            let confirmMessage = `Vous êtes sur le point d'envoyer ${remindersForTomorrow.length} rappel(s) ${type === 'sms' ? 'SMS' : 'Email'}.\n\nVoulez-vous continuer?`;
+
+            if (confirm(confirmMessage)) {
+                remindersForTomorrow.forEach(r => {
+                    const message = template
+                        .replace('{nom}', r.nomClient)
+                        .replace('{aeroport}', r.aeroport)
+                        .replace('{heure}', r.heureReservation);
+
+                    console.log(type === 'sms' ? 'SMS:' : 'Email:', r[type === 'sms' ? 'phoneClient' : 'emailClient'], message);
+                });
+
+                alert(`✅ ${remindersForTomorrow.length} rappel(s) ${type === 'sms' ? 'SMS' : 'Email'} ont été préparés!\n\nPour automatiser cet envoi, configurez une API (Twilio ou SendGrid)`);
+            }
+        }
+
         // Navigation
         function showSection(section) {
             document.querySelectorAll('[id$="Section"]').forEach(el => el.classList.add('hidden'));
@@ -1132,9 +1285,11 @@
             if (section === 'analytics') document.getElementById('pageTitle').textContent = 'Analytics Dashboard';
             else if (section === 'reservations') document.getElementById('pageTitle').textContent = 'Réservations';
             else if (section === 'clients') document.getElementById('pageTitle').textContent = 'Gestion des Clients';
+            else if (section === 'rappels') document.getElementById('pageTitle').textContent = 'Rappels Réservations';
             else if (section === 'rapports') document.getElementById('pageTitle').textContent = 'Rapports';
 
             if (section === 'clients') updateClients();
+            if (section === 'rappels') updateReminders();
         }
 
         // Export
