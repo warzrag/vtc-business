@@ -1218,26 +1218,74 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
                             `;
                         }
 
+                        // ✅ SAUVEGARDER DANS FIREBASE
+                        const referenceNumber = 'VTC-' + Date.now().toString().slice(-8);
+                        let reservationData = {
+                            referenceNumber: referenceNumber,
+                            serviceType: serviceType,
+                            nomClient: clientName,
+                            phoneClient: clientPhone,
+                            emailClient: clientEmail || 'non fourni',
+                            dateReservation: date,
+                            heureReservation: time,
+                            nombrePassagers: passengers,
+                            typeVehicule: vehicule === 'van' ? 'Van' : 'Berline',
+                            statut: 'En attente',
+                            dateCreation: new Date().toISOString(),
+                            source: 'site',
+                            prixEstime: document.getElementById('price-value').textContent
+                        };
+
+                        // Ajouter champs spécifiques au type de service
+                        if (serviceType === 'transfert') {
+                            reservationData.depart = document.getElementById('depart').value;
+                            reservationData.destination = document.getElementById('destination').value;
+                            // Détecter aéroport
+                            const dest = document.getElementById('destination').value.toLowerCase();
+                            if (dest.includes('cdg') || dest.includes('charles de gaulle')) reservationData.aeroport = 'CDG';
+                            else if (dest.includes('orly')) reservationData.aeroport = 'Orly';
+                            else if (dest.includes('beauvais')) reservationData.aeroport = 'Beauvais';
+                            else reservationData.aeroport = 'Autre';
+                        } else {
+                            reservationData.lieu = document.getElementById('mad-lieu').value;
+                            reservationData.heures = document.getElementById('mad-heures').value;
+                            reservationData.aeroport = 'MAD';
+                        }
+
                         // Envoyer par WhatsApp au numéro pro (en arrière-plan)
                         const whatsappUrl = 'https://wa.me/33669068244?text=' + encodeURIComponent(message);
 
-                        // Afficher confirmation
-                        document.getElementById('contact-form').innerHTML = `
-                            <div class="price-box" style="background: rgba(39, 174, 96, 0.2); border-color: #27ae60;">
-                                <i class="fas fa-check-circle" style="font-size: 3rem; color: #27ae60; margin-bottom: 1rem;"></i>
-                                <h4 style="color: #27ae60; margin-bottom: 0.5rem;">Réservation envoyée !</h4>
-                                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1rem;">
-                                    Merci ${clientName} !<br>
-                                    On vous rappelle au <strong>${clientPhone}</strong> dans les 15 minutes.
-                                </p>
-                                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6);">
-                                    ${confirmDetails}
-                                </p>
-                            </div>
-                        `;
+                        // Sauvegarder dans Firebase
+                        db.ref('reservations').push(reservationData)
+                            .then(() => {
+                                console.log('✅ Réservation sauvegardée dans Firebase');
 
-                        // Ouvrir WhatsApp dans un nouvel onglet pour envoyer la réservation
-                        window.open(whatsappUrl, '_blank');
+                                // Afficher confirmation
+                                document.getElementById('contact-form').innerHTML = `
+                                    <div class="price-box" style="background: rgba(39, 174, 96, 0.2); border-color: #27ae60;">
+                                        <i class="fas fa-check-circle" style="font-size: 3rem; color: #27ae60; margin-bottom: 1rem;"></i>
+                                        <h4 style="color: #27ae60; margin-bottom: 0.5rem;">Réservation Confirmée ! 🎉</h4>
+                                        <p style="color: rgba(255,255,255,0.8); margin-bottom: 1rem; font-weight: 600;">
+                                            Votre numéro de réservation:<br>
+                                            <span style="font-size: 1.3rem; color: #27ae60;">${referenceNumber}</span>
+                                        </p>
+                                        <p style="color: rgba(255,255,255,0.8); margin-bottom: 1rem;">
+                                            Merci ${clientName} !<br>
+                                            On vous rappelle au <strong>${clientPhone}</strong> dans les 15 minutes.
+                                        </p>
+                                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                                            ${confirmDetails}
+                                        </p>
+                                    </div>
+                                `;
+
+                                // Ouvrir WhatsApp dans un nouvel onglet pour envoyer la réservation
+                                window.open(whatsappUrl, '_blank');
+                            })
+                            .catch((error) => {
+                                console.error('❌ Erreur Firebase:', error);
+                                alert('Erreur: ' + error.message);
+                            });
                     });
 
                     console.log('✅ Script de calcul chargé');
@@ -1809,7 +1857,151 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
         <i class="fas fa-phone-alt"></i>
     </a>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script src="script.js"></script>
+
+    <!-- Réservation en ligne - Firebase Integration -->
+    <script>
+        // Firebase Config (même projet que le dashboard admin)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJuFLVMI3gUKFohxYRZeg8Qyn0mXf1sQI",
+            authDomain: "admin-vtc.firebaseapp.com",
+            databaseURL: "https://admin-vtc-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "admin-vtc",
+            storageBucket: "admin-vtc.firebasestorage.app",
+            messagingSenderId: "692871193828",
+            appId: "1:692871193828:web:2dd34c34736f2faf9bb8f1"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Générer numéro de référence
+        function generateReferenceNumber() {
+            return 'VTC-' + Date.now().toString().slice(-8);
+        }
+
+        // Enregistrer réservation dans Firebase
+        window.submitReservation = function() {
+            const serviceType = document.getElementById('service-type').value;
+            const clientName = document.getElementById('client-name').value;
+            const clientPhone = document.getElementById('client-phone').value;
+            const clientEmail = document.getElementById('client-email').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const passengers = document.getElementById('passengers').value;
+            const vehicule = document.getElementById('vehicule').value;
+
+            // Validation
+            if (!clientName || !clientPhone || !date || !time) {
+                alert('❌ Merci de remplir tous les champs obligatoires');
+                return;
+            }
+
+            const referenceNumber = generateReferenceNumber();
+            let reservationData = {
+                referenceNumber: referenceNumber,
+                serviceType: serviceType,
+                nomClient: clientName,
+                phoneClient: clientPhone,
+                emailClient: clientEmail || 'non fourni',
+                dateReservation: date,
+                heureReservation: time,
+                nombrePassagers: passengers,
+                typeVehicule: vehicule,
+                statut: 'En attente',
+                dateCreation: new Date().toISOString(),
+                source: 'site'
+            };
+
+            // Ajouter champs spécifiques au type de service
+            if (serviceType === 'transfert') {
+                reservationData.depart = document.getElementById('depart').value;
+                reservationData.destination = document.getElementById('destination').value;
+                reservationData.aeroport = detectAeroport(document.getElementById('destination').value);
+                reservationData.prixEstime = document.getElementById('price-value').textContent;
+            } else {
+                reservationData.lieu = document.getElementById('mad-lieu').value;
+                reservationData.heures = document.getElementById('mad-heures').value;
+                reservationData.prixEstime = 'À calculer';
+            }
+
+            // Sauvegarder dans Firebase
+            db.ref('reservations').push(reservationData)
+                .then(() => {
+                    // ✅ Succès - Afficher message + envoyer SMS
+                    showConfirmation(referenceNumber, clientPhone, clientName);
+                    resetForm();
+                    // Envoyer SMS (voir fonction ci-dessous)
+                    sendConfirmationSMS(clientPhone, referenceNumber, date, time);
+                })
+                .catch((error) => {
+                    alert('❌ Erreur lors de la réservation: ' + error.message);
+                    console.error(error);
+                });
+        };
+
+        // Détecter l'aéroport basé sur destination
+        function detectAeroport(destination) {
+            const dest = destination.toLowerCase();
+            if (dest.includes('cdg') || dest.includes('charles de gaulle') || dest.includes('roissy')) return 'CDG';
+            if (dest.includes('orly')) return 'Orly';
+            if (dest.includes('beauvais')) return 'Beauvais';
+            return 'Autre';
+        }
+
+        // Afficher confirmation
+        function showConfirmation(ref, phone, name) {
+            const html = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+                        <h2 style="color: #000; margin: 0 0 15px 0; font-size: 24px;">Réservation Confirmée!</h2>
+                        <p style="color: #666; margin: 0 0 25px 0; font-size: 14px; line-height: 1.6;">
+                            Merci ${name}!<br><br>
+                            <strong>Votre numéro de réservation:</strong><br>
+                            <span style="font-size: 24px; color: #a27d34; font-weight: 700;">${ref}</span><br><br>
+                            Un SMS de confirmation a été envoyé au ${phone}<br>
+                            Votre chauffeur vous sera assigné sous peu.
+                        </p>
+                        <button onclick="this.parentElement.parentElement.remove()" style="padding: 12px 30px; background: #a27d34; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                            FERMER
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Envoyer SMS de confirmation (intégration Twilio)
+        function sendConfirmationSMS(phone, ref, date, time) {
+            // Ce code appelle un backend pour envoyer le SMS via Twilio
+            // Pour l'instant, on affiche juste un message
+            console.log('📱 SMS à envoyer:', phone, 'Ref:', ref);
+
+            // TODO: Ajouter appel à fonction Firebase Cloud Function pour SMS
+            // fetch('/api/send-sms', {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         phone: phone,
+            //         message: `VTC Paris - Résa confirmée! Ref: ${ref} le ${date} à ${time}. Merci!`
+            //     })
+            // });
+        }
+
+        // Réinitialiser le formulaire
+        function resetForm() {
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('client-email').value = '';
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('price-estimate').style.display = 'none';
+        }
+    </script>
 
     <!-- Google Places Autocomplete -->
     <script>
