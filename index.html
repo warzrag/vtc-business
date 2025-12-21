@@ -691,9 +691,23 @@
                                     <input type="date" id="date" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="time"><i class="fas fa-clock"></i> Heure</label>
-                                    <input type="time" id="time" required>
+                                    <label for="arrival-time"><i class="fas fa-plane-arrival"></i> Heure d'arrivée à destination *</label>
+                                    <input type="time" id="arrival-time" required>
+                                    <small style="color: rgba(255,255,255,0.6); margin-top: 5px; display: block;">⏱️ Heure à laquelle vous devez arriver</small>
                                 </div>
+                            </div>
+
+                            <!-- Heure de prise en charge calculée (affichée après le calcul) -->
+                            <div id="pickup-time-info" style="display: none; background: rgba(162,125,52,0.2); border: 1px solid rgba(162,125,52,0.5); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                                <p style="color: var(--primary); font-weight: 600; margin: 0 0 8px 0;">
+                                    <i class="fas fa-info-circle"></i> Heure de prise en charge calculée
+                                </p>
+                                <p style="color: white; font-size: 1.1rem; margin: 0; font-weight: 700;">
+                                    <i class="fas fa-car"></i> Départ: <span id="calculated-pickup-time">--:--</span>
+                                </p>
+                                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 5px 0 0 0;">
+                                    Nous viendrons vous chercher <span id="time-before-arrival">--</span> avant votre arrivée
+                                </p>
                             </div>
 
                             <div class="form-row">
@@ -1014,7 +1028,7 @@ Merci de confirmer ma réservation.`;
 
                         const serviceType = document.getElementById('service-type').value;
                         const date = document.getElementById('date').value;
-                        const time = document.getElementById('time').value;
+                        const arrivalTime = document.getElementById('arrival-time').value;
                         const typeVehicule = document.getElementById('vehicule').value;
                         const isVan = typeVehicule === 'van';
                         const vehiculeIcon = isVan ? '🚐' : '🚗';
@@ -1025,8 +1039,8 @@ Merci de confirmer ma réservation.`;
                             alert('Veuillez sélectionner une date');
                             return;
                         }
-                        if (!time) {
-                            alert('Veuillez sélectionner une heure');
+                        if (!arrivalTime) {
+                            alert('Veuillez sélectionner une heure d\'arrivée');
                             return;
                         }
 
@@ -1115,6 +1129,29 @@ Merci de confirmer ma réservation.`;
                                 estimatedDistance = distanceKm.toFixed(1);
                                 estimatedDuration = duration;
 
+                                // ✅ CALCULER L'HEURE DE PRISE EN CHARGE
+                                const durationMinutes = response.rows[0].elements[0].duration.value / 60; // Durée en minutes
+                                const bufferTime = 10; // Marge de 10 min avant arrivée
+                                const totalMinutesNeeded = Math.ceil(durationMinutes) + bufferTime;
+
+                                // Soustraire du temps d'arrivée
+                                const [arrivalHour, arrivalMin] = arrivalTime.split(':').map(Number);
+                                const arrivalTotalMinutes = arrivalHour * 60 + arrivalMin;
+                                const pickupTotalMinutes = arrivalTotalMinutes - totalMinutesNeeded;
+
+                                // Gérer le passage à la journée précédente si nécessaire
+                                const pickupHour = Math.floor(Math.max(0, pickupTotalMinutes) / 60);
+                                const pickupMin = Math.max(0, pickupTotalMinutes) % 60;
+                                const pickupTimeFormatted = String(pickupHour).padStart(2, '0') + ':' + String(Math.floor(pickupMin)).padStart(2, '0');
+
+                                // Afficher les heures calculées
+                                document.getElementById('calculated-pickup-time').textContent = pickupTimeFormatted;
+                                document.getElementById('time-before-arrival').textContent = Math.ceil(durationMinutes) + ' min';
+                                document.getElementById('pickup-time-info').style.display = 'block';
+
+                                // Sauvegarder pour la réservation
+                                window.calculatedPickupTime = pickupTimeFormatted;
+
                                 document.getElementById('price-value').textContent = prix + '€';
                                 document.getElementById('price-details').innerHTML = priceLabel + (isForfait ? `<br><small style="opacity:0.6">📍 ${distanceKm.toFixed(1)} km • ⏱️ ~${duration}</small>` : '');
 
@@ -1155,7 +1192,8 @@ Merci de confirmer ma réservation.`;
 
                         const serviceType = document.getElementById('service-type').value;
                         const date = document.getElementById('date').value;
-                        const time = document.getElementById('time').value;
+                        const arrivalTime = document.getElementById('arrival-time').value;
+                        const pickupTime = window.calculatedPickupTime || '00:00';
                         const passengers = document.getElementById('passengers').value;
                         const vehicule = document.getElementById('vehicule').value;
                         const vehiculeNom = vehicule === 'van' ? '🚐 VAN 7 places' : '🚗 Berline Tesla';
@@ -1178,7 +1216,7 @@ Service: ⏰ MISE À DISPOSITION
 - Lieu de prise en charge: ${madLieu}
 - Durée: ${madHeures} heures
 - Date: ${date}
-- Heure: ${time}
+- Heure: ${arrivalTime}
 - Passagers: ${passengers}
 - Véhicule: ${vehiculeNom}
 
@@ -1187,7 +1225,7 @@ Prix: ${estimatedPrice}€ (${madHeures}h)`;
                             confirmDetails = `
                                 <i class="fas fa-clock"></i> Mise à disposition ${madHeures}h<br>
                                 <i class="fas fa-map-marker-alt"></i> ${madLieu}<br>
-                                <i class="fas fa-calendar"></i> ${date} à ${time}<br>
+                                <i class="fas fa-calendar"></i> ${date} à ${arrivalTime}<br>
                                 <i class="fas fa-euro-sign"></i> ${estimatedPrice}€
                             `;
                         } else {
@@ -1205,7 +1243,8 @@ Service: 🚗 TRANSFERT
 - Départ: ${depart}
 - Arrivée: ${destination}
 - Date: ${date}
-- Heure: ${time}
+- Heure de prise en charge: ${pickupTime}
+- Heure d'arrivée: ${arrivalTime}
 - Passagers: ${passengers}
 - Véhicule: ${vehiculeNom}
 
@@ -1213,7 +1252,8 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
 
                             confirmDetails = `
                                 <i class="fas fa-car"></i> ${depart} → ${destination}<br>
-                                <i class="fas fa-calendar"></i> ${date} à ${time}<br>
+                                <i class="fas fa-calendar"></i> ${date}<br>
+                                <i class="fas fa-clock"></i> Départ: ${pickupTime} | Arrivée: ${arrivalTime}<br>
                                 <i class="fas fa-euro-sign"></i> ${estimatedPrice}€
                             `;
                         }
@@ -1227,7 +1267,8 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
                             phoneClient: clientPhone,
                             emailClient: clientEmail || 'non fourni',
                             dateReservation: date,
-                            heureReservation: time,
+                            heureReservation: pickupTime,
+                            heureArrivee: arrivalTime,
                             nombrePassagers: passengers,
                             typeVehicule: vehicule === 'van' ? 'Van' : 'Berline',
                             statut: 'En attente',
