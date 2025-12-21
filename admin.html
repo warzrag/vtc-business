@@ -1036,8 +1036,14 @@ VTC Aéroport Paris</textarea>
             'Beauvais': 140
         };
 
-        // Calculate Revenue
+        // Calculate Revenue (uses final price if set, otherwise estimates)
         function getRevenue(res) {
+            if (res.prixFinal) {
+                return parseFloat(res.prixFinal);
+            }
+            if (res.prixEstime) {
+                return parseFloat(res.prixEstime);
+            }
             return pricing[res.aeroport] || 60;
         }
 
@@ -1263,6 +1269,7 @@ VTC Aéroport Paris</textarea>
                 const allowedTransitions = STATUS_WORKFLOW[r.statut] || [];
                 const statusColor = STATUS_COLORS[r.statut] || '#6b7280';
                 const statusIcon = STATUS_ICONS[r.statut] || '❓';
+                const displayPrice = r.prixFinal || r.prixEstime || getRevenue(r) + '€';
 
                 // Create status change dropdown
                 let statusDropdown = `<div style="display: flex; gap: 8px; align-items: center;">
@@ -1286,7 +1293,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.aeroport}</td>
                     <td>${r.dateReservation}</td>
                     <td>${r.heureReservation}</td>
-                    <td style="color: var(--green); font-weight: 600;">${getRevenue(r)}€</td>
+                    <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
                     <td>${statusDropdown}</td>
                 </tr>`;
             });
@@ -1568,6 +1575,49 @@ VTC Aéroport Paris</textarea>
                 console.log(`📱 Notification à envoyer à ${reservation.phoneClient}: ${message}`);
                 alert(`📱 Notification SMS prête:\n${message}\n\n📧 À ${reservation.phoneClient}`);
             }
+        }
+
+        // Update reservation price (for PAB adjustments)
+        function updateReservationPrice(reservationId) {
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+
+            const currentPrice = res.prixFinal || res.prixEstime || '0€';
+            const newPrice = prompt(`📊 Modifier le prix pour ${res.nomClient}\n\nPrix actuel: ${currentPrice}\n\nNouvel prix (ex: 85€):`, currentPrice.replace('€', ''));
+
+            if (newPrice === null) return; // User cancelled
+
+            // Validate price format
+            const priceValue = parseFloat(newPrice);
+            if (isNaN(priceValue) || priceValue < 0) {
+                alert('❌ Prix invalide. Veuillez entrer un nombre positif');
+                return;
+            }
+
+            const finalPrice = priceValue + '€';
+
+            // Update in Firebase
+            db.ref('reservations/' + reservationId).update({
+                prixFinal: finalPrice,
+                prixModifieDate: new Date().toISOString(),
+                prixAncien: res.prixEstime || '0€'
+            }).then(() => {
+                console.log(`✅ Prix mis à jour: ${res.prixEstime} → ${finalPrice}`);
+                alert(`✅ Prix mis à jour pour ${res.nomClient}!\n${res.prixEstime} → ${finalPrice}`);
+                notifyPriceChange(res, finalPrice);
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+        // Notify customer when price changes
+        function notifyPriceChange(reservation, newPrice) {
+            const message = `Mise à jour du tarif pour votre réservation ${reservation.referenceNumber}:\nNouvel tarif: ${newPrice}`;
+            console.log(`💰 Notification tarif à envoyer à ${reservation.phoneClient}: ${message}`);
+            alert(`💰 Notification de tarif prête:\n${message}\n\n📧 À ${reservation.phoneClient}`);
         }
 
         // Add Reservation Handler
