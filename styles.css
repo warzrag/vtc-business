@@ -834,19 +834,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .reservation-form select option {
-    background: #1a1a1a;
-    color: var(--white);
+    background: #1a1a1a !important;
+    color: #ffffff !important;
 }
 
 .reservation-form select option:hover {
-    background: var(--primary-gold);
-    color: var(--dark-bg);
+    background: var(--primary-gold) !important;
+    color: #000000 !important;
 }
 
 .reservation-form select option:checked {
-    background: linear-gradient(#1a1a1a, #1a1a1a);
-    background-color: var(--primary-gold) !important;
-    color: var(--dark-bg) !important;
+    background: var(--primary-gold) !important;
+    color: #000000 !important;
+}
+
+/* WebKit support for option styling */
+.reservation-form select option::-webkit-appearance {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+.reservation-form select option:checked::-webkit-appearance {
+    background: var(--primary-gold) !important;
+    color: #000000 !important;
 }
 
 .reservation-form .quick-loc {

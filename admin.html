@@ -265,19 +265,30 @@
         }
 
         select option {
-            background: #1a1a1a;
-            color: var(--white);
+            background: #1a1a1a !important;
+            color: #ffffff !important;
             padding: 8px;
         }
 
         select option:hover {
-            background: var(--primary);
-            color: #000;
+            background: var(--primary) !important;
+            color: #000000 !important;
         }
 
         select option:checked {
             background: var(--primary) !important;
-            color: #000 !important;
+            color: #000000 !important;
+        }
+
+        /* WebKit support */
+        select option::-webkit-appearance {
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+
+        select option:checked::-webkit-appearance {
+            background: var(--primary) !important;
+            color: #000000 !important;
         }
 
         .content {
