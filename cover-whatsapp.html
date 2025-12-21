@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Couverture WhatsApp Business - Taxi VTC Paris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            padding: 40px;
+            gap: 40px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p.info {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .cover-wrapper {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cover-wrapper span {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Cover Style 1 - Premium */
+        .cover-1 {
+            width: 640px;
+            height: 360px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 50px;
+        }
+
+        .cover-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #c9a227, #e8d078, #c9a227);
+        }
+
+        .cover-1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #c9a227, #e8d078, #c9a227);
+        }
+
+        .cover-1 .left-content {
+            z-index: 2;
+        }
+
+        .cover-1 .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .cover-1 .subtitle {
+            font-size: 18px;
+            color: #c9a227;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .cover-1 .features {
+            display: flex;
+            gap: 25px;
+        }
+
+        .cover-1 .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+        }
+
+        .cover-1 .feature i {
+            color: #c9a227;
+            font-size: 16px;
+        }
+
+        .cover-1 .right-content {
+            text-align: right;
+            z-index: 2;
+        }
+
+        .cover-1 .phone-box {
+            background: rgba(201, 162, 39, 0.15);
+            border: 2px solid #c9a227;
+            border-radius: 15px;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .cover-1 .phone-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .cover-1 .phone-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cover-1 .availability {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #c9a227;
+        }
+
+        .cover-1 .car-silhouette {
+            position: absolute;
+            right: -50px;
+            bottom: -30px;
+            font-size: 250px;
+            color: rgba(201, 162, 39, 0.08);
+            z-index: 1;
+        }
+
+        /* Cover Style 2 - With Car Image */
+        .cover-2 {
+            width: 640px;
+            height: 360px;
+            background: url('https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80') center center;
+            background-size: cover;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 40px 50px;
+        }
+
+        .cover-2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.4) 100%);
+        }
+
+        .cover-2 .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .cover-2 .badge {
+            display: inline-block;
+            background: #c9a227;
+            color: #000;
+            padding: 5px 15px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        .cover-2 .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .cover-2 .subtitle {
+            font-size: 16px;
+            color: #c9a227;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .cover-2 .info-line {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .cover-2 .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+
+        .cover-2 .info-item i {
+            color: #c9a227;
+        }
+
+        .cover-2 .phone {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cover-2 .phone i {
+            color: #c9a227;
+            margin-right: 10px;
+        }
+
+        /* Cover Style 3 - Elegant */
+        .cover-3 {
+            width: 640px;
+            height: 360px;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .cover-3::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .cover-3 .content {
+            z-index: 2;
+        }
+
+        .cover-3 .icon {
+            font-size: 60px;
+            color: #c9a227;
+            margin-bottom: 15px;
+        }
+
+        .cover-3 .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .cover-3 .subtitle {
+            font-size: 20px;
+            color: #c9a227;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .cover-3 .tagline {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .cover-3 .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .cover-3 .feature {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+        }
+
+        .cover-3 .feature i {
+            color: #c9a227;
+            margin-right: 6px;
+        }
+
+        .cover-3 .corner-tl,
+        .cover-3 .corner-tr,
+        .cover-3 .corner-bl,
+        .cover-3 .corner-br {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: #c9a227;
+            border-style: solid;
+        }
+
+        .cover-3 .corner-tl {
+            top: 20px;
+            left: 20px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .cover-3 .corner-tr {
+            top: 20px;
+            right: 20px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .cover-3 .corner-bl {
+            bottom: 20px;
+            left: 20px;
+            border-width: 0 0 2px 2px;
+        }
+
+        .cover-3 .corner-br {
+            bottom: 20px;
+            right: 20px;
+            border-width: 0 2px 2px 0;
+        }
+
+        /* Description Section */
+        .description-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin-top: 40px;
+        }
+
+        .description-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #c9a227;
+        }
+
+        .description-box {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c9a227;
+        }
+
+        .description-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .description-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+            white-space: pre-line;
+        }
+
+        .copy-btn {
+            background: #c9a227;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #a27d1a;
+        }
+    </style>
+</head>
+<body>
+    <h2>Couvertures WhatsApp Business - Taxi VTC Paris</h2>
+    <p class="info">Format 640x360px - Fais une capture d'écran (Win + Shift + S)</p>
+
+    <div class="cover-wrapper">
+        <div class="cover-1">
+            <div class="left-content">
+                <div class="title">TAXI VTC PARIS</div>
+                <div class="subtitle">Chauffeur Privé Premium</div>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check-circle"></i> Mercedes & Tesla</div>
+                    <div class="feature"><i class="fas fa-check-circle"></i> Prix fixes</div>
+                    <div class="feature"><i class="fas fa-check-circle"></i> Aéroports & Gares</div>
+                </div>
+            </div>
+            <div class="right-content">
+                <div class="phone-box">
+                    <div class="phone-label">Réservation</div>
+                    <div class="phone-number">01 87 66 55 18</div>
+                    <div class="availability"><i class="fas fa-clock"></i> 24h/24 - 7j/7</div>
+                </div>
+            </div>
+            <i class="fas fa-car-side car-silhouette"></i>
+        </div>
+        <span>Style 1 - Premium (Recommandé)</span>
+    </div>
+
+    <div class="cover-wrapper">
+        <div class="cover-2">
+            <div class="content">
+                <div class="badge">Service Premium</div>
+                <div class="title">TAXI VTC PARIS</div>
+                <div class="subtitle">Transport Privé de Luxe</div>
+                <div class="info-line">
+                    <div class="info-item"><i class="fas fa-car"></i> Mercedes & Tesla</div>
+                    <div class="info-item"><i class="fas fa-clock"></i> 24h/24</div>
+                    <div class="info-item"><i class="fas fa-euro-sign"></i> Prix fixes</div>
+                </div>
+                <div class="phone"><i class="fas fa-phone"></i> 01 87 66 55 18</div>
+            </div>
+        </div>
+        <span>Style 2 - Avec photo voiture</span>
+    </div>
+
+    <div class="cover-wrapper">
+        <div class="cover-3">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="content">
+                <i class="fas fa-car-side icon"></i>
+                <div class="title">TAXI VTC PARIS</div>
+                <div class="subtitle">Paris</div>
+                <div class="tagline">Votre Chauffeur Privé Premium</div>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-plane"></i> Aéroports</div>
+                    <div class="feature"><i class="fas fa-train"></i> Gares</div>
+                    <div class="feature"><i class="fas fa-building"></i> Business</div>
+                    <div class="feature"><i class="fas fa-heart"></i> Événements</div>
+                </div>
+            </div>
+        </div>
+        <span>Style 3 - Élégant</span>
+    </div>
+
+    <div class="description-section">
+        <h3><i class="fas fa-file-alt"></i> Descriptions WhatsApp Business</h3>
+
+        <div class="description-box">
+            <h4>Description courte (139 caractères max)</h4>
+            <p id="desc-short">Service VTC Premium à Paris. Transferts aéroports CDG/Orly, gares. Mercedes & Tesla. Prix fixes. Disponible 24h/24 7j/7</p>
+            <button class="copy-btn" onclick="copyText('desc-short')"><i class="fas fa-copy"></i> Copier</button>
+        </div>
+
+        <div class="description-box">
+            <h4>Description longue (À propos)</h4>
+            <p id="desc-long">🚘 TAXI VTC PARIS - Chauffeur Privé Premium
+
+Votre service de transport privé haut de gamme à Paris et en Île-de-France.
+
+✅ Véhicules : Mercedes Classe E/S, Tesla Model S
+✅ Transferts : Aéroports CDG, Orly, Beauvais
+✅ Gares : Nord, Lyon, Montparnasse, Est
+✅ Événements : Mariages, séminaires, soirées
+
+💰 PRIX FIXES communiqués à l'avance
+🕐 Disponible 24h/24 - 7j/7
+👔 Chauffeurs professionnels bilingues FR/EN
+📱 WiFi gratuit à bord
+
+📞 Réservation : 01 87 66 55 18
+🌐 www.taxivtcparis.fr</p>
+            <button class="copy-btn" onclick="copyText('desc-long')"><i class="fas fa-copy"></i> Copier</button>
+        </div>
+
+        <div class="description-box">
+            <h4>Message d'accueil automatique</h4>
+            <p id="desc-welcome">Bonjour et bienvenue chez TAXI VTC PARIS ! 🚘
+
+Merci de nous contacter. Comment puis-je vous aider ?
+
+1️⃣ Réserver un VTC
+2️⃣ Obtenir un devis
+3️⃣ Infos sur nos services
+
+Répondez avec le numéro de votre choix ou décrivez directement votre besoin.
+
+Notre équipe vous répond rapidement ! ⚡</p>
+            <button class="copy-btn" onclick="copyText('desc-welcome')"><i class="fas fa-copy"></i> Copier</button>
+        </div>
+
+        <div class="description-box">
+            <h4>Message d'absence</h4>
+            <p id="desc-away">Merci pour votre message ! 🚘
+
+Notre équipe est actuellement occupée mais nous vous répondrons très rapidement.
+
+Pour une réservation urgente, appelez-nous directement au :
+📞 01 87 66 55 18 (24h/24)
+
+À très vite !
+L'équipe TAXI VTC PARIS</p>
+            <button class="copy-btn" onclick="copyText('desc-away')"><i class="fas fa-copy"></i> Copier</button>
+        </div>
+    </div>
+
+    <script>
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Texte copié !');
+            });
+        }
+    </script>
+</body>
+</html>

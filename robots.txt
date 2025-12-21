@@ -1,0 +1,77 @@
+# Robots.txt optimisé pour VTC Aéroport Paris
+# https://vtc-aeroport-paris.fr
+# Dernière mise à jour: 2024-12-17
+
+# Règles par défaut - autoriser tout
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /carte-visite.html
+Allow: /styles.css
+Allow: /script.js
+Allow: /van-noir.png
+
+# Fichiers système à ne pas indexer
+Disallow: /.vercel/
+Disallow: /node_modules/
+Disallow: /*.md$
+Disallow: /*?*utm_*
+Disallow: /*?*fbclid*
+Disallow: /*?*gclid*
+
+# Sitemap principal
+Sitemap: https://vtc-aeroport-paris.fr/sitemap.xml
+
+# Google - prioritaire
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /van-noir.png
+Allow: /images/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Yandex (utile pour touristes russes)
+User-agent: Yandex
+Allow: /
+Crawl-delay: 5
+
+# Facebook crawler (pour aperçu liens)
+User-agent: facebookexternalhit
+Allow: /
+
+# Twitter crawler
+User-agent: Twitterbot
+Allow: /
+
+# LinkedIn crawler
+User-agent: LinkedInBot
+Allow: /
+
+# WhatsApp preview
+User-agent: WhatsApp
+Allow: /
+
+# Bloquer les crawlers agressifs/inutiles
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Crawl-delay: 30
+
+User-agent: SemrushBot
+Crawl-delay: 30
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- Page d'accueil - VTC Aéroport Paris -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://vtc-aeroport-paris.fr/van-noir.png</image:loc>
+            <image:title>VAN 7 Places VTC Paris Aéroport CDG Orly</image:title>
+            <image:caption>Service VTC VAN Mercedes 7 places pour transfert aéroport Paris CDG Orly Beauvais</image:caption>
+        </image:image>
+    </url>
+
+    <!-- Section Réservation - Devis & Tarifs -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/#reservation</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.95</priority>
+    </url>
+
+    <!-- Section Prestations - Services VTC -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/#prestations</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- Section Destinations - Forfaits Aéroports -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/#destinations</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- Section Flotte - Berline & VAN -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/#flotte</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
+    </url>
+
+    <!-- Section Contact -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/#contact</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.75</priority>
+    </url>
+
+    <!-- Page Cartes de Visite -->
+    <url>
+        <loc>https://vtc-aeroport-paris.fr/carte-visite.html</loc>
+        <lastmod>2024-12-17</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.30</priority>
+    </url>
+
+</urlset>

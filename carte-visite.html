@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartes de Visite - VTC Aéroport Paris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 40px;
+            gap: 30px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: #c9a227;
+            margin-bottom: 5px;
+            font-size: 2rem;
+        }
+
+        p.instruction {
+            font-family: 'Montserrat', sans-serif;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 30px;
+        }
+
+        .cards-row {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-label {
+            font-family: 'Montserrat', sans-serif;
+            color: #c9a227;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Carte de visite - Format standard 85x55mm (ratio 1.545) */
+        .business-card {
+            width: 400px;
+            height: 240px;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ==================== DESIGN 1 - LUXE ==================== */
+        .card-luxe-front {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .card-luxe-front::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(201, 162, 39, 0.05) 50%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card-luxe-front .gold-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c9a227, transparent);
+            margin-bottom: 20px;
+        }
+
+        .card-luxe-front .company-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .card-luxe-front .company-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #c9a227;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .card-luxe-front .tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 25px;
+        }
+
+        .card-luxe-front .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(201, 162, 39, 0.4);
+        }
+        .card-luxe-front .corner.tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+        .card-luxe-front .corner.tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
+        .card-luxe-front .corner.bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
+        .card-luxe-front .corner.br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
+
+        /* VERSO LUXE */
+        .card-luxe-back {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .card-luxe-back .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        .card-luxe-back .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .card-luxe-back .phone-main {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #c9a227;
+        }
+
+        .card-luxe-back .content {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+            padding-top: 15px;
+        }
+
+        .card-luxe-back .left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-luxe-back .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card-luxe-back .contact-item i {
+            color: #c9a227;
+            width: 14px;
+            font-size: 10px;
+        }
+
+        .card-luxe-back .right-col {
+            text-align: right;
+        }
+
+        .card-luxe-back .tarifs-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: #c9a227;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .card-luxe-back .tarif-line {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 4px;
+        }
+
+        .card-luxe-back .tarif-line span {
+            color: #c9a227;
+            font-weight: 600;
+        }
+
+        .card-luxe-back .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        .card-luxe-back .vehicles {
+            display: flex;
+            gap: 15px;
+        }
+
+        .card-luxe-back .vehicle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .card-luxe-back .website {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: #c9a227;
+        }
+
+        /* ==================== DESIGN 2 - MODERNE ==================== */
+        .card-modern {
+            background: #000;
+            display: grid;
+            grid-template-columns: 35% 65%;
+        }
+
+        .card-modern .left {
+            background: linear-gradient(180deg, #c9a227, #a67c00);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card-modern .left i {
+            font-size: 32px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-modern .left .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 11px;
+            color: #000;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .card-modern .right {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-modern .right .top h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .card-modern .right .top p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: #c9a227;
+            letter-spacing: 2px;
+        }
+
+        .card-modern .right .middle {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-modern .right .middle .item {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .card-modern .right .middle .item i {
+            color: #c9a227;
+            margin-right: 8px;
+            width: 12px;
+        }
+
+        .card-modern .right .middle .item.big {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-modern .right .bottom {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* ==================== DESIGN 3 - ÉPURÉ ==================== */
+        .card-clean {
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-clean .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-clean .logo-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .card-clean .logo-section p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: #c9a227;
+            letter-spacing: 3px;
+        }
+
+        .card-clean .phone-box {
+            background: #c9a227;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .card-clean .phone-box span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .card-clean .middle-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-clean .services-list {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card-clean .service-item {
+            text-align: center;
+        }
+
+        .card-clean .service-item i {
+            font-size: 16px;
+            color: #c9a227;
+            margin-bottom: 5px;
+        }
+
+        .card-clean .service-item span {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .card-clean .tarifs-box {
+            text-align: right;
+        }
+
+        .card-clean .tarifs-box .title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: #c9a227;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .card-clean .tarifs-box .line {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .card-clean .tarifs-box .line strong {
+            color: #fff;
+        }
+
+        .card-clean .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        .card-clean .bottom-row .contact {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .card-clean .bottom-row .contact i {
+            color: #c9a227;
+            margin-right: 5px;
+        }
+
+        .card-clean .bottom-row .website {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: #c9a227;
+            font-weight: 500;
+        }
+
+        /* ==================== DESIGN 4 - DOUBLE VÉHICULE ==================== */
+        .card-dual {
+            background: linear-gradient(135deg, #0a0a0a, #151515);
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        .card-dual .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-dual .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .card-dual .phone-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #c9a227;
+        }
+
+        .card-dual .vehicles-row {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .card-dual .vehicle-box {
+            flex: 1;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(201, 162, 39, 0.15);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .card-dual .vehicle-box .icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .card-dual .vehicle-box h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .card-dual .vehicle-box .capacity {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+        }
+
+        .card-dual .vehicle-box .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            color: #c9a227;
+            font-weight: 600;
+        }
+
+        .card-dual .vehicle-box .price-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 7px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .card-dual .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(201, 162, 39, 0.15);
+        }
+
+        .card-dual .footer-row .services {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .card-dual .footer-row .website {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            color: #c9a227;
+        }
+
+        /* Instructions */
+        .print-instructions {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(201, 162, 39, 0.2);
+            max-width: 500px;
+            margin-top: 30px;
+        }
+
+        .print-instructions h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #c9a227;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .print-instructions ol {
+            font-family: 'Montserrat', sans-serif;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            padding-left: 20px;
+        }
+
+        .print-instructions li {
+            margin-bottom: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .print-instructions, h1, p.instruction, .card-label {
+                display: none;
+            }
+            .business-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Cartes de Visite</h1>
+    <p class="instruction">VTC Aéroport Paris - Capture d'écran (Win + Shift + S) ou Ctrl+P</p>
+
+    <!-- DESIGN 1 - LUXE -->
+    <div class="cards-row">
+        <div class="card-wrapper">
+            <p class="card-label">Design Luxe - Recto</p>
+            <div class="business-card card-luxe-front">
+                <div class="corner tl"></div>
+                <div class="corner tr"></div>
+                <div class="corner bl"></div>
+                <div class="corner br"></div>
+                <div class="gold-line"></div>
+                <div class="company-name">VTC AÉROPORT</div>
+                <div class="company-sub">PARIS</div>
+                <div class="tagline">Chauffeur Privé Premium • 24h/24</div>
+            </div>
+        </div>
+        <div class="card-wrapper">
+            <p class="card-label">Design Luxe - Verso</p>
+            <div class="business-card card-luxe-back">
+                <div class="header">
+                    <div class="logo">VTC AÉROPORT PARIS</div>
+                    <div class="phone-main">06 69 06 82 44</div>
+                </div>
+                <div class="content">
+                    <div class="left-col">
+                        <div class="contact-item"><i class="fab fa-whatsapp"></i> WhatsApp disponible</div>
+                        <div class="contact-item"><i class="fas fa-globe"></i> vtc-aeroport-paris.fr</div>
+                        <div class="contact-item"><i class="fas fa-envelope"></i> contact@vtc-aeroport-paris.fr</div>
+                    </div>
+                    <div class="right-col">
+                        <div class="tarifs-title">FORFAITS PARIS</div>
+                        <div class="tarif-line">CDG <span>60€</span> / VAN <span>90€</span></div>
+                        <div class="tarif-line">Orly <span>60€</span> / VAN <span>70€</span></div>
+                        <div class="tarif-line">Gares <span>35€</span> / VAN <span>50€</span></div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="vehicles">
+                        <span class="vehicle"><i class="fas fa-car"></i> Berline Premium</span>
+                        <span class="vehicle"><i class="fas fa-shuttle-van"></i> VAN 7 places</span>
+                    </div>
+                    <div class="website">vtc-aeroport-paris.fr</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESIGN 2 - MODERNE -->
+    <div class="cards-row">
+        <div class="card-wrapper">
+            <p class="card-label">Design Moderne</p>
+            <div class="business-card card-modern">
+                <div class="left">
+                    <i class="fas fa-car-side"></i>
+                    <div class="brand">VTC<br>AÉROPORT<br>PARIS</div>
+                </div>
+                <div class="right">
+                    <div class="top">
+                        <h3>Chauffeur Privé</h3>
+                        <p>BERLINE & VAN 7 PLACES</p>
+                    </div>
+                    <div class="middle">
+                        <div class="item big"><i class="fas fa-phone"></i>06 69 06 82 44</div>
+                        <div class="item"><i class="fas fa-globe"></i>vtc-aeroport-paris.fr</div>
+                        <div class="item"><i class="fab fa-whatsapp"></i>WhatsApp 24h/24</div>
+                    </div>
+                    <div class="bottom">
+                        Aéroports • Gares • Événements • Mise à disposition
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESIGN 3 - ÉPURÉ -->
+    <div class="cards-row">
+        <div class="card-wrapper">
+            <p class="card-label">Design Épuré</p>
+            <div class="business-card card-clean">
+                <div class="top-row">
+                    <div class="logo-section">
+                        <h2>VTC Aéroport Paris</h2>
+                        <p>CHAUFFEUR PRIVÉ PREMIUM</p>
+                    </div>
+                    <div class="phone-box">
+                        <span>06 69 06 82 44</span>
+                    </div>
+                </div>
+                <div class="middle-row">
+                    <div class="services-list">
+                        <div class="service-item">
+                            <i class="fas fa-plane"></i>
+                            <span>Aéroports</span>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-train"></i>
+                            <span>Gares</span>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Mise à dispo</span>
+                        </div>
+                        <div class="service-item">
+                            <i class="fas fa-heart"></i>
+                            <span>Événements</span>
+                        </div>
+                    </div>
+                    <div class="tarifs-box">
+                        <div class="title">FORFAITS</div>
+                        <div class="line">Berline dès <strong>35€</strong></div>
+                        <div class="line">VAN 7pl dès <strong>50€</strong></div>
+                    </div>
+                </div>
+                <div class="bottom-row">
+                    <div class="contact">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                        <i class="fas fa-envelope" style="margin-left: 15px;"></i> contact@vtc-aeroport-paris.fr
+                    </div>
+                    <div class="website">vtc-aeroport-paris.fr</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESIGN 4 - DOUBLE VÉHICULE -->
+    <div class="cards-row">
+        <div class="card-wrapper">
+            <p class="card-label">Design Double Véhicule</p>
+            <div class="business-card card-dual">
+                <div class="header-row">
+                    <div class="brand-name">VTC Aéroport Paris</div>
+                    <div class="phone-number">06 69 06 82 44</div>
+                </div>
+                <div class="vehicles-row">
+                    <div class="vehicle-box">
+                        <div class="icon">🚗</div>
+                        <h4>BERLINE PREMIUM</h4>
+                        <div class="capacity">1-4 passagers</div>
+                        <div class="price">dès 35€</div>
+                        <div class="price-label">CDG 60€ • Orly 60€</div>
+                    </div>
+                    <div class="vehicle-box">
+                        <div class="icon">🚐</div>
+                        <h4>VAN NOIR</h4>
+                        <div class="capacity">5-7 passagers</div>
+                        <div class="price">dès 50€</div>
+                        <div class="price-label">CDG 90€ • Orly 70€</div>
+                    </div>
+                </div>
+                <div class="footer-row">
+                    <div class="services">Aéroports • Gares • Événements • 24h/24</div>
+                    <div class="website">vtc-aeroport-paris.fr</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-instructions">
+        <h3><i class="fas fa-print"></i> Comment imprimer ?</h3>
+        <ol>
+            <li>Capture d'écran de la carte souhaitée (Win + Shift + S)</li>
+            <li>Ou Ctrl+P pour imprimer cette page</li>
+            <li>Format standard : 85mm x 55mm</li>
+            <li>Papier recommandé : 350g/m² mat ou brillant</li>
+        </ol>
+    </div>
+</body>
+</html>

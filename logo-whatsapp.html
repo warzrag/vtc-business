@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo WhatsApp Business - Taxi VTC Paris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-family: 'Montserrat', sans-serif;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .logo-wrapper {
+            text-align: center;
+        }
+
+        .logo-wrapper span {
+            display: block;
+            margin-top: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Logo Style 1 - Premium Gold */
+        .logo-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(162, 125, 52, 0.1) 50%, transparent 60%);
+        }
+
+        .logo-1 .icon {
+            font-size: 120px;
+            color: #c9a227;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(201, 162, 39, 0.3);
+        }
+
+        .logo-1 .text-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .logo-1 .text-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #c9a227;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .logo-1 .tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        /* Logo Style 2 - Minimal */
+        .logo-2 {
+            width: 500px;
+            height: 500px;
+            background: #000000;
+            border-radius: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-2 .icon {
+            font-size: 140px;
+            color: #c9a227;
+            margin-bottom: 30px;
+        }
+
+        .logo-2 .text-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        .logo-2 .text-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #c9a227;
+            letter-spacing: 8px;
+            margin-top: 10px;
+        }
+
+        /* Logo Style 3 - Badge Style */
+        .logo-3 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #c9a227 0%, #a27d1a 100%);
+            border-radius: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .logo-3 .inner-circle {
+            width: 420px;
+            height: 420px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #c9a227;
+        }
+
+        .logo-3 .icon {
+            font-size: 100px;
+            color: #c9a227;
+            margin-bottom: 15px;
+        }
+
+        .logo-3 .text-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        .logo-3 .text-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #c9a227;
+            letter-spacing: 6px;
+            margin-top: 5px;
+        }
+
+        .logo-3 .tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        .instructions {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .instructions h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            font-family: 'Montserrat', sans-serif;
+            color: #666;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Logos WhatsApp Business - Taxi VTC Paris</h2>
+    <p>Choisis le style qui te plaît et fais une capture d'écran</p>
+
+    <div class="logo-container">
+        <div class="logo-wrapper">
+            <div class="logo-1">
+                <i class="fas fa-car-side icon"></i>
+                <div class="text-main">TAXI VTC</div>
+                <div class="text-sub">PARIS</div>
+                <div class="tagline">Chauffeur Privé Premium</div>
+            </div>
+            <span>Style 1 - Premium Gold</span>
+        </div>
+
+        <div class="logo-wrapper">
+            <div class="logo-2">
+                <i class="fas fa-car-side icon"></i>
+                <div class="text-main">TAXI VTC</div>
+                <div class="text-sub">PARIS</div>
+            </div>
+            <span>Style 2 - Minimal</span>
+        </div>
+
+        <div class="logo-wrapper">
+            <div class="logo-3">
+                <div class="inner-circle">
+                    <i class="fas fa-car-side icon"></i>
+                    <div class="text-main">TAXI VTC</div>
+                    <div class="text-sub">PARIS</div>
+                    <div class="tagline">24h/24 - 7j/7</div>
+                </div>
+            </div>
+            <span>Style 3 - Badge</span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>Comment sauvegarder le logo ?</h3>
+        <ol>
+            <li>Choisis le logo qui te plaît</li>
+            <li>Fais un clic droit sur le logo → "Inspecter"</li>
+            <li>Ou utilise l'outil Capture d'écran de Windows (Win + Shift + S)</li>
+            <li>Sélectionne uniquement le carré du logo</li>
+            <li>Sauvegarde l'image en PNG (500x500px recommandé pour WhatsApp)</li>
+        </ol>
+    </div>
+</body>
+</html>
