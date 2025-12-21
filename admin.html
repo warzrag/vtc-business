@@ -1275,20 +1275,27 @@ VTC Aéroport Paris</textarea>
                 const statusIcon = STATUS_ICONS[r.statut] || '❓';
                 const displayPrice = r.prixFinal || r.prixEstime || getRevenue(r) + '€';
 
-                // Create status change dropdown
-                let statusDropdown = `<div style="display: flex; gap: 8px; align-items: center;">
+                // Create status change dropdown or action buttons
+                let statusCell = `<div style="display: flex; gap: 8px; align-items: center;">
                     <span style="background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${statusIcon} ${r.statut}</span>`;
 
-                if (allowedTransitions.length > 0) {
-                    statusDropdown += `<select onchange="if(this.value) { updateReservationStatus('${r.id}', this.value); this.value = ''; }" style="padding: 4px 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-size: 11px; cursor: pointer;">
+                // Special action buttons for "En attente" status
+                if (r.statut === 'En attente') {
+                    statusCell += `
+                        <button onclick="acceptReservation('${r.id}')" style="padding: 4px 8px; background: #22c55e; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Accepter">✓</button>
+                        <button onclick="rejectReservation('${r.id}')" style="padding: 4px 8px; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Refuser">✕</button>
+                    `;
+                } else if (allowedTransitions.length > 0) {
+                    // Status change dropdown for other statuses
+                    statusCell += `<select onchange="if(this.value) { updateReservationStatus('${r.id}', this.value); this.value = ''; }" style="padding: 4px 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-size: 11px; cursor: pointer;">
                         <option value="">→</option>`;
                     allowedTransitions.forEach(transition => {
                         const transIcon = STATUS_ICONS[transition] || '❓';
-                        statusDropdown += `<option value="${transition}">${transIcon} ${transition}</option>`;
+                        statusCell += `<option value="${transition}">${transIcon} ${transition}</option>`;
                     });
-                    statusDropdown += `</select>`;
+                    statusCell += `</select>`;
                 }
-                statusDropdown += `</div>`;
+                statusCell += `</div>`;
 
                 html += `<tr>
                     <td>${r.nomClient}</td>
@@ -1298,7 +1305,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.dateReservation}</td>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
-                    <td>${statusDropdown}</td>
+                    <td>${statusCell}</td>
                 </tr>`;
             });
             document.getElementById('reservationsTable').innerHTML = html;
@@ -1622,6 +1629,81 @@ VTC Aéroport Paris</textarea>
             const message = `Mise à jour du tarif pour votre réservation ${reservation.referenceNumber}:\nNouvel tarif: ${newPrice}`;
             console.log(`💰 Notification tarif à envoyer à ${reservation.phoneClient}: ${message}`);
             alert(`💰 Notification de tarif prête:\n${message}\n\n📧 À ${reservation.phoneClient}`);
+        }
+
+        // Accept reservation (En attente → Confirmée)
+        function acceptReservation(reservationId) {
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+
+            if (res.statut !== 'En attente') {
+                alert(`Cette réservation n'est pas en attente. Statut actuel: ${res.statut}`);
+                return;
+            }
+
+            const confirmMsg = `Accepter la réservation de ${res.nomClient} pour ${res.dateReservation} à ${res.heureReservation} ?`;
+            if (!confirm(confirmMsg)) return;
+
+            db.ref('reservations/' + reservationId).update({
+                statut: 'Confirmée',
+                dateStatutChange: new Date().toISOString(),
+                previousStatut: 'En attente'
+            }).then(() => {
+                console.log(`✅ Réservation acceptée: ${res.nomClient}`);
+                notifyReservationStatus(res, 'Confirmée');
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+        // Reject reservation (En attente → Annulée)
+        function rejectReservation(reservationId) {
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+
+            if (res.statut !== 'En attente') {
+                alert(`Cette réservation n'est pas en attente. Statut actuel: ${res.statut}`);
+                return;
+            }
+
+            const reason = prompt(`Raison du refus pour ${res.nomClient}?\n(optionnel, laissez vide si pas de raison)`, '');
+            if (reason === null) return; // User cancelled
+
+            const message = `Votre réservation VTC ${res.referenceNumber} pour ${res.dateReservation} a été refusée.${reason ? '\nRaison: ' + reason : ''}`;
+
+            db.ref('reservations/' + reservationId).update({
+                statut: 'Annulée',
+                dateStatutChange: new Date().toISOString(),
+                previousStatut: 'En attente',
+                motifAnnulation: reason || 'Non spécifié'
+            }).then(() => {
+                console.log(`❌ Réservation refusée: ${res.nomClient}`);
+                alert(`✅ Réservation refusée et notifiée au client`);
+                // Show notification message
+                console.log(`📱 Notification à envoyer à ${res.phoneClient}: ${message}`);
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+        // Notify reservation status change
+        function notifyReservationStatus(reservation, newStatus) {
+            const messages = {
+                'Confirmée': `Votre réservation VTC ${reservation.referenceNumber} pour ${reservation.dateReservation} à ${reservation.heureReservation} est CONFIRMÉE! ✅ Notre chauffeur vous contactera bientôt.`,
+                'Annulée': `Votre réservation VTC ${reservation.referenceNumber} a été annulée. ❌`
+            };
+
+            const message = messages[newStatus];
+            if (message) {
+                console.log(`📱 Notification à envoyer à ${reservation.phoneClient}: ${message}`);
+                alert(`📱 Notification prête:\n${message}\n\n📧 À ${reservation.phoneClient}`);
+            }
         }
 
         // Add Reservation Handler
