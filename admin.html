@@ -702,10 +702,12 @@
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Statut *</label>
                                     <select id="resStatus" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                         <option value="">-- Choisir --</option>
-                                        <option value="En attente">En attente</option>
-                                        <option value="Confirmée">Confirmée</option>
-                                        <option value="Complétée">Complétée</option>
-                                        <option value="Annulée">Annulée</option>
+                                        <option value="En attente">⏳ En attente</option>
+                                        <option value="Confirmée">✅ Confirmée</option>
+                                        <option value="Chauffeur assigné">👤 Chauffeur assigné</option>
+                                        <option value="En route">🚗 En route</option>
+                                        <option value="Complétée">✔️ Complétée</option>
+                                        <option value="Annulée">❌ Annulée</option>
                                     </select>
                                 </div>
                             </div>
@@ -1137,17 +1139,39 @@ VTC Aéroport Paris</textarea>
                 statuses[r.statut] = (statuses[r.statut] || 0) + 1;
             });
             const ctx3 = document.getElementById('statusChart').getContext('2d');
+            const statusLabels = Object.keys(statuses);
+            const statusColors = statusLabels.map(status => STATUS_COLORS[status] || '#6b7280');
+
             charts.status = new Chart(ctx3, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(statuses),
+                    labels: statusLabels.map(s => STATUS_ICONS[s] + ' ' + s),
                     datasets: [{
-                        label: 'Statut',
+                        label: 'Réservations',
                         data: Object.values(statuses),
-                        backgroundColor: '#a27d34'
+                        backgroundColor: statusColors,
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: 'rgba(255, 255, 255, 0.7)' } }
+                    }
+                }
             });
 
             // Vehicle Chart
@@ -1236,6 +1260,25 @@ VTC Aéroport Paris</textarea>
             // All reservations
             html = '';
             allReservations.forEach(r => {
+                const allowedTransitions = STATUS_WORKFLOW[r.statut] || [];
+                const statusColor = STATUS_COLORS[r.statut] || '#6b7280';
+                const statusIcon = STATUS_ICONS[r.statut] || '❓';
+
+                // Create status change dropdown
+                let statusDropdown = `<div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${statusIcon} ${r.statut}</span>`;
+
+                if (allowedTransitions.length > 0) {
+                    statusDropdown += `<select onchange="if(this.value) { updateReservationStatus('${r.id}', this.value); this.value = ''; }" style="padding: 4px 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 4px; color: var(--white); font-size: 11px; cursor: pointer;">
+                        <option value="">→</option>`;
+                    allowedTransitions.forEach(transition => {
+                        const transIcon = STATUS_ICONS[transition] || '❓';
+                        statusDropdown += `<option value="${transition}">${transIcon} ${transition}</option>`;
+                    });
+                    statusDropdown += `</select>`;
+                }
+                statusDropdown += `</div>`;
+
                 html += `<tr>
                     <td>${r.nomClient}</td>
                     <td style="color: var(--primary);">${r.emailClient}</td>
@@ -1244,7 +1287,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.dateReservation}</td>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600;">${getRevenue(r)}€</td>
-                    <td><span style="background: ${r.statut === 'Confirmée' ? '#22c55e' : r.statut === 'En attente' ? '#f59e0b' : '#ef4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${r.statut}</span></td>
+                    <td>${statusDropdown}</td>
                 </tr>`;
             });
             document.getElementById('reservationsTable').innerHTML = html;
@@ -1447,6 +1490,84 @@ VTC Aéroport Paris</textarea>
                 html = '<p style="color: var(--gray); text-align: center; padding: 20px;">✅ Aucune réservation ce jour. Disponible!</p>';
             }
             document.getElementById('dayDetailsList').innerHTML = html;
+        }
+
+        // ========== STATUS WORKFLOW SYSTEM ==========
+        const STATUS_WORKFLOW = {
+            'En attente': ['Confirmée', 'Annulée'],
+            'Confirmée': ['Chauffeur assigné', 'Annulée'],
+            'Chauffeur assigné': ['En route', 'Annulée'],
+            'En route': ['Complétée', 'Annulée'],
+            'Complétée': [],
+            'Annulée': []
+        };
+
+        const STATUS_COLORS = {
+            'En attente': '#f59e0b',
+            'Confirmée': '#3b82f6',
+            'Chauffeur assigné': '#8b5cf6',
+            'En route': '#ec4899',
+            'Complétée': '#22c55e',
+            'Annulée': '#ef4444'
+        };
+
+        const STATUS_ICONS = {
+            'En attente': '⏳',
+            'Confirmée': '✅',
+            'Chauffeur assigné': '👤',
+            'En route': '🚗',
+            'Complétée': '✔️',
+            'Annulée': '❌'
+        };
+
+        // Update reservation status with workflow validation
+        function updateReservationStatus(reservationId, newStatus) {
+            if (!reservationId || !newStatus) return;
+
+            // Find the reservation to get current status
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+
+            const currentStatus = res.statut;
+
+            // Check if transition is allowed
+            const allowedTransitions = STATUS_WORKFLOW[currentStatus] || [];
+            if (!allowedTransitions.includes(newStatus)) {
+                alert(`Transition non autorisée: ${currentStatus} → ${newStatus}\n\nTransitions disponibles: ${allowedTransitions.join(', ') || 'Aucune'}`);
+                return;
+            }
+
+            // Update in Firebase
+            db.ref('reservations/' + reservationId).update({
+                statut: newStatus,
+                dateStatutChange: new Date().toISOString(),
+                previousStatut: currentStatus
+            }).then(() => {
+                console.log(`✅ Statut mis à jour: ${currentStatus} → ${newStatus}`);
+                notifyStatusChange(res, currentStatus, newStatus);
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+        // Notify customer when status changes
+        function notifyStatusChange(reservation, oldStatus, newStatus) {
+            const messages = {
+                'Confirmée': `Votre réservation VTC ${reservation.referenceNumber || 'N/A'} pour ${reservation.dateReservation} à ${reservation.heureReservation} est CONFIRMÉE! Notre chauffeur vous contactera bientôt.`,
+                'Chauffeur assigné': `Votre chauffeur a été assigné! Il arrive dans ${Math.ceil(Math.random() * 20 + 10)} minutes. Numéro de plaque: À Confirmer`,
+                'En route': `Notre chauffeur est en route vers vous! Temps d'arrivée estimé: ${Math.ceil(Math.random() * 10 + 5)} minutes`,
+                'Complétée': `Merci pour votre réservation! Un reçu a été envoyé à votre email. Tarif: ${getRevenue(reservation)}€`,
+                'Annulée': `Votre réservation a été annulée.`
+            };
+
+            const message = messages[newStatus];
+            if (message) {
+                console.log(`📱 Notification à envoyer à ${reservation.phoneClient}: ${message}`);
+                alert(`📱 Notification SMS prête:\n${message}\n\n📧 À ${reservation.phoneClient}`);
+            }
         }
 
         // Add Reservation Handler
