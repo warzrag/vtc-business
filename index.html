@@ -1324,14 +1324,22 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
                                             Votre numéro de réservation:<br>
                                             <span style="font-size: 1.3rem; color: #27ae60;">${referenceNumber}</span>
                                         </p>
-                                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 1.5rem;">
                                             ${confirmDetails}
                                         </p>
+                                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                            <button onclick="window.open('${whatsappUrl}', '_blank')" style="flex: 1; min-width: 150px; padding: 12px; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                                <i class="fab fa-whatsapp"></i> WhatsApp
+                                            </button>
+                                            <button onclick="navigator.clipboard.writeText('${message}'); alert('Message copié ! Vous pouvez le coller dans SMS ou Email');" style="flex: 1; min-width: 150px; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                                <i class="fas fa-copy"></i> Copier
+                                            </button>
+                                            <a href="tel:${clientPhone}" style="flex: 1; min-width: 150px; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                                <i class="fas fa-phone"></i> Appeler
+                                            </a>
+                                        </div>
                                     </div>
                                 `;
-
-                                // Ouvrir WhatsApp dans un nouvel onglet pour envoyer la réservation
-                                window.open(whatsappUrl, '_blank');
                             })
                             .catch((error) => {
                                 console.error('❌ Erreur Firebase:', error);
