@@ -473,6 +473,7 @@
 
             <div class="nav-item active" onclick="showSection('analytics')">📊 Analytics</div>
             <div class="nav-item" onclick="showSection('reservations')">📅 Réservations</div>
+            <div class="nav-item" onclick="showSection('clients')">👥 Clients</div>
             <div class="nav-item" onclick="showSection('rapports')">📈 Rapports</div>
             <div class="nav-item" onclick="showSection('settings')">⚙️ Paramètres</div>
 
@@ -607,6 +608,36 @@
                                     </tr>
                                 </thead>
                                 <tbody id="reservationsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients Section -->
+                <div id="clientsSection" class="hidden">
+                    <div class="section">
+                        <div class="section-title">👥 Gestion des Clients</div>
+                        <p style="color:var(--gray); margin-bottom: 20px;">Liste complète de tous vos clients avec leurs coordonnées</p>
+
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <input type="text" id="searchClient" placeholder="Chercher un client..."
+                                style="flex: 1; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);"
+                                onkeyup="filterClients()">
+                            <button class="btn-export" onclick="exportContacts()">📥 Exporter Contacts</button>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Réservations</th>
+                                        <th>Revenu Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsTable"></tbody>
                             </table>
                         </div>
                     </div>
@@ -823,6 +854,7 @@
             updateKPIs();
             updateCharts();
             updateTables();
+            updateClients();
         }
 
         function updateKPIs() {
@@ -1025,6 +1057,70 @@
             document.getElementById('reservationsTable').innerHTML = html;
         }
 
+        // Clients Management
+        let allClients = [];
+
+        function updateClients() {
+            const clientsMap = {};
+
+            // Group reservations by client
+            allReservations.forEach(r => {
+                const key = r.nomClient;
+                if (!clientsMap[key]) {
+                    clientsMap[key] = {
+                        nom: r.nomClient,
+                        email: r.emailClient,
+                        phone: r.phoneClient,
+                        reservations: 0,
+                        revenu: 0
+                    };
+                }
+                clientsMap[key].reservations++;
+                clientsMap[key].revenu += getRevenue(r);
+            });
+
+            allClients = Object.values(clientsMap).sort((a, b) => b.reservations - a.reservations);
+            renderClientsTable(allClients);
+        }
+
+        function renderClientsTable(clients) {
+            let html = '';
+            clients.forEach(client => {
+                html += `<tr>
+                    <td>${client.nom}</td>
+                    <td style="color: var(--primary);">${client.email}</td>
+                    <td>${client.phone}</td>
+                    <td style="text-align: center;">${client.reservations}</td>
+                    <td style="color: var(--green); font-weight: 600;">${client.revenu}€</td>
+                </tr>`;
+            });
+            document.getElementById('clientsTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: var(--gray);">Aucun client trouvé</td></tr>';
+        }
+
+        function filterClients() {
+            const search = document.getElementById('searchClient').value.toLowerCase();
+            const filtered = allClients.filter(client =>
+                client.nom.toLowerCase().includes(search) ||
+                client.email.toLowerCase().includes(search) ||
+                client.phone.includes(search)
+            );
+            renderClientsTable(filtered);
+        }
+
+        function exportContacts() {
+            let csv = 'Nom,Email,Téléphone,Réservations,Revenu Total\n';
+            allClients.forEach(client => {
+                csv += `"${client.nom}","${client.email}","${client.phone}","${client.reservations}","${client.revenu}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vtc-contacts-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
         // Navigation
         function showSection(section) {
             document.querySelectorAll('[id$="Section"]').forEach(el => el.classList.add('hidden'));
@@ -1035,7 +1131,10 @@
 
             if (section === 'analytics') document.getElementById('pageTitle').textContent = 'Analytics Dashboard';
             else if (section === 'reservations') document.getElementById('pageTitle').textContent = 'Réservations';
+            else if (section === 'clients') document.getElementById('pageTitle').textContent = 'Gestion des Clients';
             else if (section === 'rapports') document.getElementById('pageTitle').textContent = 'Rapports';
+
+            if (section === 'clients') updateClients();
         }
 
         // Export
