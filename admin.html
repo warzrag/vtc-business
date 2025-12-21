@@ -993,6 +993,31 @@ VTC Aéroport Paris</textarea>
         </div>
     </div>
 
+    <!-- Modal Assignation Chauffeur -->
+    <div id="assignChauffeurModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--white);">👤 Assigner un Chauffeur</h2>
+                <button onclick="closeAssignChauffeurModal()" style="background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+
+            <div id="assignChauffeurInfo" style="background: rgba(162,125,52,0.2); border-left: 3px solid #a27d34; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="color: var(--white); margin: 0; font-weight: 600;" id="assignReservationInfo"></p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 10px;">Chauffeurs Disponibles</label>
+                <div id="assignChauffeursList" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Chauffeurs seront générés ici -->
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <button onclick="closeAssignChauffeurModal()" class="btn-export" style="background: #6b7280; flex: 1;">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1386,6 +1411,11 @@ VTC Aéroport Paris</textarea>
                 }
                 statusCell += `</div>`;
 
+                let assignBtn = '';
+                if (r.statut === 'Confirmée' || r.statut === 'Chauffeur assigné') {
+                    assignBtn = `<button onclick="openAssignChauffeurModal('${r.id}')" style="padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Assigner un chauffeur">👤 Assigner</button>`;
+                }
+
                 html += `<tr>
                     <td>${r.nomClient}</td>
                     <td style="color: var(--primary);">${r.emailClient}</td>
@@ -1395,6 +1425,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
                     <td>${statusCell}</td>
+                    <td>${assignBtn}</td>
                 </tr>`;
             });
             document.getElementById('reservationsTable').innerHTML = html;
@@ -1553,6 +1584,124 @@ VTC Aéroport Paris</textarea>
                 .catch(error => {
                     alert('❌ Erreur: ' + error.message);
                 });
+        }
+
+        // Assignation Chauffeur System
+        let currentAssignReservationId = null;
+
+        function openAssignChauffeurModal(reservationId) {
+            currentAssignReservationId = reservationId;
+            const reservation = allReservations.find(r => r.id === reservationId);
+
+            if (!reservation) {
+                alert('❌ Réservation non trouvée');
+                return;
+            }
+
+            // Afficher info réservation
+            document.getElementById('assignReservationInfo').innerHTML = `
+                <strong>${reservation.nomClient}</strong><br>
+                📍 ${reservation.aeroport} | 🚗 ${reservation.typeVehicule}<br>
+                📅 ${reservation.dateReservation} à ${reservation.heureReservation}
+            `;
+
+            // Générer liste intelligente des chauffeurs
+            renderSmartChauffeursList(reservation);
+
+            // Afficher modal
+            document.getElementById('assignChauffeurModal').style.display = 'flex';
+        }
+
+        function closeAssignChauffeurModal() {
+            document.getElementById('assignChauffeurModal').style.display = 'none';
+            currentAssignReservationId = null;
+        }
+
+        function renderSmartChauffeursList(reservation) {
+            const container = document.getElementById('assignChauffeursList');
+
+            // Filtrer chauffeurs intelligemment
+            const scoredChauffeurs = allChauffeurs.map(chauffeur => {
+                let score = 100;
+
+                // 1. Véhicule matching (très important)
+                if (chauffeur.vehicule === reservation.typeVehicule) {
+                    score += 50;
+                } else {
+                    score -= 30;
+                }
+
+                // 2. Statut disponibilité
+                if (chauffeur.statut === 'Disponible') {
+                    score += 30;
+                } else {
+                    score -= 20;
+                }
+
+                return { ...chauffeur, score };
+            }).sort((a, b) => b.score - a.score);
+
+            if (scoredChauffeurs.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray); text-align: center;">Aucun chauffeur disponible</p>';
+                return;
+            }
+
+            container.innerHTML = scoredChauffeurs.map((chauffeur, index) => {
+                const badges = [];
+                let badgeHTML = '';
+
+                if (chauffeur.vehicule === reservation.typeVehicule) {
+                    badges.push('<span style="background: #22c55e; color: black; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Bon véhicule</span>');
+                }
+                if (chauffeur.statut === 'Disponible') {
+                    badges.push('<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Disponible</span>');
+                }
+
+                if (badges.length > 0) {
+                    badgeHTML = '<div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">' + badges.join('') + '</div>';
+                }
+
+                return `
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#a27d34'; this.style.background='rgba(162,125,52,0.1)'" onmouseout="this.style.borderColor='var(--border)'; this.style.background='rgba(255,255,255,0.05)'">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <p style="color: var(--white); font-weight: 600; margin: 0 0 4px 0;">${index === 0 ? '⭐ ' : ''}${chauffeur.nom}</p>
+                                <p style="color: var(--gray); font-size: 12px; margin: 0;">📞 ${chauffeur.phone} | 🚗 ${chauffeur.vehicule}</p>
+                                <p style="color: var(--gray); font-size: 12px; margin: 4px 0 0 0;">🔤 ${chauffeur.plate}</p>
+                                ${badgeHTML}
+                            </div>
+                            <button onclick="assignChauffeurToReservation('${chauffeur.id}', '${chauffeur.nom}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function assignChauffeurToReservation(chauffeurId, chauffeurName) {
+            if (!currentAssignReservationId) return;
+
+            const reservation = allReservations.find(r => r.id === currentAssignReservationId);
+            if (!reservation) return;
+
+            // Mettre à jour le statut en "Chauffeur assigné"
+            db.ref('reservations/' + currentAssignReservationId).update({
+                statut: 'Chauffeur assigné',
+                chauffeurId: chauffeurId,
+                chauffeurNom: chauffeurName,
+                dateAssignation: new Date().toISOString()
+            }).then(() => {
+                alert(`✅ ${chauffeurName} a été assigné à ${reservation.nomClient}!`);
+                closeAssignChauffeurModal();
+                notifyChauffeurAssignment(reservation, chauffeurName);
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+        function notifyChauffeurAssignment(reservation, chauffeurName) {
+            const message = `📢 Nouvelle course assignée!\n${reservation.nomClient}\n${reservation.aeroport} - ${reservation.dateReservation} à ${reservation.heureReservation}`;
+            console.log(`📱 Notification chauffeur: ${message}`);
+            alert(`💬 Message prêt pour ${chauffeurName}:\n${message}`);
         }
 
         // Calendar Management
