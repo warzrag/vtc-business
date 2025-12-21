@@ -256,6 +256,30 @@
             cursor: pointer;
         }
 
+        select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--white);
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: var(--white);
+            padding: 8px;
+        }
+
+        select option:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        select option:checked {
+            background: var(--primary) !important;
+            color: #000 !important;
+        }
+
         .content {
             flex: 1;
             overflow-y: auto;
