@@ -830,6 +830,10 @@
                                     <input type="text" id="chauffeurPlate" placeholder="Ex: ABC123XY" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                 </div>
                                 <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Telegram @</label>
+                                    <input type="text" id="chauffeurTelegram" placeholder="Ex: @mohamedi_vtc" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
                                     <select id="chauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                         <option value="Berline">🚗 Berline</option>
@@ -848,6 +852,7 @@
                                     <tr>
                                         <th>Nom</th>
                                         <th>Téléphone</th>
+                                        <th>Telegram</th>
                                         <th>Numéro de Plaque</th>
                                         <th>Véhicule</th>
                                         <th>Statut</th>
@@ -1517,6 +1522,7 @@ VTC Aéroport Paris</textarea>
             const nom = document.getElementById('chauffeurNom').value.trim();
             const phone = document.getElementById('chauffeurPhone').value.trim();
             const plate = document.getElementById('chauffeurPlate').value.trim();
+            const telegram = document.getElementById('chauffeurTelegram').value.trim();
             const vehicule = document.getElementById('chauffeurVehicule').value;
 
             if (!nom || nom.length < 2) {
@@ -1535,6 +1541,7 @@ VTC Aéroport Paris</textarea>
             const newChauffeur = {
                 nom: nom,
                 phone: phone,
+                telegram: telegram,
                 plate: plate,
                 vehicule: vehicule,
                 statut: 'Disponible',
@@ -1546,6 +1553,7 @@ VTC Aéroport Paris</textarea>
                     alert('✅ Chauffeur ajouté avec succès!');
                     document.getElementById('chauffeurNom').value = '';
                     document.getElementById('chauffeurPhone').value = '';
+                    document.getElementById('chauffeurTelegram').value = '';
                     document.getElementById('chauffeurPlate').value = '';
                     document.getElementById('chauffeurVehicule').value = 'Berline';
                 })
@@ -1559,9 +1567,11 @@ VTC Aéroport Paris</textarea>
             let html = '';
             allChauffeurs.forEach(chauffeur => {
                 const statutColor = chauffeur.statut === 'Disponible' ? '#22c55e' : '#f59e0b';
+                const telegramDisplay = chauffeur.telegram ? `<a href="https://t.me/${chauffeur.telegram.replace('@', '')}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">${chauffeur.telegram}</a>` : '<span style="color: var(--gray);">—</span>';
                 html += `<tr>
                     <td>${chauffeur.nom}</td>
                     <td>${chauffeur.phone}</td>
+                    <td>${telegramDisplay}</td>
                     <td style="font-family: monospace; font-weight: 600;">${chauffeur.plate}</td>
                     <td>${chauffeur.vehicule}</td>
                     <td><span style="background: ${statutColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${chauffeur.statut}</span></td>
@@ -1570,7 +1580,7 @@ VTC Aéroport Paris</textarea>
                     </td>
                 </tr>`;
             });
-            document.getElementById('chauffeurTable').innerHTML = html || '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Aucun chauffeur trouvé</td></tr>';
+            document.getElementById('chauffeurTable').innerHTML = html || '<tr><td colspan="7" style="text-align: center; color: var(--gray);">Aucun chauffeur trouvé</td></tr>';
         }
 
         // Delete chauffeur
@@ -1668,6 +1678,7 @@ VTC Aéroport Paris</textarea>
                                 <p style="color: var(--white); font-weight: 600; margin: 0 0 4px 0;">${index === 0 ? '⭐ ' : ''}${chauffeur.nom}</p>
                                 <p style="color: var(--gray); font-size: 12px; margin: 0;">📞 ${chauffeur.phone} | 🚗 ${chauffeur.vehicule}</p>
                                 <p style="color: var(--gray); font-size: 12px; margin: 4px 0 0 0;">🔤 ${chauffeur.plate}</p>
+                                ${chauffeur.telegram ? `<p style="color: #3b82f6; font-size: 12px; margin: 4px 0 0 0;">📱 ${chauffeur.telegram}</p>` : ''}
                                 ${badgeHTML}
                             </div>
                             <button onclick="assignChauffeurToReservation('${chauffeur.id}', '${chauffeur.nom}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
