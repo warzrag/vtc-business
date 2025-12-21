@@ -3,131 +3,642 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin VTC - Gestion des Réservations</title>
-    <link rel="stylesheet" href="admin.css">
+    <title>Admin | VTC Aéroport Paris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #a27d34;
+            --primary-dark: #8b6628;
+            --primary-light: #d4a574;
+            --bg-dark: #0f0f0f;
+            --bg-card: #1a1a1a;
+            --border: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 3px rgba(162, 125, 52, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(162, 125, 52, 0.2);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .navbar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-email {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Buttons Group */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
+        }
+
+        .status-confirmed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-edit {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 32px 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            th, td {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 12px 16px;
+            }
+
+            .navbar-brand {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="navbar-brand">
-                <h1>🚗 Admin VTC</h1>
+    <!-- Login Screen -->
+    <div id="authScreen" class="login-screen">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">🚗 VTC</div>
+                <div class="login-subtitle">Admin Dashboard</div>
             </div>
+            <div id="authError" class="error-message hidden"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="admin@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="navbar-brand">🚗 VTC Admin</div>
             <div class="navbar-user">
-                <span id="userEmail" class="user-email"></span>
+                <div class="user-info">
+                    <div class="user-email" id="userEmail"></div>
+                </div>
                 <button id="logoutBtn" class="btn btn-logout">Déconnexion</button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Auth Section (Login) -->
-        <div id="authSection" class="auth-section hidden">
-            <div class="auth-card">
-                <h2>Connexion Admin</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" required placeholder="admin@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Mot de passe</label>
-                        <input type="password" id="loginPassword" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Se connecter</button>
-                </form>
-                <p class="auth-message" id="authMessage"></p>
-            </div>
-        </div>
-
-        <!-- Dashboard Section -->
-        <div id="dashboardSection" class="dashboard-section hidden">
-
-            <!-- Stats Cards -->
+        <!-- Container -->
+        <div class="container">
+            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>Réservations Total</h3>
-                    <p id="totalReservations" class="stat-number">0</p>
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value" id="totalReservations">0</div>
                 </div>
                 <div class="stat-card">
-                    <h3>En Attente</h3>
-                    <p id="pendingReservations" class="stat-number">0</p>
+                    <div class="stat-label">En attente</div>
+                    <div class="stat-value" id="pendingCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Confirmées</h3>
-                    <p id="confirmedReservations" class="stat-number">0</p>
+                    <div class="stat-label">Confirmées</div>
+                    <div class="stat-value" id="confirmedCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Complétées</h3>
-                    <p id="completedReservations" class="stat-number">0</p>
+                    <div class="stat-label">Complétées</div>
+                    <div class="stat-value" id="completedCount">0</div>
                 </div>
             </div>
 
-            <!-- Add Reservation Section -->
-            <section class="section">
-                <h2>Ajouter une réservation</h2>
-                <form id="addReservationForm" class="form-grid">
+            <!-- Add Reservation -->
+            <div class="section">
+                <div class="section-title">Ajouter une réservation</div>
+                <form id="addForm" class="form-grid">
                     <div class="form-group">
-                        <label for="nomClient">Nom client</label>
-                        <input type="text" id="nomClient" required>
+                        <label>Nom client</label>
+                        <input type="text" name="nomClient" required>
                     </div>
                     <div class="form-group">
-                        <label for="emailClient">Email</label>
-                        <input type="email" id="emailClient" required>
+                        <label>Email</label>
+                        <input type="email" name="emailClient" required>
                     </div>
                     <div class="form-group">
-                        <label for="phoneClient">Téléphone</label>
-                        <input type="tel" id="phoneClient" required>
+                        <label>Téléphone</label>
+                        <input type="tel" name="phoneClient" required>
                     </div>
                     <div class="form-group">
-                        <label for="dateReservation">Date</label>
-                        <input type="date" id="dateReservation" required>
+                        <label>Date</label>
+                        <input type="date" name="dateReservation" required>
                     </div>
                     <div class="form-group">
-                        <label for="heureReservation">Heure</label>
-                        <input type="time" id="heureReservation" required>
+                        <label>Heure</label>
+                        <input type="time" name="heureReservation" required>
                     </div>
                     <div class="form-group">
-                        <label for="aeroport">Aéroport</label>
-                        <select id="aeroport" required>
-                            <option value="">Sélectionner un aéroport</option>
-                            <option value="CDG">CDG - Roissy (60€)</option>
-                            <option value="Orly">Orly (60€)</option>
-                            <option value="Beauvais">Beauvais (140€)</option>
+                        <label>Aéroport</label>
+                        <select name="aeroport" required>
+                            <option value="">Sélectionner</option>
+                            <option value="CDG">CDG - Roissy</option>
+                            <option value="Orly">Orly</option>
+                            <option value="Beauvais">Beauvais</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="typeVehicule">Type véhicule</label>
-                        <select id="typeVehicule" required>
-                            <option value="">Sélectionner un véhicule</option>
-                            <option value="Berline">Berline Premium</option>
+                        <label>Véhicule</label>
+                        <select name="typeVehicule" required>
+                            <option value="">Sélectionner</option>
+                            <option value="Berline">Berline</option>
                             <option value="VAN">VAN 7 places</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="nombrePassagers">Nombre passagers</label>
-                        <input type="number" id="nombrePassagers" min="1" max="7" required>
+                        <label>Passagers</label>
+                        <input type="number" name="nombrePassagers" min="1" max="7" required>
                     </div>
                     <div class="form-group">
-                        <label for="statut">Statut</label>
-                        <select id="statut" required>
+                        <label>Statut</label>
+                        <select name="statut" required>
                             <option value="En attente">En attente</option>
                             <option value="Confirmée">Confirmée</option>
                             <option value="Complétée">Complétée</option>
                             <option value="Annulée">Annulée</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-success">Ajouter réservation</button>
+                    <button type="submit" class="btn btn-success" style="grid-column: 1/-1;">Ajouter</button>
                 </form>
-            </section>
+            </div>
 
-            <!-- Filters Section -->
-            <section class="section">
-                <h2>Filtres</h2>
-                <div class="filters">
+            <!-- Filters -->
+            <div class="section">
+                <div class="section-title">Filtres</div>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="filterAeroport">Aéroport</label>
+                        <label>Aéroport</label>
                         <select id="filterAeroport">
                             <option value="">Tous</option>
                             <option value="CDG">CDG</option>
@@ -136,7 +647,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterStatut">Statut</label>
+                        <label>Statut</label>
                         <select id="filterStatut">
                             <option value="">Tous</option>
                             <option value="En attente">En attente</option>
@@ -146,18 +657,18 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="filterDate">Date</label>
+                        <label>Date</label>
                         <input type="date" id="filterDate">
                     </div>
-                    <button id="resetFiltersBtn" class="btn btn-secondary">Réinitialiser</button>
+                    <button id="resetFilters" class="btn btn-secondary">Réinitialiser</button>
                 </div>
-            </section>
+            </div>
 
-            <!-- Reservations Table -->
-            <section class="section">
-                <h2>Réservations</h2>
+            <!-- Table -->
+            <div class="section">
+                <div class="section-title">Réservations</div>
                 <div class="table-wrapper">
-                    <table id="reservationsTable" class="reservations-table">
+                    <table id="reservationsTable">
                         <thead>
                             <tr>
                                 <th>Nom</th>
@@ -172,83 +683,346 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="reservationsBody">
+                        <tbody id="tableBody">
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" class="modal hidden">
+    <div id="editModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Modifier réservation</h2>
+            <div class="modal-header">
+                <div class="modal-title">Modifier réservation</div>
+                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
             <form id="editForm" class="form-grid">
-                <input type="hidden" id="editId">
+                <input type="hidden" name="id">
                 <div class="form-group">
-                    <label for="editNomClient">Nom client</label>
-                    <input type="text" id="editNomClient" required>
+                    <label>Nom client</label>
+                    <input type="text" name="nomClient" required>
                 </div>
                 <div class="form-group">
-                    <label for="editEmailClient">Email</label>
-                    <input type="email" id="editEmailClient" required>
+                    <label>Email</label>
+                    <input type="email" name="emailClient" required>
                 </div>
                 <div class="form-group">
-                    <label for="editPhoneClient">Téléphone</label>
-                    <input type="tel" id="editPhoneClient" required>
+                    <label>Téléphone</label>
+                    <input type="tel" name="phoneClient" required>
                 </div>
                 <div class="form-group">
-                    <label for="editDateReservation">Date</label>
-                    <input type="date" id="editDateReservation" required>
+                    <label>Date</label>
+                    <input type="date" name="dateReservation" required>
                 </div>
                 <div class="form-group">
-                    <label for="editHeureReservation">Heure</label>
-                    <input type="time" id="editHeureReservation" required>
+                    <label>Heure</label>
+                    <input type="time" name="heureReservation" required>
                 </div>
                 <div class="form-group">
-                    <label for="editAeroport">Aéroport</label>
-                    <select id="editAeroport" required>
-                        <option value="CDG">CDG - Roissy (60€)</option>
-                        <option value="Orly">Orly (60€)</option>
-                        <option value="Beauvais">Beauvais (140€)</option>
+                    <label>Aéroport</label>
+                    <select name="aeroport" required>
+                        <option value="CDG">CDG - Roissy</option>
+                        <option value="Orly">Orly</option>
+                        <option value="Beauvais">Beauvais</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="editTypeVehicule">Type véhicule</label>
-                    <select id="editTypeVehicule" required>
-                        <option value="Berline">Berline Premium</option>
+                    <label>Véhicule</label>
+                    <select name="typeVehicule" required>
+                        <option value="Berline">Berline</option>
                         <option value="VAN">VAN 7 places</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="editNombrePassagers">Nombre passagers</label>
-                    <input type="number" id="editNombrePassagers" min="1" max="7" required>
+                    <label>Passagers</label>
+                    <input type="number" name="nombrePassagers" min="1" max="7" required>
                 </div>
                 <div class="form-group">
-                    <label for="editStatut">Statut</label>
-                    <select id="editStatut" required>
+                    <label>Statut</label>
+                    <select name="statut" required>
                         <option value="En attente">En attente</option>
                         <option value="Confirmée">Confirmée</option>
                         <option value="Complétée">Complétée</option>
                         <option value="Annulée">Annulée</option>
                     </select>
                 </div>
-                <div class="modal-actions">
+                <div style="grid-column: 1/-1; display: flex; gap: 12px;">
                     <button type="submit" class="btn btn-success">Sauvegarder</button>
-                    <button type="button" class="btn btn-danger" id="deleteBtn">Supprimer</button>
+                    <button type="button" class="btn btn-delete" onclick="deleteReservation()">Supprimer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDK (compat version) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Admin Scripts -->
-    <script src="admin.js"></script>
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJuFLVMI3gUKFohxYRZeg8Qyn0mXf1sQI",
+            authDomain: "admin-vtc.firebaseapp.com",
+            databaseURL: "https://admin-vtc-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "admin-vtc",
+            storageBucket: "admin-vtc.firebasestorage.app",
+            messagingSenderId: "692871193828",
+            appId: "1:692871193828:web:2dd34c34736f2faf9bb8f1",
+            measurementId: "G-7HMTJSJ13H"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        // State
+        let currentUser = null;
+        let allReservations = [];
+        let filteredReservations = [];
+        let editingId = null;
+
+        // DOM Elements
+        const authScreen = document.getElementById('authScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userEmail = document.getElementById('userEmail');
+        const authError = document.getElementById('authError');
+
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const editModal = document.getElementById('editModal');
+        const tableBody = document.getElementById('tableBody');
+
+        const filterAeroport = document.getElementById('filterAeroport');
+        const filterStatut = document.getElementById('filterStatut');
+        const filterDate = document.getElementById('filterDate');
+        const resetFilters = document.getElementById('resetFilters');
+
+        // Auth State
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                authScreen.classList.add('hidden');
+                dashboard.classList.add('active');
+                userEmail.textContent = user.email;
+                loadReservations();
+            } else {
+                currentUser = null;
+                authScreen.classList.remove('hidden');
+                dashboard.classList.remove('active');
+            }
+        });
+
+        // Login
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .catch(err => {
+                    authError.textContent = 'Erreur: ' + err.message;
+                    authError.classList.remove('hidden');
+                });
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // Load Reservations
+        function loadReservations() {
+            db.ref('reservations').on('value', snapshot => {
+                allReservations = [];
+                const data = snapshot.val();
+
+                if (data) {
+                    Object.entries(data).forEach(([key, value]) => {
+                        allReservations.push({ id: key, ...value });
+                    });
+                }
+
+                allReservations.sort((a, b) => new Date(b.dateReservation) - new Date(a.dateReservation));
+                updateStats();
+                applyFilters();
+            });
+        }
+
+        // Add Reservation
+        addForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(addForm);
+            const reservation = Object.fromEntries(formData);
+            reservation.dateCreation = new Date().toISOString();
+
+            db.ref('reservations').push(reservation)
+                .then(() => {
+                    addForm.reset();
+                    showNotification('Réservation ajoutée!', 'success');
+                })
+                .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+        });
+
+        // Apply Filters
+        function applyFilters() {
+            filteredReservations = allReservations.filter(r => {
+                const matchAeroport = !filterAeroport.value || r.aeroport === filterAeroport.value;
+                const matchStatut = !filterStatut.value || r.statut === filterStatut.value;
+                const matchDate = !filterDate.value || r.dateReservation === filterDate.value;
+                return matchAeroport && matchStatut && matchDate;
+            });
+            renderTable();
+        }
+
+        filterAeroport.addEventListener('change', applyFilters);
+        filterStatut.addEventListener('change', applyFilters);
+        filterDate.addEventListener('change', applyFilters);
+
+        resetFilters.addEventListener('click', () => {
+            filterAeroport.value = '';
+            filterStatut.value = '';
+            filterDate.value = '';
+            applyFilters();
+        });
+
+        // Render Table
+        function renderTable() {
+            tableBody.innerHTML = '';
+
+            if (filteredReservations.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 32px; color: var(--text-secondary);">Aucune réservation</td></tr>';
+                return;
+            }
+
+            filteredReservations.forEach(r => {
+                const tr = document.createElement('tr');
+                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
+                tr.innerHTML = `
+                    <td>${r.nomClient}</td>
+                    <td>${r.emailClient}</td>
+                    <td>${r.phoneClient}</td>
+                    <td>${r.dateReservation}</td>
+                    <td>${r.heureReservation}</td>
+                    <td>${r.aeroport}</td>
+                    <td>${r.typeVehicule}</td>
+                    <td>${r.nombrePassagers}</td>
+                    <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteQuick('${r.id}')">Supprimer</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Edit
+        function openEdit(id) {
+            editingId = id;
+            const r = allReservations.find(x => x.id === id);
+            if (r) {
+                editForm.nomClient.value = r.nomClient;
+                editForm.emailClient.value = r.emailClient;
+                editForm.phoneClient.value = r.phoneClient;
+                editForm.dateReservation.value = r.dateReservation;
+                editForm.heureReservation.value = r.heureReservation;
+                editForm.aeroport.value = r.aeroport;
+                editForm.typeVehicule.value = r.typeVehicule;
+                editForm.nombrePassagers.value = r.nombrePassagers;
+                editForm.statut.value = r.statut;
+                editModal.classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            editModal.classList.remove('active');
+            editingId = null;
+        }
+
+        editForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            const data = Object.fromEntries(formData);
+            delete data.id;
+
+            db.ref(`reservations/${editingId}`).set(data)
+                .then(() => {
+                    closeModal();
+                    showNotification('Réservation mise à jour!', 'success');
+                })
+                .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+        });
+
+        function deleteReservation() {
+            if (confirm('Supprimer cette réservation?')) {
+                db.ref(`reservations/${editingId}`).remove()
+                    .then(() => {
+                        closeModal();
+                        showNotification('Réservation supprimée!', 'success');
+                    })
+                    .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+            }
+        }
+
+        function deleteQuick(id) {
+            if (confirm('Supprimer cette réservation?')) {
+                db.ref(`reservations/${id}`).remove()
+                    .catch(err => showNotification('Erreur: ' + err.message, 'error'));
+            }
+        }
+
+        // Stats
+        function updateStats() {
+            document.getElementById('totalReservations').textContent = allReservations.length;
+            document.getElementById('pendingCount').textContent = allReservations.filter(r => r.statut === 'En attente').length;
+            document.getElementById('confirmedCount').textContent = allReservations.filter(r => r.statut === 'Confirmée').length;
+            document.getElementById('completedCount').textContent = allReservations.filter(r => r.statut === 'Complétée').length;
+        }
+
+        // Notification
+        function showNotification(msg, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                font-size: 14px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = msg;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
