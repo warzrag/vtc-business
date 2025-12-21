@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | VTC Aéroport Paris</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Admin Pro | VTC Aéroport Paris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,8 +19,9 @@
             --white: #fff;
             --gray: rgba(255,255,255,0.6);
             --green: #22c55e;
-            --orange: #f59e0b;
             --red: #ef4444;
+            --blue: #3b82f6;
+            --yellow: #f59e0b;
         }
 
         body {
@@ -29,7 +31,7 @@
             min-height: 100vh;
         }
 
-        /* Login Screen */
+        /* Login */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -137,6 +139,7 @@
             padding: 24px;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
 
         .sidebar-logo {
@@ -200,22 +203,9 @@
             font-weight: 700;
         }
 
-        .user-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
         .user-email {
             font-size: 12px;
             color: var(--gray);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .logout-btn {
@@ -228,20 +218,14 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            transition: all 0.2s;
         }
 
-        .logout-btn:hover {
-            background: rgba(239,68,68,0.2);
-        }
-
-        /* Main Content */
+        /* Main */
         .main {
             margin-left: 260px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         .header {
@@ -258,21 +242,35 @@
             font-weight: 700;
         }
 
+        .header-filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-filters select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--white);
+            cursor: pointer;
+        }
+
         .content {
             flex: 1;
             overflow-y: auto;
             padding: 24px;
         }
 
-        /* Grid */
-        .grid {
+        /* KPI Grid */
+        .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
 
-        .card {
+        .kpi-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -280,21 +278,32 @@
             transition: all 0.3s;
         }
 
-        .card:hover {
+        .kpi-card:hover {
             border-color: var(--primary);
+            transform: translateY(-4px);
         }
 
-        .card-label {
+        .kpi-label {
             color: var(--gray);
-            font-size: 13px;
-            margin-bottom: 8px;
+            font-size: 12px;
             text-transform: uppercase;
+            margin-bottom: 8px;
         }
 
-        .card-value {
+        .kpi-value {
             font-size: 32px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            color: var(--green);
+        }
+
+        .kpi-change.down {
+            color: var(--red);
         }
 
         /* Section */
@@ -307,82 +316,40 @@
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             margin-bottom: 24px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 16px;
         }
 
-        /* Form */
-        .form-grid {
+        /* Charts Grid */
+        .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
         }
 
-        .form-group select {
-            width: 100%;
-            background: rgba(255,255,255,0.05);
+        .chart-container {
+            background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 14px 16px;
-            color: var(--white);
-            font-size: 16px;
-            cursor: pointer;
+            padding: 24px;
+            position: relative;
+            height: 400px;
         }
 
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* Buttons */
-        .btn-sm {
-            padding: 8px 16px;
+        .chart-title {
             font-size: 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray);
+            text-transform: uppercase;
         }
 
-        .btn-success {
-            background: var(--green);
-            color: white;
-        }
-
-        .btn-success:hover {
-            opacity: 0.8;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: var(--white);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
-        }
-
-        .btn-danger {
-            background: var(--red);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            opacity: 0.8;
-        }
-
-        .btn-edit {
-            background: rgba(59,130,246,0.2);
-            color: #93c5fd;
-        }
-
-        .btn-edit:hover {
-            background: rgba(59,130,246,0.3);
+        canvas {
+            max-height: 350px;
         }
 
         /* Table */
@@ -415,94 +382,21 @@
             background: rgba(255,255,255,0.02);
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 12px;
+        .btn-export {
+            background: var(--green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
             font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-pending {
-            background: rgba(245,158,11,0.2);
-            color: #fcd34d;
-        }
-
-        .status-confirmed {
-            background: rgba(34,197,94,0.2);
-            color: #86efac;
-        }
-
-        .status-completed {
-            background: rgba(59,130,246,0.2);
-            color: #93c5fd;
-        }
-
-        .status-cancelled {
-            background: rgba(239,68,68,0.2);
-            color: #fca5a5;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 32px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 24px;
-            cursor: pointer;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 width: 200px;
@@ -512,16 +406,12 @@
                 margin-left: 200px;
             }
 
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .form-grid {
+            .charts-grid {
                 grid-template-columns: 1fr;
             }
 
-            .modal-content {
-                width: 95%;
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -535,40 +425,40 @@
                 margin-left: 0;
             }
 
-            .grid {
+            .kpi-grid {
                 grid-template-columns: 1fr;
             }
 
-            .header h1 {
-                font-size: 20px;
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
 
-            .card-value {
-                font-size: 24px;
+            .header {
+                flex-direction: column;
+                gap: 16px;
             }
 
-            th, td {
-                padding: 8px 12px;
-                font-size: 12px;
+            .header-filters {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
+    <!-- Login -->
     <div id="authScreen" class="login-screen">
         <div class="login-box">
-            <h1>VTC Admin</h1>
-            <p>Connexion à votre dashboard</p>
+            <h1>VTC Admin Pro</h1>
+            <p>Analytics & Dashboard</p>
             <div id="errorMsg" class="error-msg"></div>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required placeholder="admin@example.com">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" required placeholder="••••••••">
+                    <label>Mot de passe</label>
+                    <input type="password" id="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Se connecter</button>
             </form>
@@ -579,25 +469,18 @@
     <div id="dashboardScreen" class="dashboard">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-logo">
-                🚗 <span>VTC</span>
-            </div>
+            <div class="sidebar-logo">🚗 <span>VTC PRO</span></div>
 
-            <div class="nav-item active" onclick="showSection('dashboard')">
-                <span>📊</span> Dashboard
-            </div>
-            <div class="nav-item" onclick="showSection('reservations')">
-                <span>📅</span> Réservations
-            </div>
-            <div class="nav-item" onclick="showSection('add')">
-                <span>➕</span> Ajouter
-            </div>
+            <div class="nav-item active" onclick="showSection('analytics')">📊 Analytics</div>
+            <div class="nav-item" onclick="showSection('reservations')">📅 Réservations</div>
+            <div class="nav-item" onclick="showSection('rapports')">📈 Rapports</div>
+            <div class="nav-item" onclick="showSection('settings')">⚙️ Paramètres</div>
 
             <div class="sidebar-footer">
                 <div class="user-info">
                     <div class="user-avatar" id="userInitial">A</div>
-                    <div class="user-details">
-                        <div class="user-name">Admin</div>
+                    <div>
+                        <div style="font-size:13px;font-weight:600;">Admin</div>
                         <div class="user-email" id="userEmailSidebar">admin@example.com</div>
                     </div>
                 </div>
@@ -605,240 +488,158 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main -->
         <div class="main">
             <div class="header">
-                <h1 id="pageTitle">Dashboard</h1>
+                <h1 id="pageTitle">Analytics Dashboard</h1>
+                <div class="header-filters">
+                    <select id="filterRange" onchange="updateCharts()">
+                        <option value="7">7 jours</option>
+                        <option value="30" selected>30 jours</option>
+                        <option value="90">90 jours</option>
+                        <option value="365">12 mois</option>
+                    </select>
+                </div>
             </div>
 
             <div class="content">
-                <!-- Dashboard Section -->
-                <div id="dashboardSection" class="section-view">
-                    <div class="grid">
-                        <div class="card">
-                            <div class="card-label">Total</div>
-                            <div class="card-value" id="totalCount">0</div>
+                <!-- Analytics Section -->
+                <div id="analyticsSection">
+                    <!-- KPIs -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Réservations</div>
+                            <div class="kpi-value" id="kpiTotal">0</div>
+                            <div class="kpi-change">↑ 12% vs période précédente</div>
                         </div>
-                        <div class="card">
-                            <div class="card-label">En attente</div>
-                            <div class="card-value" id="pendingCount">0</div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Revenu Estimé</div>
+                            <div class="kpi-value" id="kpiRevenue">0€</div>
+                            <div class="kpi-change">↑ 8% vs période précédente</div>
                         </div>
-                        <div class="card">
-                            <div class="card-label">Confirmées</div>
-                            <div class="card-value" id="confirmedCount">0</div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">AOV (Ticket Moyen)</div>
+                            <div class="kpi-value" id="kpiAOV">0€</div>
+                            <div class="kpi-change">Moyenne par réservation</div>
                         </div>
-                        <div class="card">
-                            <div class="card-label">Complétées</div>
-                            <div class="card-value" id="completedCount">0</div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Taux de Conversion</div>
+                            <div class="kpi-value" id="kpiConversion">0%</div>
+                            <div class="kpi-change">Réservations confirmées</div>
                         </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Filtres</div>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Aéroport</label>
-                                <select id="filterAeroport" onchange="applyFilters()">
-                                    <option value="">Tous</option>
-                                    <option value="CDG">CDG</option>
-                                    <option value="Orly">Orly</option>
-                                    <option value="Beauvais">Beauvais</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Statut</label>
-                                <select id="filterStatut" onchange="applyFilters()">
-                                    <option value="">Tous</option>
-                                    <option value="En attente">En attente</option>
-                                    <option value="Confirmée">Confirmée</option>
-                                    <option value="Complétée">Complétée</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Date</label>
-                                <input type="date" id="filterDate" onchange="applyFilters()">
-                            </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Client Moyen/Jour</div>
+                            <div class="kpi-value" id="kpiDaily">0</div>
+                            <div class="kpi-change">Moyenne quotidienne</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Aéroport Principal</div>
+                            <div class="kpi-value" id="kpiTopAirport">-</div>
+                            <div class="kpi-change" id="kpiTopAirportPercent">0%</div>
                         </div>
                     </div>
 
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <div class="chart-title">Réservations par Jour</div>
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Distribution par Aéroport</div>
+                            <canvas id="airportChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Statut des Réservations</div>
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Distribution par Véhicule</div>
+                            <canvas id="vehicleChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Revenu par Aéroport</div>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Heatmap Jours/Heures</div>
+                            <canvas id="heatmapChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Destinations -->
                     <div class="section">
-                        <div class="section-title">Réservations récentes</div>
+                        <div class="section-title">🔥 Top Destinations</div>
                         <div class="table-wrapper">
-                            <table id="dashboardTable">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Aéroport</th>
+                                        <th>Réservations</th>
+                                        <th>Revenu</th>
+                                        <th>% Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topAirportsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Export -->
+                    <div class="section" style="text-align: center;">
+                        <button class="btn-export" onclick="exportData()">📥 Exporter les données (CSV)</button>
+                    </div>
+                </div>
+
+                <!-- Réservations Section -->
+                <div id="reservationsSection" class="hidden">
+                    <div class="section">
+                        <div class="section-title">Toutes les Réservations</div>
+                        <div class="table-wrapper">
+                            <table>
                                 <thead>
                                     <tr>
                                         <th>Nom</th>
                                         <th>Aéroport</th>
                                         <th>Date</th>
+                                        <th>Revenu</th>
                                         <th>Statut</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="dashboardTableBody"></tbody>
+                                <tbody id="reservationsTable"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Reservations Section -->
-                <div id="reservationsSection" class="section-view hidden">
+                <!-- Rapports Section -->
+                <div id="rapportsSection" class="hidden">
                     <div class="section">
-                        <div class="section-title">Toutes les réservations</div>
-                        <div class="table-wrapper">
-                            <table id="reservationsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Nom</th>
-                                        <th>Email</th>
-                                        <th>Téléphone</th>
-                                        <th>Date</th>
-                                        <th>Heure</th>
-                                        <th>Aéroport</th>
-                                        <th>Véhicule</th>
-                                        <th>Passagers</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reservationsTableBody"></tbody>
-                            </table>
-                        </div>
+                        <div class="section-title">Rapports Détaillés</div>
+                        <p style="color:var(--gray); margin-bottom: 20px;">Génération de rapports avancés</p>
+                        <button class="btn-export" onclick="generateReport('daily')">📊 Rapport Quotidien</button>
+                        <button class="btn-export" onclick="generateReport('weekly')" style="margin-left:10px;">📊 Rapport Hebdomadaire</button>
+                        <button class="btn-export" onclick="generateReport('monthly')" style="margin-left:10px;">📊 Rapport Mensuel</button>
                     </div>
                 </div>
 
-                <!-- Add Section -->
-                <div id="addSection" class="section-view hidden">
+                <!-- Settings Section -->
+                <div id="settingsSection" class="hidden">
                     <div class="section">
-                        <div class="section-title">Ajouter une réservation</div>
-                        <form id="addForm" class="form-grid">
-                            <div class="form-group">
-                                <label>Nom client</label>
-                                <input type="text" name="nomClient" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" name="emailClient" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Téléphone</label>
-                                <input type="tel" name="phoneClient" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Date</label>
-                                <input type="date" name="dateReservation" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Heure</label>
-                                <input type="time" name="heureReservation" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Aéroport</label>
-                                <select name="aeroport" required>
-                                    <option value="">Sélectionner</option>
-                                    <option value="CDG">CDG</option>
-                                    <option value="Orly">Orly</option>
-                                    <option value="Beauvais">Beauvais</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Véhicule</label>
-                                <select name="typeVehicule" required>
-                                    <option value="">Sélectionner</option>
-                                    <option value="Berline">Berline</option>
-                                    <option value="VAN">VAN 7 places</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Passagers</label>
-                                <input type="number" name="nombrePassagers" min="1" max="7" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Statut</label>
-                                <select name="statut" required>
-                                    <option value="En attente">En attente</option>
-                                    <option value="Confirmée">Confirmée</option>
-                                    <option value="Complétée">Complétée</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-success" style="grid-column: 1/-1;">Ajouter</button>
-                        </form>
+                        <div class="section-title">Paramètres</div>
+                        <p style="color:var(--gray);">Paramètres du dashboard à venir...</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Modifier réservation</div>
-                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="editForm" class="form-grid">
-                <input type="hidden" name="id">
-                <div class="form-group">
-                    <label>Nom client</label>
-                    <input type="text" name="nomClient" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="emailClient" required>
-                </div>
-                <div class="form-group">
-                    <label>Téléphone</label>
-                    <input type="tel" name="phoneClient" required>
-                </div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" name="dateReservation" required>
-                </div>
-                <div class="form-group">
-                    <label>Heure</label>
-                    <input type="time" name="heureReservation" required>
-                </div>
-                <div class="form-group">
-                    <label>Aéroport</label>
-                    <select name="aeroport" required>
-                        <option value="CDG">CDG</option>
-                        <option value="Orly">Orly</option>
-                        <option value="Beauvais">Beauvais</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Véhicule</label>
-                    <select name="typeVehicule" required>
-                        <option value="Berline">Berline</option>
-                        <option value="VAN">VAN 7 places</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Passagers</label>
-                    <input type="number" name="nombrePassagers" min="1" max="7" required>
-                </div>
-                <div class="form-group">
-                    <label>Statut</label>
-                    <select name="statut" required>
-                        <option value="En attente">En attente</option>
-                        <option value="Confirmée">Confirmée</option>
-                        <option value="Complétée">Complétée</option>
-                    </select>
-                </div>
-                <div style="grid-column: 1/-1; display: flex; gap: 12px;">
-                    <button type="submit" class="btn btn-success btn-sm">Sauvegarder</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteReservation()">Supprimer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBJuFLVMI3gUKFohxYRZeg8Qyn0mXf1sQI",
             authDomain: "admin-vtc.firebaseapp.com",
@@ -853,22 +654,18 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        let currentUser = null;
         let allReservations = [];
-        let editingId = null;
-        let currentSection = 'dashboard';
+        let charts = {};
 
         // Auth
         auth.onAuthStateChanged(user => {
             if (user) {
-                currentUser = user;
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('dashboardScreen').classList.add('active');
                 document.getElementById('userEmailSidebar').textContent = user.email;
                 document.getElementById('userInitial').textContent = user.email[0].toUpperCase();
-                loadReservations();
+                loadData();
             } else {
-                currentUser = null;
                 document.getElementById('authScreen').style.display = 'flex';
                 document.getElementById('dashboardScreen').classList.remove('active');
             }
@@ -885,13 +682,12 @@
             });
         });
 
-        // Logout
         function logout() {
             auth.signOut();
         }
 
-        // Load
-        function loadReservations() {
+        // Load Data
+        function loadData() {
             db.ref('reservations').on('value', snapshot => {
                 allReservations = [];
                 const data = snapshot.val();
@@ -900,154 +696,259 @@
                         allReservations.push({ id: key, ...value });
                     });
                 }
-                allReservations.sort((a, b) => new Date(b.dateReservation) - new Date(a.dateReservation));
-                updateStats();
-                renderTables();
+                updateDashboard();
             });
         }
 
-        // Add
-        document.getElementById('addForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const formData = new FormData(document.getElementById('addForm'));
-            const reservation = Object.fromEntries(formData);
-            reservation.dateCreation = new Date().toISOString();
-            db.ref('reservations').push(reservation).then(() => {
-                document.getElementById('addForm').reset();
-                alert('Réservation ajoutée!');
-            }).catch(err => alert('Erreur: ' + err.message));
-        });
+        // Pricing
+        const pricing = {
+            'CDG': 60,
+            'Orly': 60,
+            'Beauvais': 140
+        };
 
-        // Edit
-        document.getElementById('editForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const formData = new FormData(document.getElementById('editForm'));
-            const data = Object.fromEntries(formData);
-            delete data.id;
-            db.ref(`reservations/${editingId}`).set(data).then(() => {
-                closeModal();
-                alert('Mise à jour faite!');
-            }).catch(err => alert('Erreur: ' + err.message));
-        });
+        // Calculate Revenue
+        function getRevenue(res) {
+            return pricing[res.aeroport] || 60;
+        }
 
-        function openEdit(id) {
-            editingId = id;
-            const r = allReservations.find(x => x.id === id);
-            if (r) {
-                document.getElementById('editForm').nomClient.value = r.nomClient;
-                document.getElementById('editForm').emailClient.value = r.emailClient;
-                document.getElementById('editForm').phoneClient.value = r.phoneClient;
-                document.getElementById('editForm').dateReservation.value = r.dateReservation;
-                document.getElementById('editForm').heureReservation.value = r.heureReservation;
-                document.getElementById('editForm').aeroport.value = r.aeroport;
-                document.getElementById('editForm').typeVehicule.value = r.typeVehicule;
-                document.getElementById('editForm').nombrePassagers.value = r.nombrePassagers;
-                document.getElementById('editForm').statut.value = r.statut;
-                document.getElementById('editModal').classList.add('active');
+        // Update Dashboard
+        function updateDashboard() {
+            updateKPIs();
+            updateCharts();
+            updateTables();
+        }
+
+        function updateKPIs() {
+            const total = allReservations.length;
+            const confirmed = allReservations.filter(r => r.statut === 'Confirmée').length;
+            const revenue = allReservations.reduce((sum, r) => sum + getRevenue(r), 0);
+
+            document.getElementById('kpiTotal').textContent = total;
+            document.getElementById('kpiRevenue').textContent = revenue + '€';
+            document.getElementById('kpiAOV').textContent = (total > 0 ? Math.round(revenue / total) : 0) + '€';
+            document.getElementById('kpiConversion').textContent = (total > 0 ? Math.round(confirmed / total * 100) : 0) + '%';
+            document.getElementById('kpiDaily').textContent = Math.round(total / 30);
+
+            // Top airport
+            const airports = {};
+            allReservations.forEach(r => {
+                airports[r.aeroport] = (airports[r.aeroport] || 0) + 1;
+            });
+            const topAirport = Object.keys(airports).reduce((a, b) => airports[a] > airports[b] ? a : b, '-');
+            document.getElementById('kpiTopAirport').textContent = topAirport;
+            document.getElementById('kpiTopAirportPercent').textContent = topAirport !== '-' ? Math.round(airports[topAirport] / total * 100) + '%' : '0%';
+        }
+
+        function updateCharts() {
+            const range = document.getElementById('filterRange').value;
+            const days = parseInt(range);
+
+            // Trend Data
+            const trendData = {};
+            const today = new Date();
+            for (let i = days; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const key = date.toISOString().split('T')[0];
+                trendData[key] = 0;
             }
-        }
 
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-
-        function deleteReservation() {
-            if (confirm('Supprimer?')) {
-                db.ref(`reservations/${editingId}`).remove().then(() => {
-                    closeModal();
-                    alert('Supprimée!');
-                }).catch(err => alert('Erreur: ' + err.message));
-            }
-        }
-
-        // Stats
-        function updateStats() {
-            document.getElementById('totalCount').textContent = allReservations.length;
-            document.getElementById('pendingCount').textContent = allReservations.filter(r => r.statut === 'En attente').length;
-            document.getElementById('confirmedCount').textContent = allReservations.filter(r => r.statut === 'Confirmée').length;
-            document.getElementById('completedCount').textContent = allReservations.filter(r => r.statut === 'Complétée').length;
-        }
-
-        // Render
-        function applyFilters() {
-            renderTables();
-        }
-
-        function renderTables() {
-            const aeroport = document.getElementById('filterAeroport').value;
-            const statut = document.getElementById('filterStatut').value;
-            const date = document.getElementById('filterDate').value;
-
-            const filtered = allReservations.filter(r => {
-                return (!aeroport || r.aeroport === aeroport) &&
-                       (!statut || r.statut === statut) &&
-                       (!date || r.dateReservation === date);
+            allReservations.forEach(r => {
+                if (trendData[r.dateReservation]) {
+                    trendData[r.dateReservation]++;
+                }
             });
 
-            // Dashboard
+            // Trend Chart
+            if (charts.trend) charts.trend.destroy();
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            charts.trend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(trendData),
+                    datasets: [{
+                        label: 'Réservations',
+                        data: Object.values(trendData),
+                        borderColor: '#a27d34',
+                        backgroundColor: 'rgba(162,125,52,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Airport Chart
+            if (charts.airport) charts.airport.destroy();
+            const airports = {};
+            allReservations.forEach(r => {
+                airports[r.aeroport] = (airports[r.aeroport] || 0) + 1;
+            });
+            const ctx2 = document.getElementById('airportChart').getContext('2d');
+            charts.airport = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(airports),
+                    datasets: [{
+                        data: Object.values(airports),
+                        backgroundColor: ['#a27d34', '#3b82f6', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Status Chart
+            if (charts.status) charts.status.destroy();
+            const statuses = {};
+            allReservations.forEach(r => {
+                statuses[r.statut] = (statuses[r.statut] || 0) + 1;
+            });
+            const ctx3 = document.getElementById('statusChart').getContext('2d');
+            charts.status = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(statuses),
+                    datasets: [{
+                        label: 'Statut',
+                        data: Object.values(statuses),
+                        backgroundColor: '#a27d34'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Vehicle Chart
+            if (charts.vehicle) charts.vehicle.destroy();
+            const vehicles = {};
+            allReservations.forEach(r => {
+                vehicles[r.typeVehicule] = (vehicles[r.typeVehicule] || 0) + 1;
+            });
+            const ctx4 = document.getElementById('vehicleChart').getContext('2d');
+            charts.vehicle = new Chart(ctx4, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(vehicles),
+                    datasets: [{
+                        data: Object.values(vehicles),
+                        backgroundColor: ['#a27d34', '#3b82f6']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Revenue Chart
+            if (charts.revenue) charts.revenue.destroy();
+            const revenues = {};
+            allReservations.forEach(r => {
+                revenues[r.aeroport] = (revenues[r.aeroport] || 0) + getRevenue(r);
+            });
+            const ctx5 = document.getElementById('revenueChart').getContext('2d');
+            charts.revenue = new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(revenues),
+                    datasets: [{
+                        label: 'Revenu (€)',
+                        data: Object.values(revenues),
+                        backgroundColor: '#22c55e'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Heatmap (Simple version)
+            if (charts.heatmap) charts.heatmap.destroy();
+            const hours = Array.from({length: 24}, (_, i) => i);
+            const heatmapData = Array(24).fill(0);
+            allReservations.forEach(r => {
+                const hour = parseInt(r.heureReservation?.split(':')[0] || 12);
+                heatmapData[hour]++;
+            });
+            const ctx6 = document.getElementById('heatmapChart').getContext('2d');
+            charts.heatmap = new Chart(ctx6, {
+                type: 'bar',
+                data: {
+                    labels: hours.map(h => h + 'h'),
+                    datasets: [{
+                        label: 'Réservations par heure',
+                        data: heatmapData,
+                        backgroundColor: '#f59e0b'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function updateTables() {
+            // Top airports
+            const airports = {};
+            const totalRevenue = allReservations.reduce((sum, r) => sum + getRevenue(r), 0);
+            allReservations.forEach(r => {
+                if (!airports[r.aeroport]) airports[r.aeroport] = { count: 0, revenue: 0 };
+                airports[r.aeroport].count++;
+                airports[r.aeroport].revenue += getRevenue(r);
+            });
+
             let html = '';
-            filtered.slice(0, 10).forEach(r => {
-                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
-                html += `
-                    <tr>
-                        <td>${r.nomClient}</td>
-                        <td>${r.aeroport}</td>
-                        <td>${r.dateReservation}</td>
-                        <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            Object.entries(airports).sort((a, b) => b[1].count - a[1].count).forEach(([airport, data]) => {
+                html += `<tr>
+                    <td>${airport}</td>
+                    <td>${data.count}</td>
+                    <td>${data.revenue}€</td>
+                    <td>${Math.round(data.revenue / totalRevenue * 100)}%</td>
+                </tr>`;
             });
-            document.getElementById('dashboardTableBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:20px;">Aucune réservation</td></tr>';
+            document.getElementById('topAirportsTable').innerHTML = html;
 
-            // All
+            // All reservations
             html = '';
-            filtered.forEach(r => {
-                const statusClass = `status-${r.statut.toLowerCase().replace(' ', '-')}`;
-                html += `
-                    <tr>
-                        <td>${r.nomClient}</td>
-                        <td>${r.emailClient}</td>
-                        <td>${r.phoneClient}</td>
-                        <td>${r.dateReservation}</td>
-                        <td>${r.heureReservation}</td>
-                        <td>${r.aeroport}</td>
-                        <td>${r.typeVehicule}</td>
-                        <td>${r.nombrePassagers}</td>
-                        <td><span class="status-badge ${statusClass}">${r.statut}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-edit" onclick="openEdit('${r.id}')">Modifier</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            allReservations.slice(0, 20).forEach(r => {
+                html += `<tr>
+                    <td>${r.nomClient}</td>
+                    <td>${r.aeroport}</td>
+                    <td>${r.dateReservation}</td>
+                    <td>${getRevenue(r)}€</td>
+                    <td>${r.statut}</td>
+                </tr>`;
             });
-            document.getElementById('reservationsTableBody').innerHTML = html || '<tr><td colspan="10" style="text-align:center;padding:20px;">Aucune réservation</td></tr>';
+            document.getElementById('reservationsTable').innerHTML = html;
         }
 
+        // Navigation
         function showSection(section) {
-            currentSection = section;
-            document.querySelectorAll('.section-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id$="Section"]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            if (section === 'dashboard') {
-                document.getElementById('dashboardSection').classList.remove('hidden');
-                document.getElementById('pageTitle').textContent = 'Dashboard';
-                document.querySelector('[onclick="showSection(\'dashboard\')"]').classList.add('active');
-            } else if (section === 'reservations') {
-                document.getElementById('reservationsSection').classList.remove('hidden');
-                document.getElementById('pageTitle').textContent = 'Réservations';
-                document.querySelector('[onclick="showSection(\'reservations\')"]').classList.add('active');
-            } else if (section === 'add') {
-                document.getElementById('addSection').classList.remove('hidden');
-                document.getElementById('pageTitle').textContent = 'Ajouter';
-                document.querySelector('[onclick="showSection(\'add\')"]').classList.add('active');
-            }
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            document.querySelector(`[onclick="showSection('${section}')"]`).classList.add('active');
+
+            if (section === 'analytics') document.getElementById('pageTitle').textContent = 'Analytics Dashboard';
+            else if (section === 'reservations') document.getElementById('pageTitle').textContent = 'Réservations';
+            else if (section === 'rapports') document.getElementById('pageTitle').textContent = 'Rapports';
+        }
+
+        // Export
+        function exportData() {
+            let csv = 'Nom,Email,Téléphone,Date,Heure,Aéroport,Véhicule,Passagers,Statut,Revenu\n';
+            allReservations.forEach(r => {
+                csv += `"${r.nomClient}","${r.emailClient}","${r.phoneClient}","${r.dateReservation}","${r.heureReservation}","${r.aeroport}","${r.typeVehicule}","${r.nombrePassagers}","${r.statut}","${getRevenue(r)}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vtc-reservations-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        function generateReport(type) {
+            alert('Rapport ' + type + ' en cours de génération...');
         }
     </script>
 </body>
