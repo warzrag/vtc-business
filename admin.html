@@ -595,6 +595,51 @@
 
                 <!-- Réservations Section -->
                 <div id="reservationsSection" class="hidden">
+                    <!-- Calendar -->
+                    <div class="section">
+                        <div class="section-title">📅 Calendrier de Disponibilité</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <button onclick="previousMonth()" style="padding: 8px 16px; background: var(--primary); border: none; border-radius: 6px; color: var(--black); font-weight: 600; cursor: pointer;">◀ Précédent</button>
+                            <h2 id="calendarMonth" style="margin: 0; color: var(--white); font-size: 18px;">-</h2>
+                            <button onclick="nextMonth()" style="padding: 8px 16px; background: var(--primary); border: none; border-radius: 6px; color: var(--black); font-weight: 600; cursor: pointer;">Suivant ▶</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px;">
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Lun</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Mar</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Mer</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Jeu</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Ven</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Sam</div>
+                            <div style="text-align: center; color: var(--gray); font-weight: 600; padding: 10px;">Dim</div>
+                        </div>
+
+                        <div id="calendarGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px;">
+                            <!-- Calendar days will be generated here -->
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <div style="text-align: center;">
+                                <div style="width: 20px; height: 20px; background: #22c55e; border-radius: 4px; margin: 0 auto 8px;"></div>
+                                <p style="color: var(--gray); font-size: 12px;">Dispo (0-1 résa)</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 20px; height: 20px; background: #f59e0b; border-radius: 4px; margin: 0 auto 8px;"></div>
+                                <p style="color: var(--gray); font-size: 12px;">Moyen (2-3 résa)</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 20px; height: 20px; background: #ef4444; border-radius: 4px; margin: 0 auto 8px;"></div>
+                                <p style="color: var(--gray); font-size: 12px;">Occupé (4+ résa)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day Details -->
+                    <div class="section" id="dayDetailsSection" style="display: none;">
+                        <div class="section-title" id="dayDetailsTitle">Réservations du jour</div>
+                        <div id="dayDetailsList" style="display: grid; gap: 10px;"></div>
+                    </div>
+
                     <!-- Add Reservation Form -->
                     <div class="section">
                         <div class="section-title">➕ Ajouter une Nouvelle Réservation</div>
@@ -1258,6 +1303,113 @@ VTC Aéroport Paris</textarea>
             a.click();
         }
 
+        // Calendar Management
+        let currentCalendarMonth = new Date();
+
+        function renderCalendar() {
+            const year = currentCalendarMonth.getFullYear();
+            const month = currentCalendarMonth.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Monday = 0
+
+            // Update month title
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                              'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            document.getElementById('calendarMonth').textContent = monthNames[month] + ' ' + year;
+
+            // Count reservations by date
+            const reservationsByDate = {};
+            allReservations.forEach(r => {
+                if (!reservationsByDate[r.dateReservation]) {
+                    reservationsByDate[r.dateReservation] = [];
+                }
+                reservationsByDate[r.dateReservation].push(r);
+            });
+
+            // Generate calendar grid
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Empty cells before first day
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.style.cssText = 'padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.02);';
+                grid.appendChild(emptyCell);
+            }
+
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const reservations = reservationsByDate[dateStr] || [];
+                const count = reservations.length;
+
+                let bgColor = '#22c55e'; // Green - available
+                if (count >= 2 && count <= 3) bgColor = '#f59e0b'; // Orange - moderate
+                if (count >= 4) bgColor = '#ef4444'; // Red - busy
+
+                const dayCell = document.createElement('div');
+                dayCell.style.cssText = `
+                    padding: 12px;
+                    border-radius: 8px;
+                    background: ${bgColor};
+                    color: white;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    border: 2px solid transparent;
+                `;
+                dayCell.innerHTML = `
+                    <div style="font-weight: 600; font-size: 14px;">${day}</div>
+                    <div style="font-size: 11px; margin-top: 4px;">${count} résa</div>
+                `;
+
+                dayCell.onmouseover = () => dayCell.style.transform = 'scale(1.05)';
+                dayCell.onmouseout = () => dayCell.style.transform = 'scale(1)';
+                dayCell.onclick = () => showDayDetails(dateStr);
+
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function previousMonth() {
+            currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function showDayDetails(dateStr) {
+            const reservations = allReservations.filter(r => r.dateReservation === dateStr);
+            const [year, month, day] = dateStr.split('-');
+            const monthNames = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                              'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+            document.getElementById('dayDetailsTitle').textContent = `Réservations du ${parseInt(day)} ${monthNames[parseInt(month)]} ${year}`;
+            document.getElementById('dayDetailsSection').style.display = 'block';
+
+            let html = '';
+            if (reservations.length > 0) {
+                reservations.forEach(r => {
+                    html += `<div style="padding: 15px; background: rgba(162,125,52,0.1); border-left: 3px solid #a27d34; border-radius: 8px;">
+                        <p style="color: var(--white); font-weight: 600; margin: 0 0 8px 0;">${r.nomClient}</p>
+                        <p style="color: var(--gray); font-size: 12px; margin: 4px 0;">📧 ${r.emailClient}</p>
+                        <p style="color: var(--gray); font-size: 12px; margin: 4px 0;">📞 ${r.phoneClient}</p>
+                        <p style="color: var(--gray); font-size: 12px; margin: 4px 0;">✈️ ${r.aeroport} à ${r.heureReservation}</p>
+                        <p style="color: var(--gray); font-size: 12px; margin: 4px 0;">🚗 ${r.typeVehicule} (${r.nombrePassagers} passagers)</p>
+                        <p style="color: var(--primary); font-weight: 600; margin: 8px 0 0 0;">💰 ${getRevenue(r)}€ - ${r.statut}</p>
+                    </div>`;
+                });
+            } else {
+                html = '<p style="color: var(--gray); text-align: center; padding: 20px;">✅ Aucune réservation ce jour. Disponible!</p>';
+            }
+            document.getElementById('dayDetailsList').innerHTML = html;
+        }
+
         // Add Reservation Handler
         function handleAddReservation(event) {
             event.preventDefault();
@@ -1387,6 +1539,7 @@ VTC Aéroport Paris</textarea>
 
             if (section === 'clients') updateClients();
             if (section === 'rappels') updateReminders();
+            if (section === 'reservations') renderCalendar();
         }
 
         // Export
