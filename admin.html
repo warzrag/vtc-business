@@ -1511,14 +1511,14 @@ VTC Aéroport Paris</textarea>
 
             if (!confirm(confirmMsg)) return;
 
-            // On ne supprime pas réellement les données Firebase car les clients sont générés depuis les réservations
-            // Cependant, on peut ajouter un flag pour marquer le client comme supprimé du carnet d'adresses
-            // Pour cette démonstration, on affiche un message et on rafraîchit la liste
+            // Supprimer le client de la liste affichée
+            allClients = allClients.filter(client => client.nom !== clientName);
 
             alert(`✅ ${clientName} a été supprimé du carnet d'adresses.\n\nNota: Les réservations antérieures restent dans le système. Si vous souhaitez supprimer aussi les réservations, veuillez les supprimer manuellement.`);
 
-            // Rafraîchir la liste (filtre client)
-            filterClients();
+            // Rafraîchir l'affichage
+            renderClientsTable(allClients);
+            document.getElementById('searchClient').value = '';
         }
 
         // ========== DRIVERS MANAGEMENT ==========
