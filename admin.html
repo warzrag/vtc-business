@@ -1034,6 +1034,12 @@
                                     <input type="text" id="chauffeurTelegram" placeholder="Ex: @mohamedi_vtc" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                 </div>
                                 <div>
+                                    <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Chat ID Telegram
+                                        <span onclick="showTelegramHelp()" style="cursor: pointer; color: #3b82f6; font-size: 12px;">(Comment l'obtenir ?)</span>
+                                    </label>
+                                    <input type="text" id="chauffeurTelegramChatId" placeholder="Ex: 123456789" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                </div>
+                                <div>
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
                                     <select id="chauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                         <option value="Berline">🚗 Berline</option>
@@ -1257,6 +1263,33 @@ VTC Aéroport Paris</textarea>
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
+
+        // Telegram Bot Config
+        const TELEGRAM_BOT_TOKEN = '8517671278:AAEWLaykP9YkG4J5RQWmZOKaiK9vPLjq1wk';
+
+        // Send Telegram message
+        async function sendTelegramMessage(chatId, message) {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                const data = await response.json();
+                if (!data.ok) {
+                    console.error('Telegram error:', data.description);
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Telegram send error:', error);
+                return false;
+            }
+        }
 
         let allReservations = [];
         let charts = {};
@@ -1797,12 +1830,28 @@ VTC Aéroport Paris</textarea>
             });
         }
 
+        // Telegram help
+        function showTelegramHelp() {
+            alert(`📱 COMMENT OBTENIR LE CHAT ID TELEGRAM
+
+1️⃣ Le chauffeur doit ouvrir Telegram
+2️⃣ Chercher le bot: @vtc_aeroport_paris_bot
+3️⃣ Cliquer sur "Démarrer" ou envoyer /start
+4️⃣ Le bot lui donnera son Chat ID
+
+Ou bien :
+1️⃣ Chercher @userinfobot sur Telegram
+2️⃣ Envoyer /start
+3️⃣ Il affiche l'ID directement`);
+        }
+
         // Add chauffeur
         function addChauffeur() {
             const nom = document.getElementById('chauffeurNom').value.trim();
             const phone = document.getElementById('chauffeurPhone').value.trim();
             const plate = document.getElementById('chauffeurPlate').value.trim();
             const telegram = document.getElementById('chauffeurTelegram').value.trim();
+            const telegramChatId = document.getElementById('chauffeurTelegramChatId').value.trim();
             const vehicule = document.getElementById('chauffeurVehicule').value;
 
             if (!nom || nom.length < 2) {
@@ -1822,6 +1871,7 @@ VTC Aéroport Paris</textarea>
                 nom: nom,
                 phone: phone,
                 telegram: telegram,
+                telegramChatId: telegramChatId,
                 plate: plate,
                 vehicule: vehicule,
                 statut: 'Disponible',
@@ -1834,6 +1884,7 @@ VTC Aéroport Paris</textarea>
                     document.getElementById('chauffeurNom').value = '';
                     document.getElementById('chauffeurPhone').value = '';
                     document.getElementById('chauffeurTelegram').value = '';
+                    document.getElementById('chauffeurTelegramChatId').value = '';
                     document.getElementById('chauffeurPlate').value = '';
                     document.getElementById('chauffeurVehicule').value = 'Berline';
                 })
@@ -1961,40 +2012,69 @@ VTC Aéroport Paris</textarea>
                                 ${chauffeur.telegram ? `<p style="color: #3b82f6; font-size: 12px; margin: 4px 0 0 0;">📱 ${chauffeur.telegram}</p>` : ''}
                                 ${badgeHTML}
                             </div>
-                            <button onclick="assignChauffeurToReservation('${chauffeur.id}', '${chauffeur.nom}', '${chauffeur.vehicule}', '${chauffeur.plate}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
+                            <button onclick="assignChauffeurToReservation('${chauffeur.id}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function assignChauffeurToReservation(chauffeurId, chauffeurName, chauffeurVehicule, chauffeurPlate) {
+        function assignChauffeurToReservation(chauffeurId) {
             if (!currentAssignReservationId) return;
 
             const reservation = allReservations.find(r => r.id === currentAssignReservationId);
             if (!reservation) return;
 
+            const chauffeur = allChauffeurs.find(c => c.id === chauffeurId);
+            if (!chauffeur) return;
+
             // Mettre à jour le statut en "Chauffeur assigné"
             db.ref('reservations/' + currentAssignReservationId).update({
                 statut: 'Chauffeur assigné',
                 chauffeurId: chauffeurId,
-                chauffeurNom: chauffeurName,
-                chauffeurVehicule: chauffeurVehicule,
-                chauffeurPlate: chauffeurPlate,
+                chauffeurNom: chauffeur.nom,
+                chauffeurVehicule: chauffeur.vehicule,
+                chauffeurPlate: chauffeur.plate,
                 dateAssignation: new Date().toISOString()
             }).then(() => {
-                alert(`✅ ${chauffeurName} (${chauffeurVehicule}) a été assigné à ${reservation.nomClient}!`);
+                alert(`✅ ${chauffeur.nom} (${chauffeur.vehicule}) a été assigné à ${reservation.nomClient}!`);
                 closeAssignChauffeurModal();
-                notifyChauffeurAssignment(reservation, chauffeurName, chauffeurVehicule, chauffeurPlate);
+                notifyChauffeurAssignment(reservation, chauffeur);
             }).catch(error => {
                 alert('❌ Erreur: ' + error.message);
             });
         }
 
-        function notifyChauffeurAssignment(reservation, chauffeurName) {
-            const message = `📢 Nouvelle course assignée!\n${reservation.nomClient}\n${reservation.aeroport} - ${reservation.dateReservation} à ${reservation.heureReservation}`;
-            console.log(`📱 Notification chauffeur: ${message}`);
-            alert(`💬 Message prêt pour ${chauffeurName}:\n${message}`);
+        async function notifyChauffeurAssignment(reservation, chauffeur) {
+            // Message formaté pour Telegram
+            const message = `🚖 <b>NOUVELLE COURSE ASSIGNÉE</b>
+
+👤 <b>Client:</b> ${reservation.nomClient}
+📞 <b>Tél:</b> ${reservation.phoneClient}
+
+✈️ <b>Aéroport:</b> ${reservation.aeroport}
+📅 <b>Date:</b> ${reservation.dateReservation}
+🕐 <b>Heure:</b> ${reservation.heureReservation}
+
+🚗 <b>Véhicule:</b> ${reservation.typeVehicule}
+👥 <b>Passagers:</b> ${reservation.nombrePassagers}
+
+💰 <b>Prix:</b> ${reservation.prixFinal || reservation.prixEstime || 'À définir'}
+
+📍 Merci de confirmer votre disponibilité!`;
+
+            // Envoyer via Telegram si le chauffeur a un chatId
+            if (chauffeur.telegramChatId) {
+                const sent = await sendTelegramMessage(chauffeur.telegramChatId, message);
+                if (sent) {
+                    console.log(`✅ Notification Telegram envoyée à ${chauffeur.nom}`);
+                } else {
+                    console.error(`❌ Échec envoi Telegram à ${chauffeur.nom}`);
+                    alert(`⚠️ Impossible d'envoyer la notification Telegram à ${chauffeur.nom}. Vérifiez son Chat ID.`);
+                }
+            } else {
+                console.log(`⚠️ Pas de Chat ID Telegram pour ${chauffeur.nom}`);
+            }
         }
 
         // Calendar Management
