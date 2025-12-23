@@ -2188,7 +2188,9 @@ Vous recevrez désormais les détails de chaque course assignée directement ici
 👤 <b>Client:</b> ${reservation.nomClient}
 📞 <b>Tél:</b> ${reservation.phoneClient}
 
-✈️ <b>Aéroport:</b> ${reservation.aeroport}
+📍 <b>Départ:</b> ${reservation.depart || 'Non spécifié'}
+🏁 <b>Destination:</b> ${reservation.destination || reservation.aeroport || 'Non spécifié'}
+
 📅 <b>Date:</b> ${reservation.dateReservation}
 🕐 <b>Heure:</b> ${reservation.heureReservation}
 
@@ -2198,7 +2200,7 @@ Vous recevrez désormais les détails de chaque course assignée directement ici
 💰 <b>Prix:</b> ${reservation.prixFinal || reservation.prixEstime || 'À définir'}
 ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'}
 
-📍 Merci de confirmer votre disponibilité!`;
+✅ Merci de confirmer votre disponibilité!`;
 
             // Envoyer via Telegram si le chauffeur a un chatId
             if (chauffeur.telegramChatId) {
