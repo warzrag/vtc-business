@@ -2275,7 +2275,7 @@ VTC Aéroport Paris</textarea>
                         // Remove from local array
                         allReservations = allReservations.filter(res => res.id !== currentReservationId);
                         // Refresh displays
-                        renderReservationsTable();
+                        updateTables();
                         renderCalendar();
                         updateKPIs();
                     })
