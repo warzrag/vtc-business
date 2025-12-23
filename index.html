@@ -1340,6 +1340,22 @@ Paiement: ${paymentValue}`;
                             .then(() => {
                                 console.log('✅ Réservation sauvegardée dans Firebase');
 
+                                // Envoyer email de confirmation
+                                sendConfirmationEmail({
+                                    email: clientEmail,
+                                    nomClient: clientName,
+                                    referenceNumber: referenceNumber,
+                                    depart: reservationData.depart,
+                                    destination: reservationData.destination,
+                                    aeroport: reservationData.aeroport,
+                                    dateReservation: date,
+                                    heureReservation: pickupTime,
+                                    typeVehicule: vehiculeNom,
+                                    nombrePassagers: passengers,
+                                    prixEstime: estimatedPrice + '€',
+                                    moyenPaiement: paymentValue
+                                });
+
                                 // Afficher confirmation
                                 document.getElementById('contact-form').innerHTML = `
                                     <div class="price-box" style="background: rgba(39, 174, 96, 0.2); border-color: #27ae60;">
@@ -1942,6 +1958,9 @@ Paiement: ${paymentValue}`;
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
     <script src="script.js"></script>
 
     <!-- Réservation en ligne - Firebase Integration -->
@@ -1960,6 +1979,39 @@ Paiement: ${paymentValue}`;
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        // Initialize EmailJS
+        emailjs.init('dMz2RrFbi5M6XMUR6');
+
+        // Envoyer email de confirmation
+        function sendConfirmationEmail(data) {
+            if (!data.email || data.email === 'non fourni') {
+                console.log('Pas d\'email client, confirmation non envoyée');
+                return;
+            }
+
+            const templateParams = {
+                email: data.email,
+                client_name: data.nomClient,
+                reference: data.referenceNumber,
+                depart: data.depart || 'À confirmer',
+                destination: data.destination || data.aeroport || 'À confirmer',
+                date: data.dateReservation,
+                heure: data.heureReservation,
+                vehicule: data.typeVehicule,
+                passagers: data.nombrePassagers,
+                prix: data.prixEstime || 'À confirmer',
+                paiement: data.moyenPaiement || 'À bord'
+            };
+
+            emailjs.send('service_2bgldx8', 'template_yzvh0r5', templateParams)
+                .then(function(response) {
+                    console.log('✅ Email de confirmation envoyé!', response.status);
+                })
+                .catch(function(error) {
+                    console.error('❌ Erreur envoi email:', error);
+                });
+        }
 
         // Générer numéro de référence
         function generateReferenceNumber() {
