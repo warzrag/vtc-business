@@ -36,11 +36,16 @@
     <meta name="twitter:description" content="VTC Premium Paris ✓ CDG 60€ ✓ Orly 60€ ✓ Berline ou VAN 7 places ✓ Prix fixe. Réservez 06 69 06 82 44">
     <meta name="twitter:image" content="https://vtc-aeroport-paris.fr/van-noir.png">
 
-    <!-- Mobile App -->
+    <!-- Mobile App / PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VTC Paris">
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#a27d34">
@@ -2227,6 +2232,21 @@ Paiement: ${paymentValue}`;
     if (GOOGLE_API_KEY !== 'REMPLACE_PAR_TA_CLE_API') {
         loadGoogleMapsAPI();
     }
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

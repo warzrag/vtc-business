@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Pro | VTC Aéroport Paris</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VTC Admin">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#a27d34">
+    <link rel="manifest" href="manifest-admin.json">
+    <link rel="apple-touch-icon" href="apple-touch-icon-admin.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-admin-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-admin.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -3293,6 +3305,21 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
 
         function generateReport(type) {
             alert('Rapport ' + type + ' en cours de génération...');
+        }
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
         }
     </script>
 </body>
