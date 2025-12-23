@@ -2293,169 +2293,47 @@ END:VCARD`;
     </script>
 
     <!-- Floating Contact Button -->
-    <div id="floating-contact-btn" class="floating-contact">
-        <button onclick="toggleContactMenu()" class="fab-main">
+    <div id="floating-contact-btn" style="position: fixed; bottom: 100px; left: 20px; z-index: 2147483647;">
+        <button id="fab-main-btn" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #a27d34, #c49a4a); border: none; color: #0a0a0a; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(162, 125, 52, 0.4); display: flex; align-items: center; justify-content: center;">
             <i class="fas fa-address-book"></i>
         </button>
-        <div class="fab-menu" id="fab-menu">
-            <button onclick="saveVTCContact(); toggleContactMenu();" class="fab-item fab-save">
+        <div id="fab-menu" style="position: absolute; bottom: 70px; left: 0; display: none; flex-direction: column; gap: 10px;">
+            <button onclick="saveVTCContact()" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 30px; font-weight: 600; font-size: 14px; white-space: nowrap; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: linear-gradient(135deg, #a27d34, #c49a4a); color: #0a0a0a;">
                 <i class="fas fa-user-plus"></i>
                 <span>Enregistrer contact</span>
             </button>
-            <a href="tel:0669068244" class="fab-item fab-call">
+            <a href="tel:0669068244" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: #22c55e; color: white;">
                 <i class="fas fa-phone"></i>
                 <span>Appeler</span>
             </a>
-            <a href="https://wa.me/33669068244" target="_blank" class="fab-item fab-whatsapp">
+            <a href="https://wa.me/33669068244" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: #25D366; color: white;">
                 <i class="fab fa-whatsapp"></i>
                 <span>WhatsApp</span>
             </a>
         </div>
     </div>
 
-    <style>
-        .floating-contact {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            z-index: 99999;
-            pointer-events: auto;
-        }
-
-        .fab-main {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #a27d34, #c49a4a);
-            border: none;
-            color: #0a0a0a;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(162, 125, 52, 0.4);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: auto;
-        }
-
-        .fab-main:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(162, 125, 52, 0.6);
-        }
-
-        .fab-main.active {
-            transform: rotate(45deg);
-            background: #333;
-            color: #fff;
-        }
-
-        .fab-menu {
-            position: absolute;
-            bottom: 70px;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: all 0.3s;
-        }
-
-        .fab-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .fab-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-        }
-
-        .fab-item:hover {
-            transform: translateX(5px);
-        }
-
-        .fab-save {
-            background: linear-gradient(135deg, #a27d34, #c49a4a);
-            color: #0a0a0a;
-        }
-
-        .fab-call {
-            background: #22c55e;
-            color: white;
-        }
-
-        .fab-whatsapp {
-            background: #25D366;
-            color: white;
-        }
-
-        .fab-item i {
-            font-size: 18px;
-        }
-
-        /* Hide on very small screens when keyboard is open */
-        @media (max-height: 500px) {
-            .floating-contact {
-                display: none;
-            }
-        }
-
-        /* Adjust position when PWA banner is visible */
-        .floating-contact.banner-visible {
-            bottom: 290px;
-        }
-    </style>
-
     <script>
-        function toggleContactMenu() {
-            const btn = document.querySelector('.fab-main');
+        document.getElementById('fab-main-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
             const menu = document.getElementById('fab-menu');
-            btn.classList.toggle('active');
-            menu.classList.toggle('show');
-        }
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+            this.style.transform = isOpen ? '' : 'rotate(45deg)';
+            this.style.background = isOpen ? 'linear-gradient(135deg, #a27d34, #c49a4a)' : '#333';
+            this.style.color = isOpen ? '#0a0a0a' : '#fff';
+        });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             const fab = document.getElementById('floating-contact-btn');
             if (!fab.contains(e.target)) {
-                document.querySelector('.fab-main').classList.remove('active');
-                document.getElementById('fab-menu').classList.remove('show');
+                document.getElementById('fab-menu').style.display = 'none';
+                const btn = document.getElementById('fab-main-btn');
+                btn.style.transform = '';
+                btn.style.background = 'linear-gradient(135deg, #a27d34, #c49a4a)';
+                btn.style.color = '#0a0a0a';
             }
         });
-
-        // Adjust position when PWA banner appears
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.target.id === 'pwa-install-banner') {
-                    const fab = document.getElementById('floating-contact-btn');
-                    if (mutation.target.style.display !== 'none') {
-                        fab.classList.add('banner-visible');
-                    } else {
-                        fab.classList.remove('banner-visible');
-                    }
-                }
-            });
-        });
-
-        const pwaBanner = document.getElementById('pwa-install-banner');
-        if (pwaBanner) {
-            observer.observe(pwaBanner, { attributes: true, attributeFilter: ['style'] });
-        }
     </script>
 
     <!-- PWA Install Banner -->
