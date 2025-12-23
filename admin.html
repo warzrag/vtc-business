@@ -1219,6 +1219,9 @@ VTC Aéroport Paris</textarea>
         </div>
     </div>
 
+    <!-- Modal Edition Chauffeur -->
+    <div id="editChauffeurModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;"></div>
+
     <!-- Modal Assignation Chauffeur -->
     <div id="assignChauffeurModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
         <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
@@ -1899,19 +1902,118 @@ Ou bien :
             allChauffeurs.forEach(chauffeur => {
                 const statutColor = chauffeur.statut === 'Disponible' ? '#22c55e' : '#f59e0b';
                 const telegramDisplay = chauffeur.telegram ? `<a href="https://t.me/${chauffeur.telegram.replace('@', '')}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">${chauffeur.telegram}</a>` : '<span style="color: var(--gray);">—</span>';
+                const chatIdDisplay = chauffeur.telegramChatId ? `<span style="color: #22c55e; font-size: 11px;">✅ ${chauffeur.telegramChatId}</span>` : '<span style="color: #ef4444; font-size: 11px;">❌ Non configuré</span>';
                 html += `<tr>
                     <td>${chauffeur.nom}</td>
                     <td>${chauffeur.phone}</td>
-                    <td>${telegramDisplay}</td>
+                    <td>${telegramDisplay}<br>${chatIdDisplay}</td>
                     <td style="font-family: monospace; font-weight: 600;">${chauffeur.plate}</td>
                     <td>${chauffeur.vehicule}</td>
                     <td><span style="background: ${statutColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${chauffeur.statut}</span></td>
-                    <td>
-                        <button onclick="deleteChauffeur('${chauffeur.id}')" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Supprimer</button>
+                    <td style="display: flex; gap: 5px;">
+                        <button onclick="openEditChauffeurModal('${chauffeur.id}')" style="padding: 6px 10px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✏️ Modifier</button>
+                        <button onclick="deleteChauffeur('${chauffeur.id}')" style="padding: 6px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️</button>
                     </td>
                 </tr>`;
             });
             document.getElementById('chauffeurTable').innerHTML = html || '<tr><td colspan="7" style="text-align: center; color: var(--gray);">Aucun chauffeur trouvé</td></tr>';
+        }
+
+        // Edit chauffeur modal
+        let currentEditChauffeurId = null;
+
+        function openEditChauffeurModal(chauffeurId) {
+            const chauffeur = allChauffeurs.find(c => c.id === chauffeurId);
+            if (!chauffeur) return;
+
+            currentEditChauffeurId = chauffeurId;
+
+            const modalHtml = `
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: var(--white);">✏️ Modifier Chauffeur</h2>
+                        <button onclick="closeEditChauffeurModal()" style="background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer;">✕</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Nom *</label>
+                            <input type="text" id="editChauffeurNom" value="${chauffeur.nom}" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Téléphone *</label>
+                            <input type="text" id="editChauffeurPhone" value="${chauffeur.phone}" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Numéro de Plaque *</label>
+                            <input type="text" id="editChauffeurPlate" value="${chauffeur.plate}" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Telegram @</label>
+                            <input type="text" id="editChauffeurTelegram" value="${chauffeur.telegram || ''}" placeholder="@username" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Chat ID Telegram (pour notifications)</label>
+                            <input type="text" id="editChauffeurTelegramChatId" value="${chauffeur.telegramChatId || ''}" placeholder="Ex: 983151531" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
+                            <select id="editChauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                <option value="Berline" ${chauffeur.vehicule === 'Berline' ? 'selected' : ''}>🚗 Berline</option>
+                                <option value="Van" ${chauffeur.vehicule === 'Van' ? 'selected' : ''}>🚐 Van 7 places</option>
+                                <option value="SUV" ${chauffeur.vehicule === 'SUV' ? 'selected' : ''}>🚙 SUV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Statut</label>
+                            <select id="editChauffeurStatut" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                <option value="Disponible" ${chauffeur.statut === 'Disponible' ? 'selected' : ''}>✅ Disponible</option>
+                                <option value="En course" ${chauffeur.statut === 'En course' ? 'selected' : ''}>🚗 En course</option>
+                                <option value="Indisponible" ${chauffeur.statut === 'Indisponible' ? 'selected' : ''}>❌ Indisponible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                        <button onclick="closeEditChauffeurModal()" style="flex: 1; padding: 12px; background: #6b7280; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Annuler</button>
+                        <button onclick="saveEditChauffeur()" style="flex: 1; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💾 Enregistrer</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('editChauffeurModal').innerHTML = modalHtml;
+            document.getElementById('editChauffeurModal').style.display = 'flex';
+        }
+
+        function closeEditChauffeurModal() {
+            document.getElementById('editChauffeurModal').style.display = 'none';
+            currentEditChauffeurId = null;
+        }
+
+        function saveEditChauffeur() {
+            if (!currentEditChauffeurId) return;
+
+            const updates = {
+                nom: document.getElementById('editChauffeurNom').value.trim(),
+                phone: document.getElementById('editChauffeurPhone').value.trim(),
+                plate: document.getElementById('editChauffeurPlate').value.trim(),
+                telegram: document.getElementById('editChauffeurTelegram').value.trim(),
+                telegramChatId: document.getElementById('editChauffeurTelegramChatId').value.trim(),
+                vehicule: document.getElementById('editChauffeurVehicule').value,
+                statut: document.getElementById('editChauffeurStatut').value
+            };
+
+            if (!updates.nom || !updates.phone || !updates.plate) {
+                alert('❌ Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+
+            db.ref('chauffeurs/' + currentEditChauffeurId).update(updates)
+                .then(() => {
+                    alert('✅ Chauffeur modifié avec succès!');
+                    closeEditChauffeurModal();
+                })
+                .catch(error => {
+                    alert('❌ Erreur: ' + error.message);
+                });
         }
 
         // Delete chauffeur
