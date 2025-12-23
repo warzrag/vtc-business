@@ -2248,5 +2248,253 @@ Paiement: ${paymentValue}`;
             });
         }
     </script>
+
+    <!-- PWA Install Banner -->
+    <div id="pwa-install-banner" style="display: none;">
+        <style>
+            #pwa-install-banner {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+                border-top: 2px solid #a27d34;
+                padding: 20px;
+                z-index: 10000;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+                animation: slideUp 0.4s ease-out;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(100%); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .pwa-banner-content {
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            .pwa-banner-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 15px;
+            }
+            .pwa-banner-icon {
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #a27d34, #c49a4a);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 16px;
+                color: #0a0a0a;
+            }
+            .pwa-banner-title {
+                color: #fff;
+                font-size: 18px;
+                font-weight: 700;
+            }
+            .pwa-banner-subtitle {
+                color: #a27d34;
+                font-size: 13px;
+            }
+            .pwa-banner-steps {
+                background: rgba(255,255,255,0.05);
+                border-radius: 12px;
+                padding: 15px;
+                margin: 15px 0;
+                text-align: left;
+            }
+            .pwa-step {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 0;
+                color: #fff;
+                font-size: 14px;
+            }
+            .pwa-step-number {
+                width: 24px;
+                height: 24px;
+                background: #a27d34;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 12px;
+                color: #0a0a0a;
+                flex-shrink: 0;
+            }
+            .pwa-step-icon {
+                font-size: 18px;
+            }
+            .pwa-banner-buttons {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            .pwa-btn {
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                border: none;
+                transition: all 0.3s;
+            }
+            .pwa-btn-primary {
+                background: linear-gradient(135deg, #a27d34, #c49a4a);
+                color: #0a0a0a;
+            }
+            .pwa-btn-primary:hover {
+                transform: scale(1.05);
+            }
+            .pwa-btn-secondary {
+                background: transparent;
+                color: #888;
+                border: 1px solid #333;
+            }
+            .pwa-btn-secondary:hover {
+                border-color: #555;
+                color: #aaa;
+            }
+            .pwa-close {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                background: none;
+                border: none;
+                color: #666;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 5px;
+            }
+            .pwa-close:hover {
+                color: #fff;
+            }
+        </style>
+
+        <button class="pwa-close" onclick="closePWABanner()">&times;</button>
+
+        <div class="pwa-banner-content">
+            <div class="pwa-banner-header">
+                <div class="pwa-banner-icon">VTC</div>
+                <div>
+                    <div class="pwa-banner-title">Installer l'application</div>
+                    <div class="pwa-banner-subtitle">Accès rapide depuis votre écran d'accueil</div>
+                </div>
+            </div>
+
+            <div class="pwa-banner-steps" id="pwa-steps">
+                <!-- Steps will be inserted by JavaScript -->
+            </div>
+
+            <div class="pwa-banner-buttons">
+                <button class="pwa-btn pwa-btn-primary" onclick="closePWABanner(true)">J'ai compris</button>
+                <button class="pwa-btn pwa-btn-secondary" onclick="closePWABanner()">Plus tard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA Install Banner Logic
+        (function() {
+            const banner = document.getElementById('pwa-install-banner');
+            const stepsContainer = document.getElementById('pwa-steps');
+
+            // Check if already installed or dismissed
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const isDismissed = localStorage.getItem('pwa-banner-dismissed');
+            const dismissedTime = localStorage.getItem('pwa-banner-dismissed-time');
+
+            // Show again after 7 days
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            const shouldShowAgain = dismissedTime && (Date.now() - parseInt(dismissedTime)) > sevenDays;
+
+            if (isStandalone || (isDismissed && !shouldShowAgain)) {
+                return;
+            }
+
+            // Detect platform
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isMobile = isIOS || isAndroid;
+
+            if (!isMobile) {
+                return; // Only show on mobile
+            }
+
+            // Generate steps based on platform
+            let steps = '';
+
+            if (isIOS) {
+                steps = `
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">1</span>
+                        <span>Appuyez sur <span class="pwa-step-icon">⬆️</span> <strong>Partager</strong> en bas de Safari</span>
+                    </div>
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">2</span>
+                        <span>Faites défiler et appuyez sur <strong>"Sur l'écran d'accueil"</strong></span>
+                    </div>
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">3</span>
+                        <span>Appuyez sur <strong>Ajouter</strong> en haut à droite</span>
+                    </div>
+                `;
+            } else if (isAndroid) {
+                steps = `
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">1</span>
+                        <span>Appuyez sur <span class="pwa-step-icon">⋮</span> <strong>Menu</strong> en haut à droite</span>
+                    </div>
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">2</span>
+                        <span>Appuyez sur <strong>"Ajouter à l'écran d'accueil"</strong></span>
+                    </div>
+                    <div class="pwa-step">
+                        <span class="pwa-step-number">3</span>
+                        <span>Confirmez en appuyant sur <strong>Ajouter</strong></span>
+                    </div>
+                `;
+            }
+
+            stepsContainer.innerHTML = steps;
+
+            // Show banner after 3 seconds
+            setTimeout(() => {
+                banner.style.display = 'block';
+            }, 3000);
+        })();
+
+        function closePWABanner(understood) {
+            const banner = document.getElementById('pwa-install-banner');
+            banner.style.animation = 'slideDown 0.3s ease-in forwards';
+
+            // Add slideDown animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDown {
+                    from { transform: translateY(0); opacity: 1; }
+                    to { transform: translateY(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 300);
+
+            if (understood) {
+                localStorage.setItem('pwa-banner-dismissed', 'true');
+                localStorage.setItem('pwa-banner-dismissed-time', Date.now().toString());
+            }
+        }
+    </script>
 </body>
 </html>
