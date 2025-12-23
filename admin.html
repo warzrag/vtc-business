@@ -769,7 +769,9 @@
                                         <th>Date</th>
                                         <th>Heure</th>
                                         <th>Revenu</th>
+                                        <th>Chauffeur</th>
                                         <th>Statut</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="reservationsTable"></tbody>
@@ -1419,8 +1421,14 @@ VTC Aéroport Paris</textarea>
                 statusCell += `</div>`;
 
                 let assignBtn = '';
-                if (r.statut === 'Confirmée' || r.statut === 'Chauffeur assigné') {
-                    assignBtn = `<button onclick="openAssignChauffeurModal('${r.id}')" style="padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Assigner un chauffeur">👤 Assigner</button>`;
+                if (r.statut === 'Confirmée' || r.statut === 'Chauffeur assigné' || r.statut === 'En route') {
+                    assignBtn = `<button onclick="openAssignChauffeurModal('${r.id}')" style="padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Assigner un chauffeur">👤 ${r.chauffeurNom ? 'Changer' : 'Assigner'}</button>`;
+                }
+
+                // Affichage du chauffeur assigné
+                let chauffeurCell = '<span style="color: var(--gray);">—</span>';
+                if (r.chauffeurNom) {
+                    chauffeurCell = `<span style="color: #3b82f6; font-weight: 600;">👤 ${r.chauffeurNom}</span>`;
                 }
 
                 html += `<tr>
@@ -1431,6 +1439,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.dateReservation}</td>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
+                    <td>${chauffeurCell}</td>
                     <td>${statusCell}</td>
                     <td>${assignBtn}</td>
                 </tr>`;
