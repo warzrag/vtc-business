@@ -448,16 +448,36 @@
             .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            .table-wrapper table {
+                min-width: 800px;
+            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
             .sidebar {
-                width: 0;
-                overflow: hidden;
+                position: fixed;
+                left: -260px;
+                width: 260px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
             }
 
             .main {
                 margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex !important;
             }
 
             .kpi-grid {
@@ -470,11 +490,164 @@
 
             .header {
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
             }
 
             .header-filters {
                 width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .header-filters select {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+
+            .table-wrapper table {
+                min-width: 700px;
+                font-size: 12px;
+            }
+
+            .table-wrapper th,
+            .table-wrapper td {
+                padding: 8px 6px;
+            }
+
+            .btn-export {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            #calendarGrid {
+                gap: 6px !important;
+            }
+
+            #calendarGrid > div {
+                padding: 8px 4px !important;
+                min-height: 60px !important;
+                font-size: 12px;
+            }
+
+            .kpi-card {
+                padding: 16px;
+            }
+
+            .kpi-value {
+                font-size: 24px;
+            }
+
+            /* Planning horaire mobile */
+            #dayDetailsList > div {
+                grid-template-columns: 50px 1fr !important;
+                padding: 8px 10px !important;
+            }
+
+            #dayDetailsList > div > div:first-child {
+                font-size: 12px !important;
+            }
+
+            #daySummary {
+                font-size: 12px;
+            }
+
+            #daySummary > div {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            /* Modal mobile */
+            #assignChauffeurModal > div {
+                width: 95% !important;
+                padding: 20px !important;
+                max-height: 90vh !important;
+            }
+
+            /* Login mobile */
+            .login-box {
+                padding: 24px;
+                margin: 16px;
+            }
+        }
+
+        /* Mobile header with hamburger */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            z-index: 999;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .hamburger {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .mobile-overlay.open {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard.active .main {
+                padding-top: 56px;
             }
         }
     </style>
@@ -502,8 +675,22 @@
 
     <!-- Dashboard -->
     <div id="dashboardScreen" class="dashboard">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <span style="font-weight: 700; color: var(--primary);">🚗 VTC PRO</span>
+            <span style="width: 32px;"></span>
+        </div>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebarMenu">
             <div class="sidebar-logo">🚗 <span>VTC PRO</span></div>
 
             <div class="nav-item active" onclick="showSection('analytics')">📊 Analytics</div>
@@ -2313,6 +2500,21 @@ VTC Aéroport Paris</textarea>
         }
 
         // Navigation
+        // Mobile Menu Functions
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
         function showSection(section) {
             document.querySelectorAll('[id$="Section"]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -2329,6 +2531,9 @@ VTC Aéroport Paris</textarea>
             if (section === 'clients') updateClients();
             if (section === 'rappels') updateReminders();
             if (section === 'reservations') renderCalendar();
+
+            // Fermer le menu mobile après sélection
+            closeMobileMenu();
         }
 
         // Export
