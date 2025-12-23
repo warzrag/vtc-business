@@ -1198,6 +1198,21 @@ VTC Aéroport Paris</textarea>
         </div>
     </div>
 
+    <!-- Modal Détails Réservation -->
+    <div id="reservationDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--white);">📋 Détails Réservation</h2>
+                <button onclick="closeReservationDetailsModal()" style="background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+            <div id="reservationDetailsContent"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <button onclick="closeReservationDetailsModal()" class="btn-export" style="background: #6b7280; flex: 1;">Fermer</button>
+                <button id="btnDeleteReservation" onclick="deleteCurrentReservation()" class="btn-export" style="background: #ef4444; flex: 1;">🗑️ Supprimer</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Assignation Chauffeur -->
     <div id="assignChauffeurModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
         <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
@@ -2171,27 +2186,103 @@ VTC Aéroport Paris</textarea>
             renderCalendar();
         }
 
+        let currentReservationId = null;
+
         function showReservationDetails(reservationId) {
             const r = allReservations.find(res => res.id === reservationId);
             if (!r) return;
 
+            currentReservationId = reservationId;
+
             const statusColor = STATUS_COLORS[r.statut] || '#6b7280';
             const statusIcon = STATUS_ICONS[r.statut] || '❓';
-            const chauffeurInfo = r.chauffeurNom ? `👤 ${r.chauffeurNom} (${r.chauffeurVehicule || 'N/A'})` : '⚠️ Pas de chauffeur assigné';
+            const chauffeurInfo = r.chauffeurNom
+                ? `<span style="color: #3b82f6;">👤 ${r.chauffeurNom}</span><br><span style="color: var(--gray); font-size: 12px;">🚗 ${r.chauffeurVehicule || 'N/A'}</span>`
+                : '<span style="color: #ef4444;">⚠️ Pas de chauffeur assigné</span>';
 
-            alert(`📋 RÉSERVATION\n\n` +
-                `👤 Client: ${r.nomClient}\n` +
-                `📞 Tél: ${r.phoneClient}\n` +
-                `📧 Email: ${r.emailClient}\n\n` +
-                `✈️ Aéroport: ${r.aeroport}\n` +
-                `📅 Date: ${r.dateReservation}\n` +
-                `🕐 Heure: ${r.heureReservation}\n` +
-                `🚗 Véhicule: ${r.typeVehicule}\n` +
-                `👥 Passagers: ${r.nombrePassagers}\n\n` +
-                `${statusIcon} Statut: ${r.statut}\n` +
-                `${chauffeurInfo}\n\n` +
-                `💰 Prix: ${r.prixFinal || r.prixEstime || getRevenue(r) + '€'}`
-            );
+            const content = `
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: rgba(162,125,52,0.2); border-left: 3px solid var(--primary); padding: 15px; border-radius: 8px;">
+                        <div style="font-weight: 700; color: var(--white); font-size: 18px;">👤 ${r.nomClient}</div>
+                        <div style="color: var(--gray); margin-top: 5px;">📞 ${r.phoneClient}</div>
+                        <div style="color: var(--gray);">📧 ${r.emailClient}</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">✈️ AÉROPORT</div>
+                            <div style="color: var(--white); font-weight: 600;">${r.aeroport}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">📅 DATE</div>
+                            <div style="color: var(--white); font-weight: 600;">${r.dateReservation}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">🕐 HEURE</div>
+                            <div style="color: var(--white); font-weight: 600;">${r.heureReservation}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">👥 PASSAGERS</div>
+                            <div style="color: var(--white); font-weight: 600;">${r.nombrePassagers}</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                        <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">🚗 VÉHICULE DEMANDÉ</div>
+                        <div style="color: var(--white); font-weight: 600;">${r.typeVehicule}</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: ${statusColor}22; border-left: 3px solid ${statusColor}; padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">STATUT</div>
+                            <div style="color: ${statusColor}; font-weight: 600;">${statusIcon} ${r.statut}</div>
+                        </div>
+                        <div style="background: rgba(34,197,94,0.1); border-left: 3px solid #22c55e; padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">💰 PRIX</div>
+                            <div style="color: #22c55e; font-weight: 600;">${r.prixFinal || r.prixEstime || getRevenue(r) + '€'}</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(59,130,246,0.1); border-left: 3px solid #3b82f6; padding: 12px; border-radius: 8px;">
+                        <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">CHAUFFEUR ASSIGNÉ</div>
+                        <div>${chauffeurInfo}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('reservationDetailsContent').innerHTML = content;
+            document.getElementById('reservationDetailsModal').style.display = 'flex';
+        }
+
+        function closeReservationDetailsModal() {
+            document.getElementById('reservationDetailsModal').style.display = 'none';
+            currentReservationId = null;
+        }
+
+        function deleteCurrentReservation() {
+            if (!currentReservationId) return;
+
+            const r = allReservations.find(res => res.id === currentReservationId);
+            if (!r) return;
+
+            const confirmDelete = confirm(`🗑️ SUPPRIMER CETTE RÉSERVATION ?\n\n👤 Client: ${r.nomClient}\n📅 Date: ${r.dateReservation}\n🕐 Heure: ${r.heureReservation}\n✈️ ${r.aeroport}\n\n⚠️ Cette action est irréversible !`);
+
+            if (confirmDelete) {
+                db.ref('reservations/' + currentReservationId).remove()
+                    .then(() => {
+                        alert('✅ Réservation supprimée avec succès');
+                        closeReservationDetailsModal();
+                        // Remove from local array
+                        allReservations = allReservations.filter(res => res.id !== currentReservationId);
+                        // Refresh displays
+                        renderReservationsTable();
+                        renderCalendar();
+                        updateKPIs();
+                    })
+                    .catch(error => {
+                        alert('❌ Erreur: ' + error.message);
+                    });
+            }
         }
 
         function renderMonthView() {
