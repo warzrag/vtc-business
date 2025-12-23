@@ -611,23 +611,46 @@
         function downloadVCard() {
             const driver = currentDriver;
             const phone = driver.telephone || '0669068244';
+            const phoneFormatted = phone.startsWith('0') ? '+33' + phone.slice(1) : phone;
             const email = driver.email || 'contact@vtc-aeroport-paris.fr';
 
-            const vcard = `BEGIN:VCARD
+            let vcard;
+            if (driver.isCompany) {
+                vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:${driver.nom}
-${!driver.isCompany ? 'ORG:VTC Aéroport Paris' : 'ORG:VTC Aéroport Paris'}
-TEL;TYPE=CELL:${phone}
-EMAIL:${email}
+FN:🚗 VTC Taxi Aéroport Paris - Transport
+N:Transport;VTC Taxi Aéroport Paris;;;
+NICKNAME:Taxi VTC Chauffeur Privé
+ORG:VTC Aéroport Paris - Taxi Chauffeur Privé
+TITLE:Chauffeur Privé VTC
+TEL;TYPE=CELL,VOICE,pref:${phoneFormatted}
+EMAIL;TYPE=WORK:${email}
 URL:https://vtc-aeroport-paris.fr
-NOTE:${driver.isCompany ? 'Service VTC Premium Paris - Transferts Aéroports CDG, Orly, Beauvais' : 'Chauffeur VTC - Transferts Aéroports Paris'}
+ADR;TYPE=WORK:;;Paris;;;France
+NOTE:🚗 VTC AÉROPORT PARIS - Votre chauffeur privé\\n\\n✅ CDG 60€ | Orly 60€ | Beauvais 140€\\n📞 24h/24 - 7j/7\\n🚐 Berline & VAN 7 places\\n\\nRecherchez: taxi, vtc, transport, chauffeur
+CATEGORIES:Transport,VTC,Taxi,Chauffeur,Aéroport
 END:VCARD`;
+            } else {
+                vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:🚗 ${driver.nom} - VTC Taxi Transport
+N:VTC Transport;${driver.nom};;;
+NICKNAME:Chauffeur VTC Taxi
+ORG:VTC Aéroport Paris
+TITLE:Chauffeur Privé VTC
+TEL;TYPE=CELL,VOICE,pref:${phoneFormatted}
+EMAIL;TYPE=WORK:${email}
+URL:https://vtc-aeroport-paris.fr
+NOTE:🚗 ${driver.nom} - Chauffeur VTC Aéroport Paris\\n\\n✅ CDG 60€ | Orly 60€ | Beauvais 140€\\n📞 24h/24\\n\\nRecherchez: taxi, vtc, transport, chauffeur
+CATEGORIES:Transport,VTC,Taxi,Chauffeur
+END:VCARD`;
+            }
 
             const blob = new Blob([vcard], { type: 'text/vcard' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${driver.nom.replace(/\s+/g, '_')}.vcf`;
+            a.download = `VTC_${driver.nom.replace(/\s+/g, '_')}.vcf`;
             a.click();
             URL.revokeObjectURL(url);
 

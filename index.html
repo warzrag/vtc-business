@@ -2028,14 +2028,19 @@ Paiement: ${paymentValue}`;
         function saveVTCContact() {
             const vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:VTC Aéroport Paris
-ORG:VTC Aéroport Paris
-TEL;TYPE=CELL:0669068244
-TEL;TYPE=WORK:0669068244
-EMAIL:contact@vtc-aeroport-paris.fr
+FN:🚗 VTC Taxi Aéroport Paris - Transport
+N:Transport;VTC Taxi Aéroport Paris;;;
+NICKNAME:Taxi VTC Chauffeur Privé
+ORG:VTC Aéroport Paris - Taxi Chauffeur Privé
+TITLE:Chauffeur Privé VTC
+TEL;TYPE=CELL,VOICE,pref:+33669068244
+TEL;TYPE=WORK,VOICE:+33669068244
+EMAIL;TYPE=WORK:contact@vtc-aeroport-paris.fr
 URL:https://vtc-aeroport-paris.fr
-NOTE:Service VTC Premium Paris - Transferts Aéroports CDG, Orly, Beauvais - Réservation 24h/24
-CATEGORIES:Transport,VTC
+ADR;TYPE=WORK:;;Paris;;;France
+NOTE:🚗 VTC AÉROPORT PARIS - Votre chauffeur privé de confiance\\n\\n✅ Aéroport CDG Roissy - 60€\\n✅ Aéroport Orly - 60€\\n✅ Aéroport Beauvais - 140€\\n✅ Disneyland - 75€\\n\\n📞 Disponible 24h/24 - 7j/7\\n🚐 Berline & VAN 7 places\\n💳 CB ou Espèces\\n\\nRecherchez: taxi, vtc, transport, chauffeur, aéroport
+CATEGORIES:Transport,VTC,Taxi,Chauffeur,Aéroport,Voyage
+X-ABLabel:VTC Taxi Transport
 END:VCARD`;
 
             const blob = new Blob([vcard], { type: 'text/vcard' });
