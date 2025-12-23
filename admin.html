@@ -770,6 +770,7 @@
                                         <th>Heure</th>
                                         <th>Revenu</th>
                                         <th>Chauffeur</th>
+                                        <th>Véhicule</th>
                                         <th>Statut</th>
                                         <th>Actions</th>
                                     </tr>
@@ -1431,6 +1432,16 @@ VTC Aéroport Paris</textarea>
                     chauffeurCell = `<span style="color: #3b82f6; font-weight: 600;">👤 ${r.chauffeurNom}</span>`;
                 }
 
+                // Affichage du véhicule du chauffeur
+                let vehiculeCell = '<span style="color: var(--gray);">—</span>';
+                if (r.chauffeurVehicule) {
+                    const vehiculeIcon = r.chauffeurVehicule === 'Berline' ? '🚗' : r.chauffeurVehicule === 'Van' ? '🚐' : '🚙';
+                    vehiculeCell = `<span style="font-weight: 500;">${vehiculeIcon} ${r.chauffeurVehicule}</span>`;
+                    if (r.chauffeurPlate) {
+                        vehiculeCell += `<br><span style="color: var(--gray); font-size: 11px; font-family: monospace;">${r.chauffeurPlate}</span>`;
+                    }
+                }
+
                 html += `<tr>
                     <td>${r.nomClient}</td>
                     <td style="color: var(--primary);">${r.emailClient}</td>
@@ -1440,6 +1451,7 @@ VTC Aéroport Paris</textarea>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
                     <td>${chauffeurCell}</td>
+                    <td>${vehiculeCell}</td>
                     <td>${statusCell}</td>
                     <td>${assignBtn}</td>
                 </tr>`;
@@ -1738,14 +1750,14 @@ VTC Aéroport Paris</textarea>
                                 ${chauffeur.telegram ? `<p style="color: #3b82f6; font-size: 12px; margin: 4px 0 0 0;">📱 ${chauffeur.telegram}</p>` : ''}
                                 ${badgeHTML}
                             </div>
-                            <button onclick="assignChauffeurToReservation('${chauffeur.id}', '${chauffeur.nom}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
+                            <button onclick="assignChauffeurToReservation('${chauffeur.id}', '${chauffeur.nom}', '${chauffeur.vehicule}', '${chauffeur.plate}')" style="padding: 8px 12px; background: var(--primary); color: black; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">Assigner →</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function assignChauffeurToReservation(chauffeurId, chauffeurName) {
+        function assignChauffeurToReservation(chauffeurId, chauffeurName, chauffeurVehicule, chauffeurPlate) {
             if (!currentAssignReservationId) return;
 
             const reservation = allReservations.find(r => r.id === currentAssignReservationId);
@@ -1756,11 +1768,13 @@ VTC Aéroport Paris</textarea>
                 statut: 'Chauffeur assigné',
                 chauffeurId: chauffeurId,
                 chauffeurNom: chauffeurName,
+                chauffeurVehicule: chauffeurVehicule,
+                chauffeurPlate: chauffeurPlate,
                 dateAssignation: new Date().toISOString()
             }).then(() => {
-                alert(`✅ ${chauffeurName} a été assigné à ${reservation.nomClient}!`);
+                alert(`✅ ${chauffeurName} (${chauffeurVehicule}) a été assigné à ${reservation.nomClient}!`);
                 closeAssignChauffeurModal();
-                notifyChauffeurAssignment(reservation, chauffeurName);
+                notifyChauffeurAssignment(reservation, chauffeurName, chauffeurVehicule, chauffeurPlate);
             }).catch(error => {
                 alert('❌ Erreur: ' + error.message);
             });
