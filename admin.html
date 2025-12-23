@@ -1972,7 +1972,10 @@ Ou bien :
                             </select>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <div style="margin-top: 15px;">
+                        <button onclick="testTelegramNotification()" style="width: 100%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Tester Notification Telegram</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 20px;">
                         <button onclick="closeEditChauffeurModal()" style="flex: 1; padding: 12px; background: #6b7280; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Annuler</button>
                         <button onclick="saveEditChauffeur()" style="flex: 1; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💾 Enregistrer</button>
                     </div>
@@ -1981,6 +1984,34 @@ Ou bien :
 
             document.getElementById('editChauffeurModal').innerHTML = modalHtml;
             document.getElementById('editChauffeurModal').style.display = 'flex';
+        }
+
+        async function testTelegramNotification() {
+            const chatId = document.getElementById('editChauffeurTelegramChatId').value.trim();
+            const nom = document.getElementById('editChauffeurNom').value.trim();
+
+            if (!chatId) {
+                alert('❌ Veuillez entrer un Chat ID Telegram');
+                return;
+            }
+
+            const message = `🧪 <b>TEST NOTIFICATION</b>
+
+✅ Bravo ${nom} !
+
+Votre notification Telegram fonctionne parfaitement.
+
+Vous recevrez désormais les détails de chaque course assignée directement ici.
+
+🚖 VTC Aéroport Paris`;
+
+            const sent = await sendTelegramMessage(chatId, message);
+
+            if (sent) {
+                alert('✅ Message test envoyé ! Vérifiez votre Telegram.');
+            } else {
+                alert('❌ Échec de l\'envoi. Vérifiez le Chat ID.');
+            }
         }
 
         function closeEditChauffeurModal() {
