@@ -1213,7 +1213,10 @@ VTC Aéroport Paris</textarea>
                 <button onclick="closeReservationDetailsModal()" style="background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer;">✕</button>
             </div>
             <div id="reservationDetailsContent"></div>
-            <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div id="btnSendTelegramContainer" style="margin-top: 15px; display: none;">
+                <button id="btnSendTelegram" onclick="sendTelegramToDriver()" style="width: 100%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Envoyer Notification Telegram au Chauffeur</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <button onclick="closeReservationDetailsModal()" class="btn-export" style="background: #6b7280; flex: 1;">Fermer</button>
                 <button id="btnDeleteReservation" onclick="deleteCurrentReservation()" class="btn-export" style="background: #ef4444; flex: 1;">🗑️ Supprimer</button>
             </div>
@@ -2507,6 +2510,38 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
 
             document.getElementById('reservationDetailsContent').innerHTML = content;
             document.getElementById('reservationDetailsModal').style.display = 'flex';
+
+            // Afficher le bouton Telegram si un chauffeur est assigné
+            if (r.chauffeurId) {
+                document.getElementById('btnSendTelegramContainer').style.display = 'block';
+            } else {
+                document.getElementById('btnSendTelegramContainer').style.display = 'none';
+            }
+        }
+
+        async function sendTelegramToDriver() {
+            if (!currentReservationId) return;
+
+            const reservation = allReservations.find(res => res.id === currentReservationId);
+            if (!reservation || !reservation.chauffeurId) {
+                alert('❌ Aucun chauffeur assigné à cette course');
+                return;
+            }
+
+            const chauffeur = allChauffeurs.find(c => c.id === reservation.chauffeurId);
+            if (!chauffeur) {
+                alert('❌ Chauffeur introuvable');
+                return;
+            }
+
+            if (!chauffeur.telegramChatId) {
+                alert(`❌ ${chauffeur.nom} n'a pas de Chat ID Telegram configuré`);
+                return;
+            }
+
+            // Envoyer la notification
+            await notifyChauffeurAssignment(reservation, chauffeur);
+            alert(`✅ Notification envoyée à ${chauffeur.nom} sur Telegram !`);
         }
 
         function closeReservationDetailsModal() {
