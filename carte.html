@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Carte de visite | VTC Aéroport Paris</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="Carte de visite VTC">
+    <meta property="og:description" content="Chauffeur VTC Aéroport Paris - Service Premium 24/7">
+    <meta property="og:image" content="https://vtc-aeroport-paris.fr/apple-touch-icon.png">
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .business-card {
+            background: linear-gradient(145deg, #151515 0%, #0a0a0a 100%);
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid rgba(162, 125, 52, 0.3);
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.5),
+                0 0 40px rgba(162, 125, 52, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #a27d34, #c49a4a, #a27d34);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #a27d34;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #a27d34, #c49a4a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #0a0a0a;
+            font-weight: 700;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .driver-name {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .driver-title {
+            color: #a27d34;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .company-name {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .contact-list {
+            margin: 25px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-item:hover {
+            transform: translateX(5px);
+        }
+
+        .contact-item:active {
+            transform: scale(0.98);
+        }
+
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .icon-phone { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .icon-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .icon-email { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .icon-website { background: linear-gradient(135deg, #a27d34, #c49a4a); }
+
+        .contact-text {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 2px;
+        }
+
+        .contact-value {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a27d34, #c49a4a);
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(162, 125, 52, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .qr-section {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .qr-title {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 15px;
+            background: #fff;
+            border-radius: 16px;
+        }
+
+        #qrcode canvas {
+            display: block;
+        }
+
+        .footer-logo {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .footer-logo img {
+            height: 30px;
+            opacity: 0.5;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #22c55e;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.4s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            padding: 50px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(162, 125, 52, 0.2);
+            border-top-color: #a27d34;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Share modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-title {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .share-option:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+
+        .share-option span:first-child {
+            font-size: 28px;
+        }
+
+        .share-option span:last-child {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+        }
+
+        .modal-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="business-card" id="card-content">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Contact ajouté !</div>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <div class="modal-title">Partager la carte</div>
+            <div class="share-options">
+                <a href="#" class="share-option" id="shareWhatsApp">
+                    <span>💬</span>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="#" class="share-option" id="shareSMS">
+                    <span>💬</span>
+                    <span>SMS</span>
+                </a>
+                <a href="#" class="share-option" id="shareEmail">
+                    <span>✉️</span>
+                    <span>Email</span>
+                </a>
+                <button class="share-option" id="copyLink">
+                    <span>🔗</span>
+                    <span>Copier</span>
+                </button>
+                <button class="share-option" id="shareNative">
+                    <span>📤</span>
+                    <span>Partager</span>
+                </button>
+                <button class="share-option" id="downloadQR">
+                    <span>📱</span>
+                    <span>QR Code</span>
+                </button>
+            </div>
+            <button class="modal-close" onclick="closeShareModal()">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJuFLVMI3gUKFohxYRZeg8Qyn0mXf1sQI",
+            authDomain: "admin-vtc.firebaseapp.com",
+            databaseURL: "https://admin-vtc-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "admin-vtc",
+            storageBucket: "admin-vtc.firebasestorage.app",
+            messagingSenderId: "692871193828",
+            appId: "1:692871193828:web:2dd34c34736f2faf9bb8f1"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Get driver ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const driverId = urlParams.get('id');
+
+        let currentDriver = null;
+        let cardUrl = window.location.href;
+
+        // Load driver data
+        async function loadDriverCard() {
+            const cardContent = document.getElementById('card-content');
+
+            if (!driverId) {
+                // Show default company card
+                showCompanyCard();
+                return;
+            }
+
+            try {
+                const snapshot = await database.ref('chauffeurs/' + driverId).once('value');
+                const driver = snapshot.val();
+
+                if (!driver) {
+                    showCompanyCard();
+                    return;
+                }
+
+                currentDriver = driver;
+                currentDriver.id = driverId;
+
+                // Update page title
+                document.title = `${driver.nom} | VTC Aéroport Paris`;
+
+                // Update OG tags
+                document.querySelector('meta[property="og:title"]').content = `${driver.nom} - Chauffeur VTC`;
+
+                renderDriverCard(driver);
+
+            } catch (error) {
+                console.error('Error loading driver:', error);
+                showCompanyCard();
+            }
+        }
+
+        function showCompanyCard() {
+            currentDriver = {
+                nom: 'VTC Aéroport Paris',
+                telephone: '0669068244',
+                email: 'contact@vtc-aeroport-paris.fr',
+                isCompany: true
+            };
+
+            renderDriverCard(currentDriver);
+        }
+
+        function renderDriverCard(driver) {
+            const cardContent = document.getElementById('card-content');
+            const initials = driver.isCompany ? 'VTC' : getInitials(driver.nom);
+            const phone = driver.telephone || '0669068244';
+            const email = driver.email || 'contact@vtc-aeroport-paris.fr';
+            const whatsapp = phone.replace(/^0/, '33');
+
+            cardContent.innerHTML = `
+                <div class="card-header">
+                    <div class="profile-photo">
+                        ${driver.photo ? `<img src="${driver.photo}" alt="${driver.nom}">` : initials}
+                    </div>
+                    <div class="driver-name">${driver.nom}</div>
+                    <div class="driver-title">${driver.isCompany ? 'Service Premium 24/7' : 'Chauffeur VTC'}</div>
+                    ${!driver.isCompany ? '<div class="company-name">VTC Aéroport Paris</div>' : ''}
+                </div>
+
+                <div class="contact-list">
+                    <a href="tel:${phone}" class="contact-item">
+                        <div class="contact-icon icon-phone">📞</div>
+                        <div class="contact-text">
+                            <div class="contact-label">Téléphone</div>
+                            <div class="contact-value">${formatPhone(phone)}</div>
+                        </div>
+                    </a>
+
+                    <a href="https://wa.me/${whatsapp}" class="contact-item" target="_blank">
+                        <div class="contact-icon icon-whatsapp">💬</div>
+                        <div class="contact-text">
+                            <div class="contact-label">WhatsApp</div>
+                            <div class="contact-value">Envoyer un message</div>
+                        </div>
+                    </a>
+
+                    <a href="mailto:${email}" class="contact-item">
+                        <div class="contact-icon icon-email">✉️</div>
+                        <div class="contact-text">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">${email}</div>
+                        </div>
+                    </a>
+
+                    <a href="https://vtc-aeroport-paris.fr" class="contact-item" target="_blank">
+                        <div class="contact-icon icon-website">🌐</div>
+                        <div class="contact-text">
+                            <div class="contact-label">Site web</div>
+                            <div class="contact-value">vtc-aeroport-paris.fr</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadVCard()">
+                        <span>📥</span>
+                        Ajouter aux contacts
+                    </button>
+                    <button class="btn btn-secondary" onclick="openShareModal()">
+                        <span>📤</span>
+                        Partager cette carte
+                    </button>
+                </div>
+
+                <div class="qr-section">
+                    <div class="qr-title">Scanner pour enregistrer</div>
+                    <div id="qrcode"></div>
+                </div>
+
+                <div class="footer-logo">
+                    <div style="color: #a27d34; font-weight: 700; font-size: 18px;">VTC AÉROPORT PARIS</div>
+                    <div class="footer-text">Service Premium • CDG • Orly • Beauvais</div>
+                </div>
+            `;
+
+            // Generate QR Code
+            generateQRCode();
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function formatPhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            if (cleaned.length === 10) {
+                return cleaned.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+            }
+            return phone;
+        }
+
+        function generateQRCode() {
+            const qrContainer = document.getElementById('qrcode');
+            if (qrContainer && typeof QRCode !== 'undefined') {
+                QRCode.toCanvas(cardUrl, {
+                    width: 150,
+                    margin: 0,
+                    color: {
+                        dark: '#0a0a0a',
+                        light: '#ffffff'
+                    }
+                }, function(error, canvas) {
+                    if (!error) {
+                        qrContainer.innerHTML = '';
+                        qrContainer.appendChild(canvas);
+                    }
+                });
+            }
+        }
+
+        function downloadVCard() {
+            const driver = currentDriver;
+            const phone = driver.telephone || '0669068244';
+            const email = driver.email || 'contact@vtc-aeroport-paris.fr';
+
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${driver.nom}
+${!driver.isCompany ? 'ORG:VTC Aéroport Paris' : 'ORG:VTC Aéroport Paris'}
+TEL;TYPE=CELL:${phone}
+EMAIL:${email}
+URL:https://vtc-aeroport-paris.fr
+NOTE:${driver.isCompany ? 'Service VTC Premium Paris - Transferts Aéroports CDG, Orly, Beauvais' : 'Chauffeur VTC - Transferts Aéroports Paris'}
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: 'text/vcard' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${driver.nom.replace(/\s+/g, '_')}.vcf`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showToast('Contact téléchargé !');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('show');
+            setupShareLinks();
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
+        }
+
+        function setupShareLinks() {
+            const driver = currentDriver;
+            const text = driver.isCompany
+                ? `VTC Aéroport Paris - Service Premium 24/7\nRéservez votre transfert : ${cardUrl}`
+                : `${driver.nom} - Chauffeur VTC Aéroport Paris\nContact : ${cardUrl}`;
+
+            document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            document.getElementById('shareSMS').href = `sms:?body=${encodeURIComponent(text)}`;
+            document.getElementById('shareEmail').href = `mailto:?subject=${encodeURIComponent('Carte de visite - ' + driver.nom)}&body=${encodeURIComponent(text)}`;
+
+            document.getElementById('copyLink').onclick = () => {
+                navigator.clipboard.writeText(cardUrl);
+                showToast('Lien copié !');
+                closeShareModal();
+            };
+
+            document.getElementById('shareNative').onclick = async () => {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: driver.nom,
+                            text: driver.isCompany ? 'VTC Aéroport Paris - Service Premium' : `${driver.nom} - Chauffeur VTC`,
+                            url: cardUrl
+                        });
+                    } catch (e) {}
+                } else {
+                    navigator.clipboard.writeText(cardUrl);
+                    showToast('Lien copié !');
+                }
+                closeShareModal();
+            };
+
+            document.getElementById('downloadQR').onclick = () => {
+                const canvas = document.querySelector('#qrcode canvas');
+                if (canvas) {
+                    const link = document.createElement('a');
+                    link.download = `qr-${driver.nom.replace(/\s+/g, '-')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToast('QR Code téléchargé !');
+                }
+                closeShareModal();
+            };
+        }
+
+        // Close modal on overlay click
+        document.getElementById('shareModal').onclick = (e) => {
+            if (e.target.id === 'shareModal') closeShareModal();
+        };
+
+        // Initialize
+        loadDriverCard();
+    </script>
+</body>
+</html>
