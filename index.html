@@ -1373,7 +1373,7 @@ Paiement: ${paymentValue}`;
                                         <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 1.5rem;">
                                             ${confirmDetails}
                                         </p>
-                                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                                             <a href="${whatsappUrl}" target="_blank" style="flex: 1; min-width: 150px; padding: 12px; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                                 <i class="fab fa-whatsapp"></i> WhatsApp
                                             </a>
@@ -1381,6 +1381,12 @@ Paiement: ${paymentValue}`;
                                                 <i class="fas fa-phone"></i> Appeler
                                             </a>
                                         </div>
+                                        <button onclick="saveVTCContact()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #a27d34, #c49a4a); color: #0a0a0a; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem;">
+                                            <i class="fas fa-user-plus"></i> Enregistrer notre contact
+                                        </button>
+                                        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 10px; text-align: center;">
+                                            Retrouvez-nous facilement pour vos prochains trajets
+                                        </p>
                                     </div>
                                 `;
                             })
@@ -2016,6 +2022,43 @@ Paiement: ${paymentValue}`;
                 .catch(function(error) {
                     console.error('❌ Erreur envoi email:', error);
                 });
+        }
+
+        // Enregistrer contact VTC dans le téléphone du client
+        function saveVTCContact() {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:VTC Aéroport Paris
+ORG:VTC Aéroport Paris
+TEL;TYPE=CELL:0669068244
+TEL;TYPE=WORK:0669068244
+EMAIL:contact@vtc-aeroport-paris.fr
+URL:https://vtc-aeroport-paris.fr
+NOTE:Service VTC Premium Paris - Transferts Aéroports CDG, Orly, Beauvais - Réservation 24h/24
+CATEGORIES:Transport,VTC
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: 'text/vcard' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'VTC_Aeroport_Paris.vcf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Feedback visuel
+            const btn = event.target.closest('button');
+            if (btn) {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Contact enregistré !';
+                btn.style.background = '#22c55e';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = 'linear-gradient(135deg, #a27d34, #c49a4a)';
+                }, 3000);
+            }
         }
 
         // Générer numéro de référence
