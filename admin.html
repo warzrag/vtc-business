@@ -1218,10 +1218,14 @@ VTC Aéroport Paris</textarea>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <button onclick="closeReservationDetailsModal()" class="btn-export" style="background: #6b7280; flex: 1;">Fermer</button>
-                <button id="btnDeleteReservation" onclick="deleteCurrentReservation()" class="btn-export" style="background: #ef4444; flex: 1;">🗑️ Supprimer</button>
+                <button onclick="openEditReservationModal()" class="btn-export" style="background: #3b82f6; flex: 1;">✏️ Modifier</button>
+                <button id="btnDeleteReservation" onclick="deleteCurrentReservation()" class="btn-export" style="background: #ef4444; flex: 1;">🗑️</button>
             </div>
         </div>
     </div>
+
+    <!-- Modal Edition Réservation -->
+    <div id="editReservationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;"></div>
 
     <!-- Modal Edition Chauffeur -->
     <div id="editChauffeurModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;"></div>
@@ -2542,6 +2546,148 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             // Envoyer la notification
             await notifyChauffeurAssignment(reservation, chauffeur);
             alert(`✅ Notification envoyée à ${chauffeur.nom} sur Telegram !`);
+        }
+
+        function openEditReservationModal() {
+            if (!currentReservationId) return;
+            const r = allReservations.find(res => res.id === currentReservationId);
+            if (!r) return;
+
+            const modalHtml = `
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: var(--white);">✏️ Modifier Réservation</h2>
+                        <button onclick="closeEditReservationModal()" style="background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer;">✕</button>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="background: rgba(162,125,52,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                            <span style="color: var(--primary); font-weight: 600;">📋 Réf: ${r.referenceNumber || 'N/A'}</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">👤 Nom Client *</label>
+                                <input type="text" id="editResNomClient" value="${r.nomClient || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">📞 Téléphone *</label>
+                                <input type="text" id="editResPhone" value="${r.phoneClient || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">📧 Email</label>
+                            <input type="email" id="editResEmail" value="${r.emailClient || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">📍 Adresse de départ</label>
+                            <input type="text" id="editResDepart" value="${r.depart || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+
+                        <div>
+                            <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">🏁 Destination</label>
+                            <input type="text" id="editResDestination" value="${r.destination || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">📅 Date</label>
+                                <input type="date" id="editResDate" value="${r.dateReservation || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">🕐 Heure</label>
+                                <input type="time" id="editResHeure" value="${r.heureReservation || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">👥 Passagers</label>
+                                <input type="number" id="editResPassagers" value="${r.nombrePassagers || 1}" min="1" max="8" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">🚗 Véhicule</label>
+                                <select id="editResVehicule" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                    <option value="Berline" ${r.typeVehicule === 'Berline' ? 'selected' : ''}>Berline</option>
+                                    <option value="Van" ${r.typeVehicule === 'Van' ? 'selected' : ''}>Van</option>
+                                    <option value="SUV" ${r.typeVehicule === 'SUV' ? 'selected' : ''}>SUV</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">✈️ Aéroport</label>
+                                <select id="editResAeroport" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                    <option value="CDG" ${r.aeroport === 'CDG' ? 'selected' : ''}>CDG</option>
+                                    <option value="Orly" ${r.aeroport === 'Orly' ? 'selected' : ''}>Orly</option>
+                                    <option value="Beauvais" ${r.aeroport === 'Beauvais' ? 'selected' : ''}>Beauvais</option>
+                                    <option value="Autre" ${r.aeroport === 'Autre' ? 'selected' : ''}>Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">💰 Prix</label>
+                                <input type="text" id="editResPrix" value="${r.prixFinal || r.prixEstime || ''}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                            </div>
+                            <div>
+                                <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">💳 Paiement</label>
+                                <select id="editResPaiement" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
+                                    <option value="Espèces" ${r.moyenPaiement === 'Espèces' ? 'selected' : ''}>💵 Espèces</option>
+                                    <option value="Carte Bancaire" ${r.moyenPaiement === 'Carte Bancaire' ? 'selected' : ''}>💳 Carte Bancaire</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                        <button onclick="closeEditReservationModal()" style="flex: 1; padding: 12px; background: #6b7280; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Annuler</button>
+                        <button onclick="saveEditReservation()" style="flex: 1; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💾 Enregistrer</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('editReservationModal').innerHTML = modalHtml;
+            document.getElementById('editReservationModal').style.display = 'flex';
+        }
+
+        function closeEditReservationModal() {
+            document.getElementById('editReservationModal').style.display = 'none';
+        }
+
+        function saveEditReservation() {
+            if (!currentReservationId) return;
+
+            const updates = {
+                nomClient: document.getElementById('editResNomClient').value.trim(),
+                phoneClient: document.getElementById('editResPhone').value.trim(),
+                emailClient: document.getElementById('editResEmail').value.trim(),
+                depart: document.getElementById('editResDepart').value.trim(),
+                destination: document.getElementById('editResDestination').value.trim(),
+                dateReservation: document.getElementById('editResDate').value,
+                heureReservation: document.getElementById('editResHeure').value,
+                nombrePassagers: document.getElementById('editResPassagers').value,
+                typeVehicule: document.getElementById('editResVehicule').value,
+                aeroport: document.getElementById('editResAeroport').value,
+                prixFinal: document.getElementById('editResPrix').value.trim(),
+                moyenPaiement: document.getElementById('editResPaiement').value
+            };
+
+            if (!updates.nomClient || !updates.phoneClient) {
+                alert('❌ Le nom et le téléphone sont obligatoires');
+                return;
+            }
+
+            db.ref('reservations/' + currentReservationId).update(updates)
+                .then(() => {
+                    alert('✅ Réservation modifiée avec succès !');
+                    closeEditReservationModal();
+                    closeReservationDetailsModal();
+                })
+                .catch(error => {
+                    alert('❌ Erreur: ' + error.message);
+                });
         }
 
         function closeReservationDetailsModal() {
