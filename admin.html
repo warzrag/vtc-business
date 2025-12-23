@@ -1049,6 +1049,7 @@
                                 </div>
                             </div>
                             <button onclick="addChauffeur()" class="btn-export" style="background-color: #22c55e;">➕ Ajouter le Chauffeur</button>
+                            <button onclick="copyTelegramTuto()" class="btn-export" style="background-color: #0088cc; margin-left: 10px;">📋 Copier Tuto Telegram</button>
                         </div>
 
                         <!-- Liste des Chauffeurs -->
@@ -1846,6 +1847,35 @@ Ou bien :
 1️⃣ Chercher @userinfobot sur Telegram
 2️⃣ Envoyer /start
 3️⃣ Il affiche l'ID directement`);
+        }
+
+        function copyTelegramTuto() {
+            const tuto = `📱 NOTIFICATION COURSES VTC
+
+Salut ! Pour recevoir automatiquement les détails de tes courses sur Telegram :
+
+1️⃣ Ouvre ce lien : https://t.me/vtc_aeroport_paris_bot
+
+2️⃣ Clique sur "Démarrer" ou envoie /start
+
+3️⃣ Ensuite va sur https://t.me/userinfobot et envoie /start - il te donnera ton ID (un numéro)
+
+4️⃣ Envoie-moi ce numéro et je t'ajoute au système !
+
+Tu recevras ensuite toutes tes courses directement sur Telegram 🚖`;
+
+            navigator.clipboard.writeText(tuto).then(() => {
+                alert('✅ Tuto copié ! Tu peux le coller sur WhatsApp ou Telegram pour l\'envoyer à un chauffeur.');
+            }).catch(() => {
+                // Fallback pour navigateurs plus anciens
+                const textarea = document.createElement('textarea');
+                textarea.value = tuto;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ Tuto copié ! Tu peux le coller sur WhatsApp ou Telegram pour l\'envoyer à un chauffeur.');
+            });
         }
 
         // Add chauffeur
