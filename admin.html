@@ -2179,6 +2179,9 @@ Vous recevrez désormais les détails de chaque course assignée directement ici
         }
 
         async function notifyChauffeurAssignment(reservation, chauffeur) {
+            // Icône paiement
+            const paiementIcon = reservation.moyenPaiement === 'Espèces' ? '💵' : '💳';
+
             // Message formaté pour Telegram
             const message = `🚖 <b>NOUVELLE COURSE ASSIGNÉE</b>
 
@@ -2193,6 +2196,7 @@ Vous recevrez désormais les détails de chaque course assignée directement ici
 👥 <b>Passagers:</b> ${reservation.nombrePassagers}
 
 💰 <b>Prix:</b> ${reservation.prixFinal || reservation.prixEstime || 'À définir'}
+${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'}
 
 📍 Merci de confirmer votre disponibilité!`;
 
@@ -2456,9 +2460,15 @@ Vous recevrez désormais les détails de chaque course assignée directement ici
                         </div>
                     </div>
 
-                    <div style="background: rgba(59,130,246,0.1); border-left: 3px solid #3b82f6; padding: 12px; border-radius: 8px;">
-                        <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">CHAUFFEUR ASSIGNÉ</div>
-                        <div>${chauffeurInfo}</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: ${r.moyenPaiement === 'Espèces' ? 'rgba(34,197,94,0.1)' : 'rgba(59,130,246,0.1)'}; border-left: 3px solid ${r.moyenPaiement === 'Espèces' ? '#22c55e' : '#3b82f6'}; padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">${r.moyenPaiement === 'Espèces' ? '💵' : '💳'} PAIEMENT</div>
+                            <div style="color: var(--white); font-weight: 600;">${r.moyenPaiement || 'Non spécifié'}</div>
+                        </div>
+                        <div style="background: rgba(59,130,246,0.1); border-left: 3px solid #3b82f6; padding: 12px; border-radius: 8px;">
+                            <div style="color: var(--gray); font-size: 11px; margin-bottom: 4px;">CHAUFFEUR</div>
+                            <div>${chauffeurInfo}</div>
+                        </div>
                     </div>
                 </div>
             `;

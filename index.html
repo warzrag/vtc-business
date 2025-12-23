@@ -772,6 +772,21 @@
                                 <div class="form-group" style="margin-bottom: 1rem;">
                                     <input type="email" id="client-email" placeholder="Votre email (optionnel)" style="width: 100%;">
                                 </div>
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label style="color: #c9a227; font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                                        <i class="fas fa-credit-card"></i> Moyen de paiement *
+                                    </label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <label style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 12px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                                            <input type="radio" name="payment-method" value="Espèces" style="accent-color: #c9a227;" required>
+                                            <span style="color: white;"><i class="fas fa-money-bill-wave"></i> Espèces</span>
+                                        </label>
+                                        <label style="flex: 1; display: flex; align-items: center; gap: 8px; padding: 12px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                                            <input type="radio" name="payment-method" value="Carte Bancaire" style="accent-color: #c9a227;" required>
+                                            <span style="color: white;"><i class="fas fa-credit-card"></i> Carte Bancaire</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 <button type="button" id="btn-send" class="btn btn-primary btn-submit">
                                     <i class="fas fa-paper-plane"></i> ENVOYER MA RÉSERVATION
                                 </button>
@@ -1200,6 +1215,13 @@ Merci de confirmer ma réservation.`;
                             return;
                         }
 
+                        const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
+                        if (!paymentMethod) {
+                            alert('Veuillez choisir un moyen de paiement');
+                            return;
+                        }
+                        const paymentValue = paymentMethod.value;
+
                         const clientName = clientFirstname + ' ' + clientLastname;
 
                         const serviceType = document.getElementById('service-type').value;
@@ -1232,7 +1254,8 @@ Service: ⏰ MISE À DISPOSITION
 - Passagers: ${passengers}
 - Véhicule: ${vehiculeNom}
 
-Prix: ${estimatedPrice}€ (${madHeures}h)`;
+Prix: ${estimatedPrice}€ (${madHeures}h)
+Paiement: ${paymentValue}`;
 
                             confirmDetails = `
                                 <i class="fas fa-clock"></i> Mise à disposition ${madHeures}h<br>
@@ -1260,7 +1283,8 @@ Service: 🚗 TRANSFERT
 - Passagers: ${passengers}
 - Véhicule: ${vehiculeNom}
 
-Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
+Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)
+Paiement: ${paymentValue}`;
 
                             confirmDetails = `
                                 <i class="fas fa-car"></i> ${depart} → ${destination}<br>
@@ -1288,7 +1312,8 @@ Prix estimé: ${estimatedPrice}€ (${estimatedDistance} km)`;
                             statut: 'En attente',
                             dateCreation: new Date().toISOString(),
                             source: 'site',
-                            prixEstime: document.getElementById('price-value').textContent
+                            prixEstime: document.getElementById('price-value').textContent,
+                            moyenPaiement: paymentValue
                         };
 
                         // Ajouter champs spécifiques au type de service
