@@ -937,9 +937,11 @@
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Type de Véhicule *</label>
                                     <select id="resVehicle" required style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
                                         <option value="">-- Choisir --</option>
-                                        <option value="Berline">Berline</option>
-                                        <option value="Van">Van</option>
-                                        <option value="SUV">SUV</option>
+                                        <option value="ECO Premium">🚗 ECO Premium</option>
+                                        <option value="Classe E">🚘 Classe E / Tesla X/S</option>
+                                        <option value="Classe S">👑 Classe S Mercedes</option>
+                                        <option value="VAN 7">🚐 VAN 7 places</option>
+                                        <option value="VAN 8">🚐 VAN 8 places</option>
                                     </select>
                                 </div>
                                 <div>
@@ -1054,9 +1056,12 @@
                                 <div>
                                     <label style="color:var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
                                     <select id="chauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
-                                        <option value="Berline">🚗 Berline</option>
-                                        <option value="Van">🚐 Van 7 places</option>
-                                        <option value="SUV">🚙 SUV</option>
+                                        <option value="ECO Premium">🚗 ECO Premium</option>
+                                        <option value="Classe E">🚘 Classe E</option>
+                                        <option value="Classe S">👑 Classe S</option>
+                                        <option value="VAN 7">🚐 VAN 7 places</option>
+                                        <option value="VAN 8">🚐 VAN 8 places</option>
+                                        
                                     </select>
                                 </div>
                             </div>
@@ -1702,7 +1707,7 @@ VTC Aéroport Paris</textarea>
                 // Affichage du véhicule du chauffeur
                 let vehiculeCell = '<span style="color: var(--gray);">—</span>';
                 if (r.chauffeurVehicule) {
-                    const vehiculeIcon = r.chauffeurVehicule === 'Berline' ? '🚗' : r.chauffeurVehicule === 'Van' ? '🚐' : '🚙';
+                    const vehiculeIcon = r.chauffeurVehicule?.includes('VAN') ? '🚐' : r.chauffeurVehicule === 'Classe S' ? '👑' : r.chauffeurVehicule === 'Classe E' ? '🚘' : '🚗';
                     vehiculeCell = `<span style="font-weight: 500;">${vehiculeIcon} ${r.chauffeurVehicule}</span>`;
                     if (r.chauffeurPlate) {
                         vehiculeCell += `<br><span style="color: var(--gray); font-size: 11px; font-family: monospace;">${r.chauffeurPlate}</span>`;
@@ -2007,9 +2012,12 @@ Tu recevras ensuite toutes tes courses directement sur Telegram 🚖`;
                         <div>
                             <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 8px;">Véhicule</label>
                             <select id="editChauffeurVehicule" style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
-                                <option value="Berline" ${chauffeur.vehicule === 'Berline' ? 'selected' : ''}>🚗 Berline</option>
-                                <option value="Van" ${chauffeur.vehicule === 'Van' ? 'selected' : ''}>🚐 Van 7 places</option>
-                                <option value="SUV" ${chauffeur.vehicule === 'SUV' ? 'selected' : ''}>🚙 SUV</option>
+                                <option value="ECO Premium" ${chauffeur.vehicule === 'ECO Premium' ? 'selected' : ''}>🚗 ECO Premium</option>
+                                <option value="Classe E" ${chauffeur.vehicule === 'Classe E' ? 'selected' : ''}>🚘 Classe E</option>
+                                <option value="Classe S" ${chauffeur.vehicule === 'Classe S' ? 'selected' : ''}>👑 Classe S</option>
+                                <option value="VAN 7" ${chauffeur.vehicule === 'VAN 7' ? 'selected' : ''}>🚐 VAN 7 places</option>
+                                <option value="VAN 8" ${chauffeur.vehicule === 'VAN 8' ? 'selected' : ''}>🚐 VAN 8 places</option>
+                                
                             </select>
                         </div>
                         <div>
@@ -2622,9 +2630,12 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
                             <div>
                                 <label style="color: var(--white); font-weight: 600; display: block; margin-bottom: 5px;">🚗 Véhicule</label>
                                 <select id="editResVehicule" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white);">
-                                    <option value="Berline" ${r.typeVehicule === 'Berline' ? 'selected' : ''}>Berline</option>
-                                    <option value="Van" ${r.typeVehicule === 'Van' ? 'selected' : ''}>Van</option>
-                                    <option value="SUV" ${r.typeVehicule === 'SUV' ? 'selected' : ''}>SUV</option>
+                                    <option value="ECO Premium" ${r.typeVehicule === 'ECO Premium' ? 'selected' : ''}>🚗 ECO Premium</option>
+                                    <option value="Classe E" ${r.typeVehicule === 'Classe E' ? 'selected' : ''}>🚘 Classe E</option>
+                                    <option value="Classe S" ${r.typeVehicule === 'Classe S' ? 'selected' : ''}>👑 Classe S</option>
+                                    <option value="VAN 7" ${r.typeVehicule === 'VAN 7' ? 'selected' : ''}>🚐 VAN 7</option>
+                                    <option value="VAN 8" ${r.typeVehicule === 'VAN 8' ? 'selected' : ''}>🚐 VAN 8</option>
+                                    
                                 </select>
                             </div>
                             <div>
