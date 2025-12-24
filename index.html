@@ -820,6 +820,46 @@
                     </div>
 
                     <script>
+                    // Configuration Telegram
+                    const TELEGRAM_BOT_TOKEN = '7609624916:AAGzWu8hGS_hNOVCiSHGlSscQkuF9gDLfeM';
+                    const TELEGRAM_CHAT_ID = '983151531';
+
+                    // Fonction pour envoyer une notification Telegram
+                    async function sendTelegramNotification(reservation) {
+                        const message = `🚖 *NOUVELLE RÉSERVATION !*
+
+👤 *Client:* ${reservation.nomClient}
+📞 *Tél:* ${reservation.phoneClient}
+📧 *Email:* ${reservation.emailClient}
+
+📍 *Départ:* ${reservation.depart || 'N/A'}
+🏁 *Arrivée:* ${reservation.destination || reservation.aeroport}
+📅 *Date:* ${reservation.dateReservation}
+🕐 *Heure:* ${reservation.heureReservation}
+
+🚗 *Véhicule:* ${reservation.typeVehicule}
+👥 *Passagers:* ${reservation.nombrePassagers}
+💰 *Prix:* ${reservation.prixEstime}
+💳 *Paiement:* ${reservation.moyenPaiement}
+
+🔖 *Réf:* ${reservation.referenceNumber}`;
+
+                        try {
+                            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    chat_id: TELEGRAM_CHAT_ID,
+                                    text: message,
+                                    parse_mode: 'Markdown'
+                                })
+                            });
+                            console.log('✅ Notification Telegram envoyée');
+                        } catch (error) {
+                            console.error('❌ Erreur Telegram:', error);
+                        }
+                    }
+
                     // Configuration des tarifs
                     const TARIFS = {
                         base: 5,        // Prix de base en €
@@ -1414,6 +1454,23 @@ Paiement: ${paymentValue}`;
                         db.ref('reservations').push(reservationData)
                             .then(() => {
                                 console.log('✅ Réservation sauvegardée dans Firebase');
+
+                                // Envoyer notification Telegram
+                                sendTelegramNotification({
+                                    nomClient: clientName,
+                                    phoneClient: clientPhone,
+                                    emailClient: clientEmail,
+                                    depart: reservationData.depart,
+                                    destination: reservationData.destination,
+                                    aeroport: reservationData.aeroport,
+                                    dateReservation: date,
+                                    heureReservation: pickupTime,
+                                    typeVehicule: vehiculeNom,
+                                    nombrePassagers: passengers,
+                                    prixEstime: estimatedPrice + '€',
+                                    moyenPaiement: paymentValue,
+                                    referenceNumber: referenceNumber
+                                });
 
                                 // Envoyer email de confirmation
                                 sendConfirmationEmail({
