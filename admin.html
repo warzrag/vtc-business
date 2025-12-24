@@ -811,7 +811,8 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Aéroport</th>
+                                        <th>Départ</th>
+                                        <th>Destination</th>
                                         <th>Réservations</th>
                                         <th>Revenu</th>
                                         <th>% Total</th>
@@ -975,7 +976,8 @@
                                         <th>Nom</th>
                                         <th>Email</th>
                                         <th>Téléphone</th>
-                                        <th>Aéroport</th>
+                                        <th>Départ</th>
+                                        <th>Destination</th>
                                         <th>Date</th>
                                         <th>Heure</th>
                                         <th>Revenu</th>
@@ -1108,7 +1110,8 @@
                                         <th>Nom</th>
                                         <th>Email</th>
                                         <th>Téléphone</th>
-                                        <th>Aéroport</th>
+                                        <th>Départ</th>
+                                        <th>Destination</th>
                                         <th>Date/Heure</th>
                                         <th>Actions</th>
                                     </tr>
@@ -1718,7 +1721,8 @@ VTC Aéroport Paris</textarea>
                     <td>${r.nomClient}</td>
                     <td style="color: var(--primary);">${r.emailClient}</td>
                     <td>${r.phoneClient}</td>
-                    <td>${r.aeroport}</td>
+                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.depart || 'N/A'}">${r.depart || '<span style="color:var(--gray)">—</span>'}</td>
+                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.destination || r.aeroport || 'N/A'}">${r.destination || r.aeroport || '<span style="color:var(--gray)">—</span>'}</td>
                     <td>${r.dateReservation}</td>
                     <td>${r.heureReservation}</td>
                     <td style="color: var(--green); font-weight: 600; cursor: pointer;" onclick="updateReservationPrice('${r.id}')" title="Cliquez pour modifier le prix">${displayPrice}</td>
@@ -3195,7 +3199,8 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
                         <td>${r.nomClient}</td>
                         <td style="color: var(--primary);">${r.emailClient}</td>
                         <td>${r.phoneClient}</td>
-                        <td>${r.aeroport}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.depart || 'N/A'}">${r.depart || '<span style="color:var(--gray)">—</span>'}</td>
+                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.destination || r.aeroport || 'N/A'}">${r.destination || r.aeroport || '<span style="color:var(--gray)">—</span>'}</td>
                         <td>${r.dateReservation} à ${r.heureReservation}</td>
                         <td>
                             <button onclick="sendReminder('${r.nomClient}', '${r.emailClient}', '${r.phoneClient}', '${r.aeroport}', '${r.heureReservation}', 'sms')" style="padding: 6px 10px; background: #22c55e; border: none; border-radius: 4px; color: black; font-weight: 600; cursor: pointer; font-size: 12px;">SMS</button>
