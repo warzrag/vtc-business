@@ -139,7 +139,7 @@
         "@id": "https://vtc-aeroport-paris.fr/#localbusiness",
         "name": "VTC Aéroport Paris",
         "alternateName": ["VTC Paris CDG", "Chauffeur Privé Paris Aéroport", "Navette Aéroport Paris"],
-        "description": "Service VTC premium à Paris. Transfert aéroport CDG 60€, Orly 60€. ECO, Classe E, Classe S et VAN 7-8 places disponibles 24h/24.",
+        "description": "Service VTC premium à Paris. Transfert aéroport CDG 80€, Orly 70€. ECO, Classe E, Classe S et VAN 7-8 places disponibles 24h/24.",
         "image": ["https://vtc-aeroport-paris.fr/van-noir.png", "https://vtc-aeroport-paris.fr/images/berline.jpg"],
         "url": "https://vtc-aeroport-paris.fr",
         "telephone": "+33743661203",
@@ -215,7 +215,7 @@
                 "name": "ECO Premium Paris-CDG",
                 "price": "80",
                 "priceCurrency": "EUR",
-                "description": "Transfert en Berline Premium (4 passagers max)"
+                "description": "Transfert en ECO Premium (4 passagers max)"
             },
             {
                 "@type": "Offer",
@@ -1345,7 +1345,7 @@ Merci de confirmer ma réservation.`;
                         const pickupTime = window.calculatedPickupTime || '00:00';
                         const passengers = document.getElementById('passengers').value;
                         const vehicule = document.getElementById('vehicule').value;
-                        const vehiculeNom = vehicule === 'van' ? '🚐 VAN 7 places' : '🚗 Berline Tesla';
+                        const vehiculeNoms = {'eco': '🚗 ECO Premium', 'classe-e': '🚗 Classe E', 'classe-s': '🚗 Classe S', 'van-7': '🚐 VAN 7 places', 'van-8': '🚐 VAN 8 places'}; const vehiculeNom = vehiculeNoms[vehicule] || '🚗 ECO Premium';
 
                         let message;
                         let confirmDetails;
@@ -1423,7 +1423,7 @@ Paiement: ${paymentValue}`;
                             heureReservation: pickupTime,
                             heureArrivee: arrivalTime,
                             nombrePassagers: passengers,
-                            typeVehicule: vehicule === 'van' ? 'Van' : 'Berline',
+                            typeVehicule: {'eco': 'ECO Premium', 'classe-e': 'Classe E', 'classe-s': 'Classe S', 'van-7': 'VAN 7', 'van-8': 'VAN 8'}[vehicule] || 'ECO Premium',
                             statut: 'En attente',
                             dateCreation: new Date().toISOString(),
                             source: 'site',
@@ -1703,7 +1703,7 @@ Paiement: ${paymentValue}`;
                 <!-- BERLINE -->
                 <div style="background: linear-gradient(135deg, #1a1a1a, rgba(162, 125, 52, 0.1)); border: 1px solid #c9a227; border-radius: 12px; overflow: hidden;">
                     <div style="position: relative;">
-                        <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=500&q=80" alt="Berline Premium" style="width: 100%; height: 180px; object-fit: cover;">
+                        <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=500&q=80" alt="Véhicule ECO Premium" style="width: 100%; height: 180px; object-fit: cover;">
                         <div style="position: absolute; top: 0; right: 0; background: #c9a227; color: #000; padding: 8px 15px; font-size: 12px; font-weight: 700;">🚗 BERLINE</div>
                     </div>
                     <div style="padding: 20px;">
@@ -2165,7 +2165,7 @@ TEL;TYPE=WORK,VOICE:+33743661203
 EMAIL;TYPE=WORK:contact@vtc-aeroport-paris.fr
 URL:https://vtc-aeroport-paris.fr
 ADR;TYPE=WORK:;;Paris;;;France
-NOTE:🚗 VTC AÉROPORT PARIS - Votre chauffeur privé de confiance\\n\\n✅ Aéroport CDG Roissy - 60€\\n✅ Aéroport Orly - 60€\\n✅ Aéroport Beauvais - 140€\\n✅ Disneyland - 75€\\n\\n📞 Disponible 24h/24 - 7j/7\\n🚐 Berline & VAN 7 places\\n💳 CB ou Espèces\\n\\nRecherchez: taxi, vtc, transport, chauffeur, aéroport
+NOTE:🚗 VTC AÉROPORT PARIS - Votre chauffeur privé de confiance\\n\\n✅ Aéroport CDG Roissy - 80€\\n✅ Aéroport Orly - 70€\\n✅ Aéroport Beauvais - 170€\\n✅ Disneyland - 90€\\n\\n📞 Disponible 24h/24 - 7j/7\\n🚐 ECO, Classe E, S & VAN 7-8\\n💳 CB ou Espèces\\n\\nRecherchez: taxi, vtc, transport, chauffeur, aéroport
 CATEGORIES:Transport,VTC,Taxi,Chauffeur,Aéroport,Voyage
 X-ABLabel:VTC Taxi Transport
 END:VCARD`;

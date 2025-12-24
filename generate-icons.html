@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'icônes PWA - VTC Aéroport Paris</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #a27d34; text-align: center; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+        h2 { color: #a27d34; margin-top: 0; }
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .icon-item {
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .icon-item canvas {
+            border-radius: 20%;
+            margin-bottom: 10px;
+        }
+        .icon-item p { margin: 5px 0; font-size: 12px; color: #888; }
+        .icon-item a {
+            display: inline-block;
+            background: #a27d34;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .icon-item a:hover { background: #c49a4a; }
+        .btn-all {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #a27d34, #c49a4a);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .btn-all:hover { opacity: 0.9; }
+        .instructions {
+            background: #1a2a1a;
+            border: 1px solid #2a4a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .instructions h3 { color: #4a9; margin-top: 0; }
+        .instructions ol { padding-left: 20px; }
+        .instructions li { margin: 10px 0; }
+        code {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Générateur d'icônes PWA</h1>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <ol>
+                <li>Cliquez sur <strong>"Télécharger toutes les icônes"</strong> pour générer un ZIP</li>
+                <li>Ou téléchargez chaque icône individuellement</li>
+                <li>Placez tous les fichiers dans le dossier <code>icons/</code></li>
+                <li>L'icône <code>apple-touch-icon.png</code> va à la racine du site</li>
+            </ol>
+        </div>
+
+        <button class="btn-all" onclick="downloadAllIcons()">Télécharger toutes les icônes (ZIP)</button>
+
+        <div class="section">
+            <h2>Icônes Site Client (VTC Paris)</h2>
+            <div class="icons-grid" id="client-icons"></div>
+        </div>
+
+        <div class="section">
+            <h2>Icônes Admin</h2>
+            <div class="icons-grid" id="admin-icons"></div>
+        </div>
+
+        <div class="section">
+            <h2>Apple Touch Icons (Racine)</h2>
+            <div class="icons-grid" id="apple-icons"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const appleSizes = [180, 152, 144, 120];
+
+        function drawClientIcon(ctx, size) {
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0a0a0a');
+            gradient.addColorStop(1, '#1a1a1a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Gold accent circle
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size * 0.35, 0, Math.PI * 2);
+            const goldGradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size * 0.35);
+            goldGradient.addColorStop(0, '#c49a4a');
+            goldGradient.addColorStop(1, '#a27d34');
+            ctx.fillStyle = goldGradient;
+            ctx.fill();
+
+            // VTC Text
+            ctx.fillStyle = '#0a0a0a';
+            ctx.font = `bold ${size * 0.2}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('VTC', size/2, size/2);
+        }
+
+        function drawAdminIcon(ctx, size) {
+            // Dark background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#1a1a2a');
+            gradient.addColorStop(1, '#0a0a1a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Gold border
+            ctx.strokeStyle = '#a27d34';
+            ctx.lineWidth = size * 0.04;
+            ctx.strokeRect(size * 0.1, size * 0.1, size * 0.8, size * 0.8);
+
+            // Gear icon (simplified)
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size * 0.25, 0, Math.PI * 2);
+            ctx.fillStyle = '#a27d34';
+            ctx.fill();
+
+            // Inner circle
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size * 0.12, 0, Math.PI * 2);
+            ctx.fillStyle = '#1a1a2a';
+            ctx.fill();
+
+            // Admin text
+            ctx.fillStyle = '#a27d34';
+            ctx.font = `bold ${size * 0.12}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('ADMIN', size/2, size * 0.92);
+        }
+
+        function createIcon(size, type, filename) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            if (type === 'admin') {
+                drawAdminIcon(ctx, size);
+            } else {
+                drawClientIcon(ctx, size);
+            }
+
+            return canvas;
+        }
+
+        function createIconItem(size, type, filename, container) {
+            const canvas = createIcon(size, type, filename);
+
+            const div = document.createElement('div');
+            div.className = 'icon-item';
+
+            // Scale down for display
+            const displaySize = Math.min(100, size);
+            canvas.style.width = displaySize + 'px';
+            canvas.style.height = displaySize + 'px';
+
+            div.appendChild(canvas);
+
+            const p = document.createElement('p');
+            p.textContent = `${filename} (${size}x${size})`;
+            div.appendChild(p);
+
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = filename;
+            a.textContent = 'Télécharger';
+            div.appendChild(a);
+
+            container.appendChild(div);
+
+            return { filename, canvas };
+        }
+
+        // Generate client icons
+        const clientContainer = document.getElementById('client-icons');
+        const clientIcons = sizes.map(size =>
+            createIconItem(size, 'client', `icon-${size}x${size}.png`, clientContainer)
+        );
+
+        // Generate admin icons
+        const adminContainer = document.getElementById('admin-icons');
+        const adminIcons = sizes.map(size =>
+            createIconItem(size, 'admin', `icon-admin-${size}x${size}.png`, adminContainer)
+        );
+
+        // Generate Apple touch icons
+        const appleContainer = document.getElementById('apple-icons');
+        const appleIcons = [];
+        appleIcons.push(createIconItem(180, 'client', 'apple-touch-icon.png', appleContainer));
+        appleIcons.push(createIconItem(180, 'admin', 'apple-touch-icon-admin.png', appleContainer));
+
+        async function downloadAllIcons() {
+            const zip = new JSZip();
+            const iconsFolder = zip.folder('icons');
+
+            // Add client icons
+            for (const icon of clientIcons) {
+                const dataUrl = icon.canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+                iconsFolder.file(icon.filename, base64, {base64: true});
+            }
+
+            // Add admin icons
+            for (const icon of adminIcons) {
+                const dataUrl = icon.canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+                iconsFolder.file(icon.filename, base64, {base64: true});
+            }
+
+            // Add Apple touch icons to root
+            for (const icon of appleIcons) {
+                const dataUrl = icon.canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+                zip.file(icon.filename, base64, {base64: true});
+            }
+
+            // Generate and download
+            const content = await zip.generateAsync({type: 'blob'});
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vtc-pwa-icons.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
