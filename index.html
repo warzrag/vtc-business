@@ -139,7 +139,7 @@
         "@id": "https://vtc-aeroport-paris.fr/#localbusiness",
         "name": "VTC Aéroport Paris",
         "alternateName": ["VTC Paris CDG", "Chauffeur Privé Paris Aéroport", "Navette Aéroport Paris"],
-        "description": "Service VTC premium à Paris. Transfert aéroport CDG 60€, Orly 60€. Berline Premium et VAN 7 places disponibles 24h/24.",
+        "description": "Service VTC premium à Paris. Transfert aéroport CDG 60€, Orly 60€. ECO, Classe E, Classe S et VAN 7-8 places disponibles 24h/24.",
         "image": ["https://vtc-aeroport-paris.fr/van-noir.png", "https://vtc-aeroport-paris.fr/images/berline.jpg"],
         "url": "https://vtc-aeroport-paris.fr",
         "telephone": "+33669068244",
@@ -206,14 +206,14 @@
         "@id": "https://vtc-aeroport-paris.fr/#service-cdg",
         "serviceType": "Transfert Aéroport",
         "name": "Transfert Paris - Aéroport CDG Roissy",
-        "description": "Service VTC pour transfert entre Paris et l'aéroport Charles de Gaulle. Berline Premium à 60€ ou VAN 7 places à 90€. Prix fixe, pas de supplément.",
+        "description": "Service VTC pour transfert entre Paris et l'aéroport Charles de Gaulle. ECO dès 80€, Classe E 100€, Classe S 120€, VAN 7 100€. Prix fixe, pas de supplément.",
         "provider": {"@id": "https://vtc-aeroport-paris.fr/#localbusiness"},
         "areaServed": {"@type": "Place", "name": "Paris - Aéroport CDG"},
         "offers": [
             {
                 "@type": "Offer",
-                "name": "Berline Premium Paris-CDG",
-                "price": "60",
+                "name": "ECO Premium Paris-CDG",
+                "price": "80",
                 "priceCurrency": "EUR",
                 "description": "Transfert en Berline Premium (4 passagers max)"
             },
@@ -235,14 +235,14 @@
         "@id": "https://vtc-aeroport-paris.fr/#service-orly",
         "serviceType": "Transfert Aéroport",
         "name": "Transfert Paris - Aéroport Orly",
-        "description": "Service VTC pour transfert entre Paris et l'aéroport d'Orly. Berline Premium à 60€ ou VAN 7 places à 70€. Prix fixe garanti.",
+        "description": "Service VTC pour transfert entre Paris et l'aéroport d'Orly. ECO dès 70€, Classe E 90€, Classe S 110€, VAN 90-100€. Prix fixe garanti.",
         "provider": {"@id": "https://vtc-aeroport-paris.fr/#localbusiness"},
         "areaServed": {"@type": "Place", "name": "Paris - Aéroport Orly"},
         "offers": [
             {
                 "@type": "Offer",
-                "name": "Berline Premium Paris-Orly",
-                "price": "60",
+                "name": "ECO Premium Paris-Orly",
+                "price": "80",
                 "priceCurrency": "EUR"
             },
             {
@@ -262,11 +262,11 @@
         "@id": "https://vtc-aeroport-paris.fr/#service-beauvais",
         "serviceType": "Transfert Aéroport",
         "name": "Transfert Paris - Aéroport Beauvais",
-        "description": "Service VTC pour transfert entre Paris et l'aéroport de Beauvais. Berline Premium à 140€ ou VAN 7 places à 170€.",
+        "description": "Service VTC pour transfert entre Paris et l'aéroport de Beauvais. ECO dès 170€, Classe E 215€, Classe S 260€, VAN 215-240€.",
         "provider": {"@id": "https://vtc-aeroport-paris.fr/#localbusiness"},
         "offers": [
-            {"@type": "Offer", "name": "Berline Paris-Beauvais", "price": "140", "priceCurrency": "EUR"},
-            {"@type": "Offer", "name": "VAN Paris-Beauvais", "price": "170", "priceCurrency": "EUR"}
+            {"@type": "Offer", "name": "ECO Paris-Beauvais", "price": "170", "priceCurrency": "EUR"},
+            {"@type": "Offer", "name": "VAN 7 Paris-Beauvais", "price": "215", "priceCurrency": "EUR"}
         ]
     }
     </script>
@@ -278,11 +278,11 @@
         "@id": "https://vtc-aeroport-paris.fr/#service-disney",
         "serviceType": "Transfert Touristique",
         "name": "Transfert Paris - Disneyland Paris",
-        "description": "Service VTC pour transfert entre Paris et Disneyland Paris. Berline Premium à 75€ ou VAN 7 places à 90€.",
+        "description": "Service VTC pour transfert entre Paris et Disneyland Paris. ECO dès 90€, Classe E 115€, Classe S 140€, VAN 115-130€.",
         "provider": {"@id": "https://vtc-aeroport-paris.fr/#localbusiness"},
         "offers": [
-            {"@type": "Offer", "name": "Berline Paris-Disney", "price": "75", "priceCurrency": "EUR"},
-            {"@type": "Offer", "name": "VAN Paris-Disney", "price": "90", "priceCurrency": "EUR"}
+            {"@type": "Offer", "name": "ECO Paris-Disney", "price": "90", "priceCurrency": "EUR"},
+            {"@type": "Offer", "name": "VAN 7 Paris-Disney", "price": "115", "priceCurrency": "EUR"}
         ]
     }
     </script>
@@ -294,11 +294,11 @@
         "@id": "https://vtc-aeroport-paris.fr/#service-mad",
         "serviceType": "Mise à Disposition",
         "name": "Mise à Disposition Chauffeur Privé Paris",
-        "description": "Location de chauffeur privé avec véhicule à l'heure. Berline Premium 45€/h ou VAN 7 places 50€/h. Idéal pour événements, réunions, visites.",
+        "description": "Location de chauffeur privé avec véhicule à l'heure. ECO 45€/h, Classe E 55€/h, Classe S 70€/h, VAN 55-65€/h. Idéal pour événements, réunions, visites.",
         "provider": {"@id": "https://vtc-aeroport-paris.fr/#localbusiness"},
         "offers": [
-            {"@type": "Offer", "name": "Mise à disposition Berline", "price": "45", "priceCurrency": "EUR", "unitText": "HOUR"},
-            {"@type": "Offer", "name": "Mise à disposition VAN", "price": "50", "priceCurrency": "EUR", "unitText": "HOUR"}
+            {"@type": "Offer", "name": "Mise à disposition ECO", "price": "45", "priceCurrency": "EUR", "unitText": "HOUR"},
+            {"@type": "Offer", "name": "Mise à disposition VAN 7", "price": "55", "priceCurrency": "EUR", "unitText": "HOUR"}
         ]
     }
     </script>
@@ -369,7 +369,7 @@
                 "name": "Combien de bagages puis-je prendre ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "En Berline Premium: jusqu'à 3 grandes valises + bagages cabine. En VAN 7 places: jusqu'à 7 grandes valises. Les bagages sont inclus dans le prix, pas de supplément."
+                    "text": "En ECO/Classe E/S: jusqu'à 3 grandes valises + cabine. En VAN 7: 7 valises. En VAN 8: 8 valises. Les bagages sont inclus dans le prix, pas de supplément."
                 }
             }
         ]
@@ -410,7 +410,7 @@
             <div class="top-bar-content">
                 <div class="top-bar-left">
                     <span><i class="fas fa-clock"></i> Disponible 24h/24 - 7j/7</span>
-                    <span><i class="fas fa-car"></i> Berline Premium & VAN 7 Places</span>
+                    <span><i class="fas fa-car"></i> ECO, Classe E, S & VAN 7-8 Places</span>
                 </div>
                 <div class="top-bar-right">
                     <a href="tel:+33669068244" onclick="trackPhoneClick()"><i class="fas fa-phone"></i> 06 69 06 82 44</a>
@@ -511,7 +511,7 @@
                     <i class="fas fa-award"></i> Service Premium Paris & Île-de-France
                 </div>
                 <h1 class="hero-title">SERVICE DE TRANSPORT PRIVÉ EN TAXI VTC</h1>
-                <p class="hero-subtitle">Transport Privé Sur Paris de Personnels et Professionnels en Berline ou en Van VIP 7 Places en Mode Salon</p>
+                <p class="hero-subtitle">Transport Privé Sur Paris de Personnels et Professionnels en ECO, Classe E, Classe S ou VAN 7-8 Places en Mode Salon</p>
 
                 <div class="hero-cta">
                     <a href="tel:+33669068244" class="hero-phone" onclick="trackPhoneClick()">
@@ -535,7 +535,7 @@
                     </div>
                     <div class="hero-feature">
                         <i class="fas fa-check-circle"></i>
-                        <span>Berline & VAN 7 places</span>
+                        <span>ECO, Classe E, S & VAN</span>
                     </div>
                     <div class="hero-feature">
                         <i class="fas fa-check-circle"></i>
@@ -685,7 +685,7 @@
                                         <strong>Mise à disposition :</strong> Chauffeur et véhicule à votre disposition pendant la durée choisie. Idéal pour événements, rendez-vous multiples, shopping...
                                     </p>
                                     <p style="color: #c9a227; font-size: 0.9rem; margin: 10px 0 0 0; font-weight: 600;">
-                                        🚗 Berline : 45€/h • 🚐 VAN : 50€/h
+                                        🚗 ECO 45€/h • 🚘 Classe E 55€/h • 👑 Classe S 70€/h • 🚐 VAN 55-65€/h
                                     </p>
                                 </div>
                             </div>
@@ -1664,7 +1664,7 @@ Paiement: ${paymentValue}`;
                                 <span>Paris ↔ CDG</span><span style="color: #c9a227; font-weight: 600;">80€</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; color: #fff; font-size: 0.85rem; margin-bottom: 5px;">
-                                <span>Paris ↔ Orly</span><span style="color: #c9a227; font-weight: 600;">80€</span>
+                                <span>Paris ↔ Orly</span><span style="color: #c9a227; font-weight: 600;">70€</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; color: #fff; font-size: 0.85rem;">
                                 <span>Mise à dispo</span><span style="color: #c9a227; font-weight: 600;">45€/h</span>
@@ -1685,7 +1685,7 @@ Paiement: ${paymentValue}`;
                         <p style="color: #c9a227; font-size: 0.9rem; margin: 0 0 15px 0;">7-8 Places Mode Salon</p>
 
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
-                            <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: #fff;"><i class="fas fa-users" style="color: #c9a227;"></i> 5-7 pers.</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: #fff;"><i class="fas fa-users" style="color: #c9a227;"></i> 5-8 pers.</span>
                             <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: #fff;"><i class="fas fa-suitcase" style="color: #c9a227;"></i> 7+ bagages</span>
                             <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; color: #fff;"><i class="fas fa-couch" style="color: #c9a227;"></i> Salon</span>
                         </div>
@@ -1695,7 +1695,7 @@ Paiement: ${paymentValue}`;
                                 <span>Paris ↔ CDG</span><span style="color: #c9a227; font-weight: 600;">100€</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; color: #fff; font-size: 0.85rem; margin-bottom: 5px;">
-                                <span>Paris ↔ Orly</span><span style="color: #c9a227; font-weight: 600;">100€</span>
+                                <span>Paris ↔ Orly</span><span style="color: #c9a227; font-weight: 600;">90€</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; color: #fff; font-size: 0.85rem;">
                                 <span>Mise à dispo</span><span style="color: #c9a227; font-weight: 600;">55€/h</span>
@@ -1728,7 +1728,7 @@ Paiement: ${paymentValue}`;
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+                        <i class="fas fa-star"></i>
                     </div>
                     <span class="rating-score">5/5</span>
                     <span class="rating-count">Nouveau service</span>
