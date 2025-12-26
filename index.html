@@ -1427,7 +1427,7 @@ Paiement: ${paymentValue}`;
                             typeVehicule: {'eco': 'ECO Premium', 'classe-e': 'Classe E', 'classe-s': 'Classe S', 'van-7': 'VAN 7', 'van-8': 'VAN 8'}[vehicule] || 'ECO Premium',
                             statut: 'En attente',
                             dateCreation: new Date().toISOString(),
-                            source: 'site',
+                            source: 'vtc-aeroport-paris',
                             prixEstime: document.getElementById('price-value').textContent,
                             moyenPaiement: paymentValue
                         };
@@ -2229,7 +2229,7 @@ END:VCARD`;
                 typeVehicule: vehicule,
                 statut: 'En attente',
                 dateCreation: new Date().toISOString(),
-                source: 'site'
+                source: 'vtc-aeroport-paris'
             };
 
             // Ajouter champs spécifiques au type de service
