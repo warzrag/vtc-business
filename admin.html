@@ -1236,6 +1236,7 @@ VTC Aéroport Paris</textarea>
             <div id="btnSendTelegramContainer" style="margin-top: 15px; display: none;">
                 <button id="btnSendTelegram" onclick="sendTelegramToDriver()" style="width: 100%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Envoyer Notification Telegram au Chauffeur</button>
             </div>
+            <div id="actionButtonsContainer" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
             <div style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <button onclick="closeReservationDetailsModal()" class="btn-export" style="background: #6b7280; flex: 1;">Fermer</button>
                 <button onclick="openEditReservationModal()" class="btn-export" style="background: #3b82f6; flex: 1;">✏️ Modifier</button>
@@ -2549,6 +2550,20 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             } else {
                 document.getElementById('btnSendTelegramContainer').style.display = 'none';
             }
+            
+            // Afficher les boutons d'action selon le statut
+            let actionButtons = '';
+            if (r.statut === 'En attente') {
+                actionButtons = '<button onclick="acceptReservation(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Accepter</button>' +
+                               '<button onclick="rejectReservation(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">❌ Refuser</button>';
+            } else if (r.statut === 'Confirmée') {
+                actionButtons = '<button onclick="openAssignChauffeurModal(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">👤 Assigner Chauffeur</button>';
+            } else if (r.statut === 'Chauffeur assigné') {
+                actionButtons = '<button onclick="updateReservationStatus(\'' + r.id + '\', \'En route\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #ec4899; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">🚗 Démarrer la course</button>';
+            } else if (r.statut === 'En route') {
+                actionButtons = '<button onclick="terminerCourse(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Terminer la course</button>';
+            }
+            document.getElementById('actionButtonsContainer').innerHTML = actionButtons;
         }
 
         async function sendTelegramToDriver() {
