@@ -957,7 +957,7 @@
                                         <option value="Confirmée">✅ Confirmée</option>
                                         <option value="Chauffeur assigné">👤 Chauffeur assigné</option>
                                         <option value="En route">🚗 En route</option>
-                                        <option value="Complétée">✔️ Complétée</option>
+                                        <option value="Réalisée">✔️ Réalisée</option>
                                         <option value="Annulée">❌ Annulée</option>
                                     </select>
                                 </div>
@@ -1697,8 +1697,12 @@ VTC Aéroport Paris</textarea>
                 statusCell += `</div>`;
 
                 let assignBtn = '';
+                let finCourseBtn = '';
                 if (r.statut === 'Confirmée' || r.statut === 'Chauffeur assigné' || r.statut === 'En route') {
                     assignBtn = `<button onclick="openAssignChauffeurModal('${r.id}')" style="padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Assigner un chauffeur">👤 ${r.chauffeurNom ? 'Changer' : 'Assigner'}</button>`;
+                }
+                if (r.statut === 'En route') {
+                    finCourseBtn = `<button onclick="terminerCourse('${r.id}')" style="padding: 4px 8px; background: #22c55e; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 4px;" title="Terminer la course">✅ Terminer</button>`;
                 }
 
                 // Affichage du chauffeur assigné
@@ -1729,7 +1733,7 @@ VTC Aéroport Paris</textarea>
                     <td>${chauffeurCell}</td>
                     <td>${vehiculeCell}</td>
                     <td>${statusCell}</td>
-                    <td>${assignBtn}</td>
+                    <td>${assignBtn}${finCourseBtn}</td>
                 </tr>`;
             });
             document.getElementById('reservationsTable').innerHTML = html;
@@ -2956,8 +2960,8 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             'En attente': ['Confirmée', 'Annulée'],
             'Confirmée': ['Chauffeur assigné', 'Annulée'],
             'Chauffeur assigné': ['En route', 'Annulée'],
-            'En route': ['Complétée', 'Annulée'],
-            'Complétée': [],
+            'En route': ['Réalisée', 'Annulée'],
+            'Réalisée': [],
             'Annulée': []
         };
 
@@ -2966,7 +2970,7 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             'Confirmée': '#3b82f6',
             'Chauffeur assigné': '#8b5cf6',
             'En route': '#ec4899',
-            'Complétée': '#22c55e',
+            'Réalisée': '#22c55e',
             'Annulée': '#ef4444'
         };
 
@@ -2975,11 +2979,50 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             'Confirmée': '✅',
             'Chauffeur assigné': '👤',
             'En route': '🚗',
-            'Complétée': '✔️',
+            'Réalisée': '✔️',
             'Annulée': '❌'
         };
 
         // Update reservation status with workflow validation
+
+        // ========== TERMINER COURSE ==========
+        const GOOGLE_REVIEW_LINK = 'https://g.page/r/Cd969YTkoqPbEAE/review';
+        
+        function terminerCourse(reservationId) {
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+            
+            if (res.statut !== 'En route') {
+                alert("Cette course n'est pas en cours");
+                return;
+            }
+            
+            if (!confirm('Terminer la course pour ' + res.nomClient + ' ?')) return;
+            
+            db.ref('reservations/' + reservationId).update({
+                statut: 'Réalisée',
+                dateStatutChange: new Date().toISOString(),
+                previousStatut: 'En route',
+                dateRealisation: new Date().toISOString()
+            }).then(() => {
+                console.log('✅ Course terminée');
+                
+                const prenom = res.nomClient.split(' ')[0];
+                const message = 'Bonjour ' + prenom + ' 👋\n\nMerci d\'avoir choisi VTC Aéroport Paris ! 🚗✨\n\nNous espérons que votre trajet s\'est bien passé.\n\nSi vous êtes satisfait de notre service, pourriez-vous nous laisser un avis Google ? Cela nous aide beaucoup ! ⭐⭐⭐⭐⭐\n\n👉 ' + GOOGLE_REVIEW_LINK + '\n\nMerci et à bientôt ! 🙏\n\n— L\'équipe VTC Aéroport Paris';
+
+                const phone = res.phoneClient.replace(/\s/g, '').replace(/^0/, '33');
+                const waLink = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+                window.open(waLink, '_blank');
+                
+                alert('✅ Course terminée ! WhatsApp ouvert avec le message.');
+            }).catch(error => {
+                alert('❌ Erreur: ' + error.message);
+            });
+        }
+
         function updateReservationStatus(reservationId, newStatus) {
             if (!reservationId || !newStatus) return;
 
@@ -3018,7 +3061,7 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
                 'Confirmée': `Votre réservation VTC ${reservation.referenceNumber || 'N/A'} pour ${reservation.dateReservation} à ${reservation.heureReservation} est CONFIRMÉE! Notre chauffeur vous contactera bientôt.`,
                 'Chauffeur assigné': `Votre chauffeur a été assigné! Il arrive dans ${Math.ceil(Math.random() * 20 + 10)} minutes. Numéro de plaque: À Confirmer`,
                 'En route': `Notre chauffeur est en route vers vous! Temps d'arrivée estimé: ${Math.ceil(Math.random() * 10 + 5)} minutes`,
-                'Complétée': `Merci pour votre réservation! Un reçu a été envoyé à votre email. Tarif: ${getRevenue(reservation)}€`,
+                'Réalisée': `Merci pour votre réservation! Un reçu a été envoyé à votre email. Tarif: ${getRevenue(reservation)}€`,
                 'Annulée': `Votre réservation a été annulée.`
             };
 
