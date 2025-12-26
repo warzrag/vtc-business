@@ -2553,15 +2553,18 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
             
             // Afficher les boutons d'action selon le statut
             let actionButtons = '';
+            
+            // Bouton "Marquer comme faite" toujours visible sauf si déjà réalisée ou annulée
+            if (r.statut !== 'Réalisée' && r.statut !== 'Annulée') {
+                actionButtons += '<button onclick="marquerCommeFaite(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Marquer comme faite</button>';
+            }
+            
+            // Boutons supplémentaires selon le statut
             if (r.statut === 'En attente') {
-                actionButtons = '<button onclick="acceptReservation(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Accepter</button>' +
+                actionButtons += '<button onclick="acceptReservation(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Accepter</button>' +
                                '<button onclick="rejectReservation(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">❌ Refuser</button>';
             } else if (r.statut === 'Confirmée') {
-                actionButtons = '<button onclick="openAssignChauffeurModal(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">👤 Assigner Chauffeur</button>';
-            } else if (r.statut === 'Chauffeur assigné') {
-                actionButtons = '<button onclick="updateReservationStatus(\'' + r.id + '\', \'En route\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #ec4899; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">🚗 Démarrer la course</button>';
-            } else if (r.statut === 'En route') {
-                actionButtons = '<button onclick="terminerCourse(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">✅ Terminer la course</button>';
+                actionButtons += '<button onclick="openAssignChauffeurModal(\'' + r.id + '\'); closeReservationDetailsModal();" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">👤 Assigner</button>';
             }
             document.getElementById('actionButtonsContainer').innerHTML = actionButtons;
         }
@@ -3041,6 +3044,38 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
                 alert('✅ Course terminée ! WhatsApp ouvert avec le message.');
             }).catch(error => {
                 alert('❌ Erreur: ' + error.message);
+            });
+        }
+
+
+        // ========== MARQUER COMME FAITE (raccourci) ==========
+        function marquerCommeFaite(reservationId) {
+            const res = allReservations.find(r => r.id === reservationId);
+            if (!res) {
+                alert('Réservation non trouvée');
+                return;
+            }
+            
+            if (!confirm('Marquer la course de ' + res.nomClient + ' comme faite et envoyer le message avis Google ?')) return;
+            
+            db.ref('reservations/' + reservationId).update({
+                statut: 'Réalisée',
+                dateStatutChange: new Date().toISOString(),
+                previousStatut: res.statut,
+                dateRealisation: new Date().toISOString()
+            }).then(function() {
+                console.log('Course marquée comme faite');
+                
+                var prenom = res.nomClient.split(' ')[0];
+                var message = 'Bonjour ' + prenom + ' 👋\n\nMerci d\'avoir choisi VTC Aéroport Paris ! 🚗✨\n\nNous espérons que votre trajet s\'est bien passé.\n\nSi vous êtes satisfait de notre service, pourriez-vous nous laisser un avis Google ? Cela nous aide beaucoup ! ⭐⭐⭐⭐⭐\n\n👉 ' + GOOGLE_REVIEW_LINK + '\n\nMerci et à bientôt ! 🙏\n\n— L\'équipe VTC Aéroport Paris';
+
+                var phone = res.phoneClient.replace(/\s/g, '').replace(/^0/, '33');
+                var waLink = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+                window.open(waLink, '_blank');
+                
+                alert('✅ Course marquée comme faite ! WhatsApp ouvert.');
+            }).catch(function(error) {
+                alert('Erreur: ' + error.message);
             });
         }
 
