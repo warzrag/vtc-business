@@ -2917,6 +2917,12 @@ ${paiementIcon} <b>Paiement:</b> ${reservation.moyenPaiement || 'Non spécifié'
                                         ${chauffeurInfo}
                                         ${vehiculeInfo ? `<span style="color: var(--gray);">${vehiculeInfo}</span>` : ''}
                                     </div>
+                                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                        ${r.statut === 'En route' ? `<button onclick="terminerCourse('${r.id}')" style="padding: 5px 10px; background: #22c55e; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">✅ Terminer</button>` : ''}
+                                        ${r.statut === 'En attente' ? `<button onclick="acceptReservation('${r.id}')" style="padding: 5px 10px; background: #3b82f6; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">✅ Accepter</button><button onclick="rejectReservation('${r.id}')" style="padding: 5px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">❌ Refuser</button>` : ''}
+                                        ${r.statut === 'Confirmée' ? `<button onclick="openAssignChauffeurModal('${r.id}')" style="padding: 5px 10px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">👤 Assigner chauffeur</button>` : ''}
+                                        ${r.statut === 'Chauffeur assigné' ? `<button onclick="updateReservationStatus('${r.id}', 'En route')" style="padding: 5px 10px; background: #ec4899; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">🚗 Démarrer</button>` : ''}
+                                    </div>
                                 </div>
                             </div>
                         `;
